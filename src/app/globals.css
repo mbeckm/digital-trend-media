@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+:root {
+  --color-page: #fafcff;
+  --color-ink: #000000;
+  --color-muted: #838383;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f7f9fd;
+  --color-surface-faq: #f8f8f8;
+  --color-border: #dfe4f6;
+  --color-border-soft: #f3f4f7;
+  --color-border-chip: #1c59b6;
+  --color-chip-text: #132c55;
+  --color-link: #1f4e8e;
+  --color-footer: #2b6ecb;
+  --color-card-meta: #3c3d3e;
+  --gradient-blue: linear-gradient(
+    180deg in oklab,
+    oklab(72.1% -0.038 -0.143) 0%,
+    oklab(42.8% -0.032 -0.163) 100%
+  );
+  --gradient-blue-text: linear-gradient(
+    180deg in oklab,
+    oklab(72.1% -0.038 -0.142) 0%,
+    oklab(42.8% -0.031 -0.164) 100%
+  );
+  --gradient-card-dark: linear-gradient(
+    180deg in oklab,
+    oklab(37.8% -0.027 -0.125) 0%,
+    oklab(27.5% -0.018 -0.077) 100%
+  );
+  --gradient-hero: linear-gradient(
+    180deg in oklab,
+    oklab(98.1% -0.002 -0.009) 0%,
+    oklab(98.1% -0.002 -0.009 / 14%) 100%
+  );
+  --gradient-cause: radial-gradient(
+    ellipse 63% 737% at 50% 50% in oklab,
+    oklab(44.3% -0.031 -0.16) 0%,
+    oklab(95.1% -0.006 -0.023) 100%
+  );
+  --shadow-cta: 0 0 19px #00142e36;
+  --radius-section: 48px;
+  --radius-media: 24px;
+  --container: 1272px;
+  --gutter: 24px;
+  --gutter-lg: 48px;
+  --section-gap: 80px;
+}
+
+@theme inline {
+  --color-background: var(--color-page);
+  --color-foreground: var(--color-ink);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-inter-tight);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--color-page);
+  color: var(--color-ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: #c5d9f5;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s ease both;
+}
+
+.delay-1 {
+  animation-delay: 0.08s;
+}
+.delay-2 {
+  animation-delay: 0.16s;
+}
+.delay-3 {
+  animation-delay: 0.24s;
+}
+.delay-4 {
+  animation-delay: 0.32s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-fade-up,
+  .animate-fade-in {
+    animation: none;
+  }
+}
