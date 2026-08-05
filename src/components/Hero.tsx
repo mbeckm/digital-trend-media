@@ -1,16 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef } from "react";
 
 import { CloudsVolumetric } from "@/components/clouds/CloudsVolumetric";
 import { YouTubeBackground } from "@/components/YouTubeEmbed";
-
-const benefits = [
-  "Komplexes einfach erklärt",
-  "Mehr Anfragen",
-  "Kürzere Vertriebszyklen",
-];
 
 export function Hero() {
   const mediaRef = useRef<HTMLDivElement>(null);
@@ -106,25 +99,6 @@ export function Hero() {
         <div ref={mediaRef} className="hero-media relative overflow-hidden">
           <YouTubeBackground title="Digital Trend Media Showreel" />
         </div>
-      </div>
-
-      <div className="mx-auto flex w-full max-w-[1280px] flex-col items-center justify-between gap-4 px-6 sm:flex-row md:px-12 lg:px-20">
-        {benefits.map((benefit) => (
-          <div key={benefit} className="flex items-center gap-2">
-            <div className="relative size-[42px] shrink-0 overflow-hidden rounded-md">
-              <Image
-                src="/images/flowers.webp"
-                alt=""
-                fill
-                className="object-cover"
-                sizes="50px"
-              />
-            </div>
-            <span className="text-center text-[clamp(1rem,1.2vw,1.125rem)] font-semibold leading-7 text-black">
-              {benefit}
-            </span>
-          </div>
-        ))}
       </div>
     </section>
   );
