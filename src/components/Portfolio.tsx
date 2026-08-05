@@ -3,6 +3,13 @@
 import Image from "next/image";
 import { useState } from "react";
 
+import {
+  PlayIcon,
+  PORTFOLIO_VIDEO_ID,
+  YouTubePlayer,
+  youTubePoster,
+} from "@/components/YouTubeEmbed";
+
 const filters = {
   Branche: [
     "Finanzindustrie",
@@ -47,7 +54,7 @@ function Chip({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full border px-4 py-2 text-xs transition-[background-color,color,transform] active:scale-[0.97] ${
+      className={`rounded-full border px-4 py-2 text-[13px] transition-[background-color,color,transform] active:scale-[0.97] ${
         active
           ? "border-[#1c59b6] bg-[#1c59b6] text-white"
           : "border-[#1c59b6] text-[#132c55] hover:bg-[#eaf2ff]"
@@ -55,6 +62,51 @@ function Chip({
     >
       {label}
     </button>
+  );
+}
+
+function FilmCard({
+  film,
+}: {
+  film: { name: string; role: string; company: string };
+}) {
+  const [playing, setPlaying] = useState(false);
+
+  return (
+    <article className="relative flex min-h-[260px] items-center justify-center overflow-hidden rounded-2xl lg:min-h-[380px]">
+      {playing ? (
+        <YouTubePlayer
+          videoId={PORTFOLIO_VIDEO_ID}
+          title={`${film.name}, ${film.company}`}
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setPlaying(true)}
+          aria-label={`Film abspielen: ${film.name}, ${film.company}`}
+          className="group absolute inset-0 flex cursor-pointer items-center justify-center gap-6 px-6 text-left"
+        >
+          <Image
+            src={youTubePoster(PORTFOLIO_VIDEO_ID)}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
+          <span className="absolute inset-0 bg-black/60 transition-colors duration-300 group-hover:bg-black/50" />
+          <span className="relative z-10 flex size-[64px] shrink-0 items-center justify-center rounded-full bg-white shadow-[0_6px_24px_#00142e4d] transition-transform duration-300 group-hover:scale-105 group-active:scale-95">
+            <PlayIcon size={30} />
+          </span>
+          <span className="relative z-10 flex flex-col gap-3 text-white">
+            <span className="text-base font-semibold">{film.name}</span>
+            <span className="flex flex-col gap-1 text-base">
+              <span>{film.role}</span>
+              <span>{film.company}</span>
+            </span>
+          </span>
+        </button>
+      )}
+    </article>
   );
 }
 
@@ -71,17 +123,17 @@ export function Portfolio() {
   return (
     <section
       id="portfolio"
-      className="flex w-full flex-col items-start gap-12 rounded-[48px] p-6 md:p-12"
+      className="flex w-full flex-col items-start gap-8 rounded-[48px] px-6 py-10 md:gap-10 md:px-10 md:py-14"
       style={{
         backgroundImage:
           "linear-gradient(180deg in oklab, oklab(99.1% 0.0001 -0.004) 0%, oklab(100% 0 0) 100%)",
       }}
     >
-      <div className="flex flex-col gap-6">
-        <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(2.5rem,6vw,4.5rem)] font-bold leading-[1.08] tracking-[-0.025em] text-black">
+      <div className="flex flex-col gap-3 md:gap-4">
+        <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(2rem,4vw,3rem)] font-bold leading-[1.08] tracking-[-0.025em] text-black">
           Von Hä? zu Aha!
         </h2>
-        <p className="max-w-5xl font-[family-name:var(--font-inter-tight)] text-[clamp(1.5rem,3vw,2.5rem)] leading-[1.35] text-black">
+        <p className="max-w-[62ch] font-[family-name:var(--font-inter-tight)] text-[clamp(1.0625rem,1.5vw,1.375rem)] leading-[1.35] text-black">
           Egal was Ihnen vorschwebt, wir haben bereits einen passenden
           Erklärfilm umgesetzt. Nutzen Sie unser interaktives Tool, um die für
           Ihr Unternehmen passende Referenz zu finden.
@@ -115,42 +167,12 @@ export function Portfolio() {
         </div>
 
         <div className="flex w-full flex-col gap-6 rounded-2xl border border-[#a7a8a9] p-6">
-          <h3 className="font-[family-name:var(--font-inter-tight)] text-[clamp(1.25rem,2vw,1.75rem)] font-semibold text-black">
+          <h3 className="font-[family-name:var(--font-inter-tight)] text-[clamp(1.125rem,1.6vw,1.5rem)] font-semibold text-black">
             {selectedCount} passende Filme gefunden
           </h3>
           <div className="grid gap-6 md:grid-cols-2">
             {films.map((film) => (
-              <article
-                key={film.name}
-                className="relative flex min-h-[320px] items-center justify-center gap-6 overflow-hidden rounded-2xl lg:min-h-[500px]"
-              >
-                <Image
-                  src="/images/flowers.webp"
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-                <div className="absolute inset-0 bg-black/45" />
-                <div className="relative z-10 flex items-center gap-6 px-6">
-                  <div className="relative flex size-[78px] shrink-0 items-center justify-center rounded-full bg-white">
-                    <svg viewBox="0 0 44 44" width="44" height="44" aria-hidden>
-                      <path
-                        fillRule="evenodd"
-                        d="M34.41 22.709L9.59 5.641L9.59 38.923L34.41 22.709Z"
-                        fill="#5A5A5A"
-                      />
-                    </svg>
-                  </div>
-                  <div className="flex flex-col gap-3 text-white">
-                    <p className="text-base font-semibold">{film.name}</p>
-                    <div className="flex flex-col gap-1 text-base">
-                      <span>{film.role}</span>
-                      <span>{film.company}</span>
-                    </div>
-                  </div>
-                </div>
-              </article>
+              <FilmCard key={film.name} film={film} />
             ))}
           </div>
         </div>

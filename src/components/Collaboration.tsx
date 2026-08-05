@@ -27,13 +27,13 @@ export function Collaboration() {
   return (
     <section
       id="prozess"
-      className="flex w-full flex-col items-center gap-12 rounded-[48px] p-6 md:p-12"
+      className="flex w-full flex-col items-center gap-8 py-10 md:gap-10 md:py-14"
     >
-      <div className="flex w-full flex-col gap-6">
-        <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(2.5rem,6vw,4.5rem)] font-bold leading-[1.08] tracking-[-0.025em] text-black">
+      <div className="flex w-full flex-col gap-3 md:gap-4">
+        <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(2rem,4vw,3rem)] font-bold leading-[1.08] tracking-[-0.025em] text-black">
           So läuft die Zusammenarbeit ab
         </h2>
-        <p className="max-w-5xl font-[family-name:var(--font-inter-tight)] text-[clamp(1.5rem,3vw,2.5rem)] leading-[1.35] text-black">
+        <p className="max-w-[62ch] font-[family-name:var(--font-inter-tight)] text-[clamp(1.0625rem,1.5vw,1.375rem)] leading-[1.35] text-black">
           Nicht jedes Angebot eignet sich für einen Erklärfilm. In einem
           kostenlosen Erstgespräch finden wir gemeinsam heraus, ob ein
           Erklärvideo auch für euch sinnvoll sein kann.
@@ -42,7 +42,7 @@ export function Collaboration() {
       <div className="grid w-full gap-6 sm:grid-cols-2 xl:grid-cols-4">
         {steps.map((step) => (
           <article key={step.title} className="flex flex-1 flex-col gap-4">
-            <div className="relative h-[180px] shrink-0 overflow-hidden rounded-md sm:h-[219px]">
+            <div className="relative h-[160px] shrink-0 overflow-hidden rounded-md sm:h-[190px]">
               <Image
                 src="/images/flowers.webp"
                 alt=""
@@ -55,7 +55,9 @@ export function Collaboration() {
               </div>
             </div>
             <div className="flex flex-col gap-1">
-              <h3 className="text-[22px] leading-7 text-black">{step.title}</h3>
+              <h3 className="text-[clamp(1.125rem,1.4vw,1.375rem)] leading-7 text-black">
+                {step.title}
+              </h3>
               <p className="whitespace-pre-wrap text-base leading-5 text-black">
                 {step.body}
               </p>
@@ -65,7 +67,7 @@ export function Collaboration() {
       </div>
       <a
         href="#kontakt"
-        className="inline-flex min-h-[82px] min-w-[240px] items-center justify-center rounded-full border-[3px] border-[#e5f0ff] px-12 py-6 text-[22px] font-semibold text-white outline outline-[0.3px] outline-[#cbcfd7] transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-[0_0_20px_#00142e52] active:scale-[0.98] md:min-w-[381px]"
+        className="inline-flex min-h-[60px] min-w-[220px] items-center justify-center rounded-full border-[3px] border-[#e5f0ff] px-9 py-4 text-[17px] font-semibold text-white outline outline-[0.3px] outline-[#cbcfd7] transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-[0_0_20px_#00142e52] active:scale-[0.98] md:min-w-[300px]"
         style={{
           backgroundImage: "var(--gradient-blue)",
           boxShadow: "0 0 10px #00142e52",

@@ -1,4 +1,10 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useRef } from "react";
+
+import { CloudsVolumetric } from "@/components/clouds/CloudsVolumetric";
+import { YouTubeBackground } from "@/components/YouTubeEmbed";
 
 const benefits = [
   "Komplexes einfach erklärt",
@@ -7,47 +13,87 @@ const benefits = [
 ];
 
 export function Hero() {
+  const mediaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const media = mediaRef.current;
+    if (!media) return;
+
+    // Feature-detect CSS scroll-driven animations. If supported, CSS handles it.
+    const supportsScrollTimeline =
+      typeof CSS !== "undefined" &&
+      typeof CSS.supports === "function" &&
+      CSS.supports("animation-timeline: scroll()");
+
+    if (supportsScrollTimeline) {
+      media.classList.add("hero-media--css-scroll");
+      return;
+    }
+
+    // JS fallback for browsers without scroll-driven animations.
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let frame = 0;
+
+    const update = () => {
+      if (reduceMotion.matches) {
+        media.style.setProperty("--hero-p", "1");
+        return;
+      }
+            const distance = Math.max(window.innerHeight * 0.4, 260);
+      const p = Math.min(1, Math.max(0, window.scrollY / distance));
+      media.style.setProperty("--hero-p", p.toFixed(4));
+    };
+
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
   return (
     <section
       id="top"
-      className="animate-fade-up flex w-full flex-col items-center gap-12 rounded-[48px] p-6 outline outline-4 outline-[#f3f4f7] md:p-12"
+      className="relative isolate flex w-full flex-col items-center gap-8 overflow-hidden py-10 md:gap-10 md:py-14"
       style={{ backgroundImage: "var(--gradient-hero)" }}
     >
-      <div className="flex w-full flex-col items-center gap-6">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <h1 className="font-[family-name:var(--font-inter-tight)] text-[clamp(3rem,10vw,7.5rem)] font-semibold leading-[0.95] tracking-[-0.025em] text-black">
-            Komplexes.
-          </h1>
-          <p
-            className="-mt-2 bg-clip-text font-[family-name:var(--font-inter-tight)] text-[clamp(3rem,10vw,7.5rem)] font-bold leading-[0.95] tracking-[-0.025em] text-transparent"
-            style={{ backgroundImage: "var(--gradient-blue-text)" }}
-          >
-            Einfach erklärt.
+      <CloudsVolumetric className="-z-10" />
+
+      <div className="w-full px-6 md:px-12">
+        <div className="mx-auto flex w-full max-w-[1280px] flex-col items-center gap-6">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <h1 className="font-[family-name:var(--font-inter-tight)] text-[clamp(2.75rem,7vw,5.5rem)] font-semibold leading-[0.95] tracking-[-0.025em] text-black">
+              Komplexes.
+            </h1>
+            <p
+              className="-mt-2 bg-clip-text font-[family-name:var(--font-inter-tight)] text-[clamp(2.75rem,7vw,5.5rem)] font-bold leading-[0.95] tracking-[-0.025em] text-transparent"
+              style={{ backgroundImage: "var(--gradient-blue-text)" }}
+            >
+              Einfach erklärt.
+            </p>
+          </div>
+          <p className="max-w-[46rem] text-center text-[clamp(1.0625rem,1.5vw,1.375rem)] font-semibold leading-[1.35] text-black">
+            Digital Trend Media macht Erklärfilme, die eure Zielgruppe von eurem
+            Angebot begeistern.
+            <br className="hidden sm:block" />
+            Denn Menschen kaufen nur, was sie auch verstehen.
           </p>
         </div>
-        <p className="max-w-[52rem] text-center text-[clamp(1.125rem,2vw,1.75rem)] font-semibold leading-[1.35] text-black">
-          Digital Trend Media macht Erklärfilme, die eure Zielgruppe von eurem
-          Angebot begeistern.
-          <br className="hidden sm:block" />
-          Denn Menschen kaufen nur, was sie auch verstehen.
-        </p>
-      </div>
-
-      <div className="animate-fade-up delay-2 relative h-[240px] w-full overflow-hidden rounded-3xl sm:h-[360px] lg:h-[476px]">
-        <Image
-          src="/images/flowers.webp"
-          alt="Gelbe Blumen vor hellem Himmel"
-          fill
-          priority
-          className="object-cover"
-          sizes="(max-width: 1280px) 100vw, 1176px"
-        />
       </div>
 
       <a
         id="kontakt"
         href="#kontakt"
-        className="animate-fade-up delay-3 inline-flex min-h-[82px] min-w-[240px] items-center justify-center rounded-full border-[3px] border-[#e5f0ff] px-12 py-6 text-[22px] font-semibold text-white outline outline-[0.3px] outline-[#cbcfd7] transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-[0_0_28px_#00142e55] active:translate-y-0 active:scale-[0.98] md:min-w-[381px]"
+        className="inline-flex min-h-[64px] min-w-[280px] items-center justify-center rounded-full border-[3px] border-[#e5f0ff] px-12 py-4 text-[18px] font-semibold text-white outline outline-[0.3px] outline-[#cbcfd7] transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-[0_0_28px_#00142e55] active:translate-y-0 active:scale-[0.98] md:min-w-[420px]"
         style={{
           backgroundImage: "var(--gradient-blue)",
           boxShadow: "var(--shadow-cta)",
@@ -56,10 +102,16 @@ export function Hero() {
         Kostenloses Erstgespräch
       </a>
 
-      <div className="animate-fade-up delay-4 flex w-full flex-col items-center justify-between gap-4 px-0 sm:flex-row sm:gap-4 sm:px-8 lg:px-20">
+      <div className="flex w-full justify-center">
+        <div ref={mediaRef} className="hero-media relative overflow-hidden">
+          <YouTubeBackground title="Digital Trend Media Showreel" />
+        </div>
+      </div>
+
+      <div className="mx-auto flex w-full max-w-[1280px] flex-col items-center justify-between gap-4 px-6 sm:flex-row md:px-12 lg:px-20">
         {benefits.map((benefit) => (
           <div key={benefit} className="flex items-center gap-2">
-            <div className="relative size-[50px] shrink-0 overflow-hidden rounded-md">
+            <div className="relative size-[42px] shrink-0 overflow-hidden rounded-md">
               <Image
                 src="/images/flowers.webp"
                 alt=""
@@ -68,7 +120,7 @@ export function Hero() {
                 sizes="50px"
               />
             </div>
-            <span className="text-center text-[22px] font-semibold leading-7 text-black">
+            <span className="text-center text-[clamp(1rem,1.2vw,1.125rem)] font-semibold leading-7 text-black">
               {benefit}
             </span>
           </div>

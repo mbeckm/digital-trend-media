@@ -43,6 +43,7 @@
   --radius-section: 48px;
   --radius-media: 24px;
   --container: 1272px;
+  --container-page: 1280px;
   --gutter: 24px;
   --gutter-lg: 48px;
   --section-gap: 80px;
@@ -118,6 +119,92 @@ body {
   animation-delay: 0.32s;
 }
 
+/* YouTube iframes can't use object-fit, so cover is done with aspect-ratio + minimums */
+.video-cover {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.video-cover iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  aspect-ratio: 16 / 9;
+  width: auto;
+  height: auto;
+  min-width: calc(100% * var(--video-overscan, 1));
+  min-height: calc(100% * var(--video-overscan, 1));
+  border: 0;
+}
+
+/* Ambient players zoom slightly so a non-16:9 master doesn't show YouTube's pillarbox */
+.video-cover--bleed {
+  --video-overscan: 1.18;
+}
+
+/* Hero player: inset cinematic band → full 16:9 viewing size on scroll */
+.hero-media {
+  --hero-p: 0;
+  --hero-w-start: 70%;
+  --hero-h-start: clamp(240px, 32vw, 440px);
+  --hero-r-start: 36px;
+  /* The end state is a true 16:9 frame scaled to the viewport: height-capped on
+     wide screens (138.667vh = 78vh × 16/9) and full-bleed on narrow ones, so the
+     whole film stays visible instead of being cropped into a letterbox strip. */
+  --hero-w-end: min(100%, 138.667vh);
+  --hero-h-end: min(56.25vw, 78vh);
+  --hero-r-end: 0px;
+  width: calc(
+    var(--hero-w-start) + (var(--hero-w-end) - var(--hero-w-start)) *
+      var(--hero-p)
+  );
+  height: calc(
+    var(--hero-h-start) + (var(--hero-h-end) - var(--hero-h-start)) *
+      var(--hero-p)
+  );
+  border-radius: calc(
+    var(--hero-r-start) + (var(--hero-r-end) - var(--hero-r-start)) *
+      var(--hero-p)
+  );
+  opacity: calc(0.82 + 0.18 * var(--hero-p));
+  transform-origin: center center;
+  will-change: width, height, border-radius, opacity;
+}
+
+/* Past this viewport aspect the player is height-capped rather than full-bleed,
+   so it keeps a radius to read as a deliberate frame instead of a clipped edge. */
+@media (min-aspect-ratio: 1387 / 1000) {
+  .hero-media {
+    --hero-r-end: 20px;
+  }
+}
+
+@keyframes hero-media-expand {
+  from {
+    width: var(--hero-w-start);
+    height: var(--hero-h-start);
+    border-radius: var(--hero-r-start);
+    opacity: 0.82;
+  }
+  to {
+    width: var(--hero-w-end);
+    height: var(--hero-h-end);
+    border-radius: var(--hero-r-end);
+    opacity: 1;
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  .hero-media--css-scroll {
+    animation: hero-media-expand linear both;
+    animation-timeline: scroll(root);
+    /* Finishes while the player is still in frame, not after it scrolls past */
+    animation-range: 0 40vh;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -127,4 +214,14 @@ body {
   .animate-fade-in {
     animation: none;
   }
+
+  .hero-media,
+  .hero-media--css-scroll {
+    width: var(--hero-w-end);
+    height: var(--hero-h-end);
+    border-radius: var(--hero-r-end);
+    opacity: 1;
+    animation: none;
+  }
 }
+

@@ -20,12 +20,12 @@ const steps = [
 
 export function StartProcess() {
   return (
-    <section className="flex w-full flex-col items-center gap-12 rounded-[48px] p-6 md:p-12">
-      <div className="flex w-full flex-col gap-6">
-        <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(2.5rem,6vw,4.5rem)] font-bold leading-[1.08] tracking-[-0.025em] text-black">
+    <section className="flex w-full flex-col items-center gap-8 py-10 md:gap-10 md:py-14">
+      <div className="flex w-full flex-col gap-3 md:gap-4">
+        <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(2rem,4vw,3rem)] font-bold leading-[1.08] tracking-[-0.025em] text-black">
           So könnt ihr mit uns starten
         </h2>
-        <p className="max-w-5xl font-[family-name:var(--font-inter-tight)] text-[clamp(1.5rem,3vw,2.5rem)] leading-[1.35] text-black">
+        <p className="max-w-[62ch] font-[family-name:var(--font-inter-tight)] text-[clamp(1.0625rem,1.5vw,1.375rem)] leading-[1.35] text-black">
           Nicht jedes Angebot eignet sich für einen Erklärfilm. In einem
           kostenlosen Erstgespräch finden wir gemeinsam heraus, ob ein
           Erklärvideo auch für euch sinnvoll sein kann.
@@ -39,7 +39,7 @@ export function StartProcess() {
             style={{ backgroundImage: "var(--gradient-card-dark)" }}
           >
             <div className="flex flex-1 flex-col justify-center gap-6">
-              <div className="relative h-[180px] shrink-0 overflow-hidden rounded-md border border-[#eaeaea] sm:h-[219px]">
+              <div className="relative h-[160px] shrink-0 overflow-hidden rounded-md border border-[#eaeaea] sm:h-[190px]">
                 <Image
                   src="/images/flowers.webp"
                   alt=""
@@ -52,7 +52,7 @@ export function StartProcess() {
                 </div>
               </div>
               <div className="flex flex-col gap-1">
-                <h3 className="font-[family-name:var(--font-inter-tight)] text-[22px] font-semibold leading-7 text-white">
+                <h3 className="font-[family-name:var(--font-inter-tight)] text-[clamp(1.125rem,1.4vw,1.375rem)] font-semibold leading-7 text-white">
                   {step.title}
                 </h3>
                 <p className="text-base leading-5 text-white">{step.body}</p>

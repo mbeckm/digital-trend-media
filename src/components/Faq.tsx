@@ -72,13 +72,13 @@ export function Faq() {
   return (
     <section
       id="faq"
-      className="flex w-full flex-col items-center gap-6 rounded-2xl bg-[#f8f8f8] p-6 md:p-12"
+      className="flex w-full flex-col items-center gap-6 rounded-2xl bg-[#f8f8f8] px-6 py-10 md:px-10 md:py-14"
     >
       <div className="flex flex-col items-center gap-2 text-center">
-        <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(1.75rem,4vw,2.5rem)] font-semibold leading-[1.2] text-black">
+        <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(1.75rem,3vw,2.25rem)] font-semibold leading-[1.2] text-black">
           Häufige Fragen
         </h2>
-        <p className="font-[family-name:var(--font-inter-tight)] text-[22px] leading-7 text-black">
+        <p className="font-[family-name:var(--font-inter-tight)] text-[clamp(1rem,1.2vw,1.125rem)] leading-7 text-black">
           So läuft eine Zusammenarbeit mit Digital Trend Media ab.
         </p>
       </div>
@@ -97,7 +97,7 @@ export function Faq() {
                 aria-expanded={open}
                 onClick={() => setOpenIndex(open ? -1 : i)}
               >
-                <span className="text-lg font-medium text-black">{item.q}</span>
+                <span className="text-base font-medium text-black">{item.q}</span>
                 <PlusIcon open={open} />
               </button>
               <div
@@ -106,7 +106,7 @@ export function Faq() {
                 }`}
               >
                 <div className="overflow-hidden">
-                  <p className="mt-2 max-w-[65%] text-lg font-medium text-[#838383]">
+                  <p className="mt-2 max-w-[68ch] text-base font-medium text-[#838383]">
                     {item.a}
                   </p>
                 </div>

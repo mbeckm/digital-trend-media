@@ -1,0 +1,868 @@
+/* Scenes for the "Warum bleiben Anfragen aus?" cards.
+
+   Each card holds a small diagram built from DOM nodes and inline SVG. Two kinds
+   of motion are in play:
+
+   - Reveal: runs once as the card enters the viewport, declared with
+     `animation-fill-mode: both` so the paused pre-view state is the `from`
+     keyframe and the resting state is the finished diagram.
+   - Ambient: the one signature loop per scene. Periods are deliberately
+     mismatched so the four cards never pulse in unison.
+
+   Both are plain CSS so they run off the main thread; only the card entrance and
+   the in-view detection are driven from JS. */
+
+.reason-card {
+  --reason-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --reason-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.reason-scene {
+  --scene-accent: #2b6ecb;
+  --scene-accent-soft: #c5d9f5;
+  --scene-accent-faint: #eaf1fd;
+  --scene-inert: #e0e6f4;
+  --scene-ink: #132c55;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* A shared dot grid, faded out at the edges, is what makes the four scenes read
+   as one set rather than four unrelated drawings. */
+.reason-scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: radial-gradient(circle, #cfdaef 1px, transparent 1.2px);
+  background-size: 14px 14px;
+  opacity: 0.55;
+  mask-image: radial-gradient(
+    ellipse 110% 90% at 50% 42%,
+    #000 35%,
+    transparent 100%
+  );
+}
+
+/* Nothing animates until the card is actually on screen. Both selectors are
+   deliberately more specific than the per-part rules below, because those use the
+   `animation` shorthand, which resets `animation-play-state` back to running. */
+.reason-card .reason-scene * {
+  animation-play-state: paused;
+}
+
+.reason-card[data-in-view="true"] .reason-scene * {
+  animation-play-state: running;
+}
+
+/* Hover moves only the stage, so it can never fight a keyframed transform on
+   the parts inside it. */
+.scene-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  transition: transform 420ms var(--reason-ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .reason-card:hover .scene-stage {
+    transform: translateY(-3px) scale(1.015);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   #1 Website ist zu alt — bounce rate.
+   A visitor lands, glances, leaves. The "0 Anfragen" chip is the failure signal
+   that stays behind. The window itself stays grey on purpose — no colour is what
+   dates it.
+   --------------------------------------------------------------------------- */
+
+.scene-window__frame {
+  position: relative;
+  width: 84%;
+  max-width: 272px;
+  overflow: hidden;
+  /* A small radius reads as older chrome than the 12-16px of the rest of the page. */
+  border: 1px solid #d5dbe8;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgb(12 26 58 / 6%),
+    0 10px 24px -14px rgb(12 26 58 / 22%);
+  animation: scene-window-in 700ms var(--reason-ease-out) both;
+}
+
+@keyframes scene-window-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+}
+
+.scene-window__chrome {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-bottom: 1px solid #e4e8f1;
+  background: linear-gradient(#f6f7fa, #e9ecf3);
+  padding: 0 7px;
+  height: 18px;
+}
+
+.scene-window__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c8cdd8;
+}
+
+.scene-window__dot:first-child {
+  background: #cfd4de;
+}
+
+.scene-window__url {
+  display: flex;
+  align-items: center;
+  margin-left: 5px;
+  border: 1px solid #dee2ec;
+  border-radius: 2px;
+  background: #fdfdfe;
+  width: 100%;
+  height: 9px;
+  padding: 0 3px;
+}
+
+.scene-window__caret {
+  width: 1px;
+  height: 5px;
+  background: #9aa3b4;
+  animation: scene-caret 1.1s steps(1, end) infinite;
+}
+
+@keyframes scene-caret {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.scene-window__viewport {
+  display: flex;
+  align-items: stretch;
+}
+
+.scene-window__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  padding: 8px;
+}
+
+.scene-window__nav {
+  display: flex;
+  gap: 5px;
+  border-bottom: 1px solid #e8ebf2;
+  padding-bottom: 6px;
+  animation: scene-part-in 520ms var(--reason-ease-out) 80ms both;
+}
+
+.scene-window__nav span {
+  border-radius: 1px;
+  background: #d9dde4;
+  width: 20px;
+  height: 4px;
+}
+
+.scene-window__scroll {
+  position: relative;
+  flex-shrink: 0;
+  border-left: 1px solid #e8ebf2;
+  background: #f4f5f8;
+  width: 8px;
+}
+
+.scene-window__thumb {
+  position: absolute;
+  top: 10%;
+  right: 1px;
+  left: 1px;
+  border: 1px solid #bcc2cd;
+  border-radius: 1px;
+  background: linear-gradient(#dfe2e8, #c4c9d3);
+  height: 32%;
+}
+
+.scene-window__banner {
+  border-radius: 2px;
+  background: linear-gradient(#dcdfe6, #c4c9d3);
+  height: 34px;
+  animation: scene-part-in 520ms var(--reason-ease-out) 120ms both;
+}
+
+.scene-window__bar {
+  border-radius: 2px;
+  background: #e2e5ec;
+  height: 5px;
+  animation: scene-part-in 520ms var(--reason-ease-out) 190ms both;
+}
+
+.scene-window__bar:last-of-type {
+  animation-delay: 250ms;
+}
+
+/* The bevelled gradient button is the strongest single "old web" tell. */
+.scene-window__cta {
+  margin-top: 2px;
+  border: 1px solid #c3c9d4;
+  border-radius: 3px;
+  background: linear-gradient(#fbfbfc, #dcdfe6);
+  box-shadow: inset 0 1px 0 #fff;
+  width: 54px;
+  height: 13px;
+  animation: scene-part-in 520ms var(--reason-ease-out) 310ms both;
+}
+
+@keyframes scene-part-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* Tiny person figure: head + body. Rests off-screen so reduced-motion just shows
+   the empty "0 Anfragen" chip. */
+.scene-window__visitor {
+  position: absolute;
+  left: 42%;
+  top: 38%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  opacity: 0;
+  animation: scene-bounce 6.8s var(--reason-ease-in-out) 800ms infinite both;
+}
+
+.scene-window__visitor-head {
+  border-radius: 50%;
+  background: var(--scene-accent);
+  width: 6px;
+  height: 6px;
+}
+
+.scene-window__visitor-body {
+  border-radius: 3px 3px 2px 2px;
+  background: #4a7fc4;
+  width: 8px;
+  height: 7px;
+}
+
+@keyframes scene-bounce {
+  /* Enter from the top of the viewport. */
+  0% {
+    opacity: 0;
+    transform: translate(28px, -36px) scale(0.92);
+  }
+  8% {
+    opacity: 1;
+    transform: translate(18px, -10px) scale(1);
+  }
+  /* Glance across the hero. */
+  24% {
+    opacity: 1;
+    transform: translate(-6px, 4px) scale(1);
+  }
+  /* Hover near the CTA without engaging. */
+  38% {
+    opacity: 1;
+    transform: translate(-18px, 22px) scale(1);
+  }
+  46% {
+    opacity: 1;
+    transform: translate(-16px, 24px) scale(1);
+  }
+  /* Bounce — leave before the empty chip appears. */
+  60% {
+    opacity: 0.55;
+    transform: translate(36px, -8px) scale(0.96);
+  }
+  68%,
+  100% {
+    opacity: 0;
+    transform: translate(48px, -40px) scale(0.9);
+  }
+}
+
+/* Failure signal: appears once the visitor has left, and rests visible so a
+   paused frame still reads as "nobody asked". */
+/* Persistent failure label — always readable at a glance; the bounce is the story. */
+.scene-window__stat {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 3;
+  border: 1px solid #ecd5d5;
+  border-radius: 4px;
+  background: #fdf4f4;
+  box-shadow: 0 1px 3px rgb(12 26 58 / 10%);
+  color: #b45353;
+  font-family: var(--font-inter-tight), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  padding: 4px 6px;
+  white-space: nowrap;
+  animation: scene-part-in 480ms var(--reason-ease-out) 900ms both;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* Tipping the window away from the viewer pushes it further into the past. */
+  .reason-card:hover .scene-window__frame {
+    filter: saturate(0.75) contrast(0.97);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   #2 Vertrieb muss besser werden — a lead that freezes and fails.
+   --------------------------------------------------------------------------- */
+
+.scene-pipe {
+  --scene-row-h: 22px;
+  --scene-row-gap: 8px;
+}
+
+.scene-pipe__rows {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  gap: var(--scene-row-gap);
+  width: 74%;
+  max-width: 250px;
+}
+
+/* The track the lead travels down, behind the rows' left edge. */
+.scene-pipe__track {
+  position: absolute;
+  top: calc(var(--scene-row-h) / 2);
+  bottom: calc(var(--scene-row-h) / 2);
+  left: 0;
+  border-left: 1px dashed #bcc9e4;
+  animation: scene-area-in 600ms var(--reason-ease-out) 320ms both;
+}
+
+.scene-pipe__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--scene-inert);
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(12 26 58 / 4%);
+  width: var(--w);
+  height: var(--scene-row-h);
+  padding: 0 7px;
+  animation: scene-row-in 560ms var(--reason-ease-out) both;
+}
+
+@keyframes scene-row-in {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
+
+.scene-pipe__row:nth-child(2) {
+  animation-delay: 60ms;
+}
+.scene-pipe__row:nth-child(3) {
+  animation-delay: 130ms;
+}
+.scene-pipe__row:nth-child(4) {
+  animation-delay: 200ms;
+}
+.scene-pipe__row:nth-child(5) {
+  animation-delay: 270ms;
+}
+
+/* Later stages are drained rather than faded, so one reveal keyframe covers every
+   row and the emptiness is a colour decision instead of an opacity trick. */
+.scene-pipe__row:nth-child(4),
+.scene-pipe__row:nth-child(5) {
+  border-color: #eaeef8;
+  box-shadow: none;
+}
+
+.scene-pipe__label {
+  border-radius: 2px;
+  background: var(--scene-inert);
+  width: var(--label-w, 46%);
+  height: 4px;
+}
+
+.scene-pipe__row:nth-child(2) .scene-pipe__label {
+  background: var(--scene-accent-soft);
+}
+
+.scene-pipe__row:nth-child(4) .scene-pipe__label,
+.scene-pipe__row:nth-child(5) .scene-pipe__label {
+  background: #eaeef8;
+}
+
+.scene-pipe__chip {
+  margin-left: auto;
+  border-radius: 50%;
+  background: #f0f3fa;
+  width: 8px;
+  height: 8px;
+}
+
+/* Lead: appear → sink one stage → wait → fail. Container carries the travel. */
+.scene-pipe__lead {
+  position: absolute;
+  left: -3px;
+  top: calc(var(--scene-row-h) / 2 - 3.5px);
+  width: 7px;
+  height: 7px;
+  animation: scene-lead-travel 5.4s var(--reason-ease-in-out) 900ms infinite both;
+}
+
+.scene-pipe__lead-core {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--scene-accent);
+  box-shadow: 0 0 0 3px rgb(43 110 203 / 14%);
+  animation: scene-lead-core 5.4s var(--reason-ease-out) 900ms infinite both;
+}
+
+/* Waiting ring while stuck on stage 2. Rests invisible. */
+.scene-pipe__lead-wait {
+  position: absolute;
+  inset: -4px;
+  border: 1.5px solid transparent;
+  border-top-color: var(--scene-accent);
+  border-radius: 50%;
+  opacity: 0;
+  animation: scene-lead-wait 5.4s linear 900ms infinite both;
+}
+
+/* Permanent mark on stage 2 — the failure signal that survives a paused frame. */
+.scene-pipe__stuck {
+  position: absolute;
+  left: 14px;
+  top: calc(var(--scene-row-h) + var(--scene-row-gap) + var(--scene-row-h) / 2 - 5px);
+  width: 10px;
+  height: 10px;
+  animation: scene-part-in 420ms var(--reason-ease-out) 1100ms both;
+}
+
+.scene-pipe__stuck::before,
+.scene-pipe__stuck::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  border-radius: 1px;
+  background: #b45353;
+  width: 1.5px;
+  height: 9px;
+}
+
+.scene-pipe__stuck::before {
+  transform: rotate(45deg);
+}
+
+.scene-pipe__stuck::after {
+  transform: rotate(-45deg);
+}
+
+@keyframes scene-lead-travel {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.9);
+  }
+  8% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  /* Arrive at stage 2 (row height + gap ≈ 30px). */
+  26% {
+    opacity: 1;
+    transform: translateY(30px) scale(1);
+  }
+  /* Hold while waiting. */
+  58% {
+    opacity: 1;
+    transform: translateY(30px) scale(1);
+  }
+  /* Fail, then clear for the next cycle. */
+  72% {
+    opacity: 1;
+    transform: translateY(30px) scale(1);
+  }
+  88%,
+  100% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.85);
+  }
+}
+
+@keyframes scene-lead-core {
+  0%,
+  58% {
+    background: var(--scene-accent);
+    box-shadow: 0 0 0 3px rgb(43 110 203 / 14%);
+  }
+  /* Greys out the moment the fail mark lands. */
+  64%,
+  100% {
+    background: #a8b0c2;
+    box-shadow: 0 0 0 3px rgb(120 128 148 / 12%);
+  }
+}
+
+@keyframes scene-lead-wait {
+  0%,
+  26% {
+    opacity: 0;
+    transform: rotate(0deg);
+  }
+  30%,
+  56% {
+    opacity: 1;
+  }
+  30% {
+    transform: rotate(0deg);
+  }
+  56% {
+    transform: rotate(320deg);
+  }
+  60%,
+  100% {
+    opacity: 0;
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   #3 Werbeanzeigen funktionieren nicht — attention without conversion.
+   Cursor nearly clicks; the "0 Klicks" chip never moves.
+   --------------------------------------------------------------------------- */
+
+.scene-ad__card {
+  display: flex;
+  position: relative;
+  gap: 9px;
+  border: 1px solid #e2e7f3;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgb(12 26 58 / 5%),
+    0 12px 26px -16px rgb(12 26 58 / 24%);
+  width: 76%;
+  max-width: 254px;
+  padding: 9px;
+  animation: scene-window-in 700ms var(--reason-ease-out) both;
+}
+
+.scene-ad__thumb {
+  flex-shrink: 0;
+  border-radius: 6px;
+  background: linear-gradient(140deg, var(--scene-accent-soft), #9dbdea);
+  width: 46px;
+  height: 46px;
+}
+
+.scene-ad__meta {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.scene-ad__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.scene-ad__tag {
+  color: #93a1bb;
+  font-size: 6px;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* Failure signal: always "0". A soft pulse when the cursor leaves proves it
+   never moved. Visible at rest for reduced motion. */
+.scene-ad__stat {
+  border: 1px solid #e4e8f4;
+  border-radius: 3px;
+  background: #f7f9fd;
+  color: #b45353;
+  font-family: var(--font-inter-tight), system-ui, sans-serif;
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  padding: 2px 4px;
+  white-space: nowrap;
+  animation: scene-ad-stat 6.8s var(--reason-ease-out) 400ms infinite;
+}
+
+@keyframes scene-ad-stat {
+  0%,
+  54% {
+    border-color: #e4e8f4;
+    background: #f7f9fd;
+    transform: scale(1);
+  }
+  /* Emphasise the zero the moment the cursor gives up. */
+  64%,
+  74% {
+    border-color: #ecd5d5;
+    background: #fdf4f4;
+    transform: scale(1.06);
+  }
+  86%,
+  100% {
+    border-color: #e4e8f4;
+    background: #f7f9fd;
+    transform: scale(1);
+  }
+}
+
+.scene-ad__bar {
+  border-radius: 2px;
+  background: var(--scene-inert);
+  width: var(--w);
+  height: 4px;
+}
+
+.scene-ad__action {
+  position: relative;
+  margin-top: auto;
+}
+
+.scene-ad__cta {
+  display: block;
+  border-radius: 3px;
+  background: var(--scene-accent);
+  width: 48px;
+  height: 11px;
+  animation: scene-cta-tease 6.8s linear 400ms infinite;
+}
+
+/* The button lights up as the pointer nears, then goes quiet again. */
+@keyframes scene-cta-tease {
+  0%,
+  30% {
+    box-shadow: 0 0 0 0 rgb(43 110 203 / 0%);
+    filter: brightness(1);
+  }
+  40%,
+  52% {
+    box-shadow: 0 0 0 3px rgb(43 110 203 / 16%);
+    filter: brightness(1.08);
+  }
+  64%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(43 110 203 / 0%);
+    filter: brightness(1);
+  }
+}
+
+/* Anchored to the button's far end, so translate(0, 0) puts the tip on the call
+   to action and every offset below is measured from "about to click". */
+.scene-ad__cursor {
+  position: absolute;
+  left: 40px;
+  top: 5px;
+  z-index: 2;
+  filter: drop-shadow(0 1px 2px rgb(12 26 58 / 24%));
+  animation: scene-cursor 6.8s var(--reason-ease-in-out) 400ms infinite;
+}
+
+@keyframes scene-cursor {
+  0% {
+    opacity: 0;
+    transform: translate(56px, 42px) scale(0.95);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(46px, 34px) scale(1);
+  }
+  /* Arrives on the button… */
+  42% {
+    opacity: 1;
+    transform: translate(3px, 3px) scale(1);
+  }
+  54% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  /* …hesitates, and drifts back out of frame without ever clicking. */
+  80% {
+    opacity: 0.55;
+    transform: translate(48px, 32px) scale(1);
+  }
+  92%,
+  100% {
+    opacity: 0;
+    transform: translate(60px, 44px) scale(0.95);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   #4 Marktlage ist schlecht — demand draining away.
+   --------------------------------------------------------------------------- */
+
+.scene-market__svg {
+  width: 78%;
+  max-width: 260px;
+  overflow: visible;
+}
+
+.scene-market__bar {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  animation: scene-bar-grow 620ms var(--reason-ease-out) both;
+}
+
+@keyframes scene-bar-grow {
+  from {
+    opacity: 0;
+    transform: scaleY(0.08);
+  }
+}
+
+.scene-market__bar:nth-of-type(1) {
+  animation-delay: 60ms;
+}
+.scene-market__bar:nth-of-type(2) {
+  animation-delay: 120ms;
+}
+.scene-market__bar:nth-of-type(3) {
+  animation-delay: 180ms;
+}
+.scene-market__bar:nth-of-type(4) {
+  animation-delay: 240ms;
+}
+.scene-market__bar:nth-of-type(5) {
+  animation-delay: 300ms;
+}
+.scene-market__bar:nth-of-type(6) {
+  animation-delay: 360ms;
+}
+
+.scene-market__area {
+  animation: scene-area-in 700ms var(--reason-ease-out) 520ms both;
+}
+
+@keyframes scene-area-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.scene-market__line {
+  stroke-dasharray: 340;
+  stroke-dashoffset: 0;
+  animation: scene-line-draw 1000ms var(--reason-ease-out) 380ms both;
+}
+
+@keyframes scene-line-draw {
+  from {
+    stroke-dashoffset: 340;
+  }
+}
+
+.scene-market__head {
+  animation: scene-part-in 400ms var(--reason-ease-out) 1280ms both;
+}
+
+/* Also rests invisible, so it never doubles up as a halo on the head dot. */
+.scene-market__pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: scene-pulse 3.4s var(--reason-ease-out) 1400ms infinite;
+}
+
+@keyframes scene-pulse {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  60%,
+  100% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion: every resting state above is already the finished diagram, so
+   dropping the animations leaves the scenes complete and still.
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .reason-scene *,
+  .scene-stage {
+    animation: none;
+    transition: none;
+  }
+
+  /* Freeze each scene on its failure beat, not the empty start of a loop. */
+  .scene-window__visitor {
+    opacity: 0;
+  }
+
+  .scene-window__stat {
+    opacity: 1;
+    transform: none;
+  }
+
+  .scene-pipe__lead {
+    opacity: 1;
+    transform: translateY(30px);
+  }
+
+  .scene-pipe__lead-core {
+    background: #a8b0c2;
+    box-shadow: 0 0 0 3px rgb(120 128 148 / 12%);
+  }
+
+  .scene-pipe__lead-wait {
+    opacity: 0;
+  }
+
+  .scene-pipe__stuck {
+    opacity: 1;
+    transform: none;
+  }
+
+  .scene-ad__stat {
+    border-color: #ecd5d5;
+    background: #fdf4f4;
+    transform: none;
+  }
+
+  .scene-ad__cursor {
+    opacity: 0;
+  }
+}
