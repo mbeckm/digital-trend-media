@@ -140,7 +140,7 @@ export function DecisionParalysis() {
       >
         {sources.map(({ className, cx, cy, path, Icon }) => (
           <g key={className} className={`cause-c__source ${className} cause-anim`}>
-            <g transform={`translate(${cx} ${cy})`}>
+            <g transform={`translate(${cx} ${cy}) scale(1.55)`}>
               <Icon />
             </g>
             <path pathLength={1} d={path} />

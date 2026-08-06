@@ -560,16 +560,16 @@
 .cause-c__icon path,
 .cause-c__icon circle {
   fill: none;
-  stroke: rgb(255 255 255 / 92%);
-  stroke-width: 1.6;
+  stroke: rgb(255 255 255 / 94%);
+  stroke-width: 1.75;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .cause-c__icon circle.cause-c__icon-bg {
-  fill: rgb(255 255 255 / 12%);
-  stroke: rgb(255 255 255 / 28%);
-  stroke-width: 1;
+  fill: rgb(255 255 255 / 16%);
+  stroke: rgb(255 255 255 / 42%);
+  stroke-width: 1.15;
 }
 
 .cause-c__icon circle.cause-c__icon-dot {

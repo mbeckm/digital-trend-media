@@ -215,7 +215,7 @@ export function Portfolio() {
             <SectionDek
               tone="light"
               lead="Über 100 Filme. Für Unternehmen aus ganz unterschiedlichen Branchen."
-              rest="Von Fintech bis Industrie, von Onboarding bis Pitch. Jedes Projekt eine eigene Geschichte, jede mit dem gleichen Ziel: aus Hä? wird Aha!"
+              rest="Von Fintech bis Industrie, von Onboarding bis Pitch. Jedes Projekt eine eigene Geschichte."
             />
           </header>
         </div>

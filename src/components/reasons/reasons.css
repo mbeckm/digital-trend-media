@@ -15,6 +15,22 @@
 .reason-card {
   --reason-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --reason-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  /* Peeking / covered cards: ring only. Soft blur is reserved for the front
+     card so stacked shadows don't compound into a heavy halo. */
+  box-shadow:
+    0 0 0 1px rgb(12 26 58 / 0.08),
+    0 1px 2px rgb(12 26 58 / 0.04);
+  transition: box-shadow 280ms var(--reason-ease-out);
+}
+
+.reason-card[data-front="true"] {
+  /* Match smooth-shadow-ring-md + shadow-[#0c1a3a] without the utility so we
+     can transition cleanly against the peek ring above. */
+  box-shadow:
+    0 0 0 1px rgb(12 26 58 / 0.1),
+    0 1px 2px rgb(12 26 58 / 0.06),
+    0 4px 8px -2px rgb(12 26 58 / 0.08),
+    0 12px 24px -6px rgb(12 26 58 / 0.12);
 }
 
 .reason-scene {

@@ -47,14 +47,7 @@ export function StartProcess() {
       <EditorialSpine
         steps={steps}
         footer={
-          <a
-            href="#kontakt"
-            className="inline-flex min-h-[60px] min-w-[220px] items-center justify-center rounded-full border-[3px] border-[#e5f0ff] px-9 py-4 text-[17px] font-semibold text-white outline outline-[0.3px] outline-[#cbcfd7] transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-[0_0_20px_#00142e52] active:scale-[0.98] md:min-w-[300px]"
-            style={{
-              backgroundImage: "var(--gradient-blue)",
-              boxShadow: "0 0 10px #00142e52",
-            }}
-          >
+          <a href="#kontakt" className="hero-cta">
             Termin buchen
           </a>
         }
