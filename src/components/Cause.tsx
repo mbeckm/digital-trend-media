@@ -1,4 +1,10 @@
-export function Cause() {
+import { CauseStage, type CauseVariantId } from "@/components/cause/CauseStage";
+
+export function Cause({
+  variant = "decision-paralysis",
+}: {
+  variant?: CauseVariantId;
+}) {
   return (
     <section className="flex w-full flex-col items-stretch gap-8 py-10 md:gap-10 md:py-14">
       <div className="flex w-full flex-col items-start gap-3 md:gap-4">
@@ -10,11 +16,7 @@ export function Cause() {
           genug.
         </p>
       </div>
-      <div
-        className="h-[260px] w-full shrink-0 overflow-hidden rounded-3xl sm:h-[360px] lg:h-[520px]"
-        style={{ backgroundImage: "var(--gradient-cause)" }}
-        aria-hidden
-      />
+      <CauseStage variant={variant} />
     </section>
   );
 }

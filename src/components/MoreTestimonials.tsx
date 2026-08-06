@@ -1,11 +1,39 @@
 import Image from "next/image";
 
-const quotes = Array.from({ length: 4 }, () => ({
-  quote: '"Digital Trend Media ist einfach super, ich liebe es."',
-  name: "Christoph Busch",
-  role: "Leiter Einkauf",
-  company: "Apple",
-}));
+const quotes = [
+  {
+    quote:
+      "Unser Erklärfilm hat die Anfragen deutlich gesteigert. Komplexe Leistungen werden endlich in wenigen Minuten verständlich.",
+    name: "Laura Hoffmann",
+    role: "Head of Marketing",
+    company: "Nova Finance",
+    image: "/images/testimonials/office-1.jpg",
+  },
+  {
+    quote:
+      "Vom Kick-off bis zum fertigen Film alles klar strukturiert. Der Film läuft jetzt auf der Website und in unserem Vertrieb.",
+    name: "Thomas Berger",
+    role: "Geschäftsführer",
+    company: "Berger Technik",
+    image: "/images/testimonials/office-2.jpg",
+  },
+  {
+    quote:
+      "Wir nutzen den Film in Ads und im Onboarding. Die Conversion ist spürbar besser – und das Team spart Erklärzeit.",
+    name: "Sarah Klein",
+    role: "Growth Lead",
+    company: "Klarpath Software",
+    image: "/images/testimonials/office-3.jpg",
+  },
+  {
+    quote:
+      "Endlich eine Botschaft, die unsere Zielgruppe sofort versteht. Professionell, schnell und ohne Abstimmungs-Chaos.",
+    name: "Michael Richter",
+    role: "Vertriebsleiter",
+    company: "Helio Systems",
+    image: "/images/testimonials/office-4.jpg",
+  },
+];
 
 export function MoreTestimonials() {
   return (
@@ -15,37 +43,35 @@ export function MoreTestimonials() {
           Weitere Kundenstimmen
         </h2>
         <p className="max-w-[62ch] font-[family-name:var(--font-inter-tight)] text-[clamp(1.0625rem,1.5vw,1.375rem)] leading-[1.35] text-black">
-          Der Grund für ausbleibende Anfragen ist nicht ihr Angebot. In den
-          meisten Fällen liegt es an der Art und Weise, wie sie Ihr
+          Was unsere Kunden nach dem Launch berichten – von mehr Anfragen bis
+          zu klareren Gesprächen im Vertrieb.
         </p>
       </div>
       <div className="grid w-full gap-6 md:grid-cols-2">
-        {quotes.map((item, i) => (
+        {quotes.map((item) => (
           <article
-            key={i}
-            className="relative flex min-h-[280px] items-center overflow-hidden rounded-lg border-2 border-white p-4 lg:min-h-[320px]"
+            key={item.name}
+            className="flex flex-col rounded-2xl border border-[#e3e8f4] bg-white p-2 shadow-[0_1px_2px_rgba(12,26,58,0.04),0_10px_28px_-16px_rgba(12,26,58,0.14)]"
           >
-            <Image
-              src="/images/flowers.webp"
-              alt=""
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-            <div className="absolute inset-0 bg-black/10" />
-            <div className="relative z-10 flex flex-col justify-center gap-6 rounded-2xl border border-[#e8e8e8] bg-black/25 p-4">
-              <p className="text-[clamp(1.125rem,1.6vw,1.5rem)] font-semibold leading-[1.35] text-white">
-                {item.quote}
+            <div className="relative h-[180px] overflow-hidden rounded-lg md:h-[200px]">
+              <Image
+                src={item.image}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+            <div className="flex flex-1 flex-col gap-4 px-2 pb-2 pt-4">
+              <p className="text-[clamp(1.0625rem,1.4vw,1.25rem)] font-medium leading-[1.4] tracking-[-0.01em] text-black">
+                „{item.quote}“
               </p>
-              <div className="flex flex-col gap-1">
-                <p className="font-[family-name:var(--font-inter-tight)] text-[clamp(1.125rem,1.4vw,1.375rem)] font-semibold leading-7 text-white">
+              <div className="mt-auto flex flex-col gap-0.5">
+                <p className="font-[family-name:var(--font-inter-tight)] text-base font-semibold leading-6 text-black">
                   {item.name}
                 </p>
-                <p className="text-[clamp(1.125rem,1.4vw,1.375rem)] leading-7 text-white">
-                  {item.role}
-                </p>
-                <p className="-mt-1 text-[clamp(1.125rem,1.4vw,1.375rem)] leading-7 text-white">
-                  {item.company}
+                <p className="text-base leading-6 text-[var(--color-card-meta)]">
+                  {item.role}, {item.company}
                 </p>
               </div>
             </div>
