@@ -345,3 +345,20 @@ body {
   }
 }
 
+/* Cinema stories: grab-to-drag strip */
+.stories-cinema-track {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.stories-cinema-track.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+}
+
+.stories-cinema-track.is-dragging * {
+  cursor: grabbing;
+  pointer-events: none;
+}
+

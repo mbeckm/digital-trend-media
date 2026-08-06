@@ -64,7 +64,7 @@ export function Comparison() {
           Digital Trend Media im Vergleich
         </h2>
         <SectionDek
-          lead="Kein nettes Video. Ein Werkzeug für Marketing und Vertrieb."
+          lead="Mehr Freiraum in der Produktion. Mehr Wirkung im Vertrieb."
           rest="Unbegrenzte Korrekturen, individuelle Gestaltung und eine Story, die auf eure Ziele einzahlt. Statt Dateien ohne Wirkung."
         />
       </div>
