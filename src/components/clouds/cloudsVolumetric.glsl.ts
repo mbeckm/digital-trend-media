@@ -19,6 +19,9 @@ uniform vec2 uPointer;
 uniform vec2 uPointerVel;
 uniform float uPointerStrength;
 uniform vec3 uWake[10];
+uniform float uIntensity;
+uniform float uSeed;
+uniform float uCardMode;
 
 const float POINTER_RADIUS = 0.30;
 const float POINTER_STRENGTH = 0.085;
@@ -127,6 +130,18 @@ float textLegibilityMask(vec2 uv) {
   return mix(TEXT_MASK_MIN, 1.0, smoothstep(0.32, 1.08, d));
 }
 
+/**
+ * Soft edge bias for card washes — keep the center mostly clear at rest.
+ * Higher uIntensity (hover) opens the field so the pointer can sculpt more.
+ */
+float cardSoftMask(vec2 uv) {
+  float edge = smoothstep(0.0, 0.28, uv.x) * smoothstep(1.0, 0.72, uv.x)
+    * smoothstep(0.0, 0.24, uv.y) * smoothstep(1.0, 0.76, uv.y);
+  float rim = 1.0 - edge;
+  float open = smoothstep(0.2, 0.5, uIntensity);
+  return mix(mix(0.28, 1.0, rim * rim), mix(0.55, 1.0, rim), open);
+}
+
 /** Soft pigment: blue belly → white tops. No specular / silver rim. */
 vec3 cloudAlbedo(float lit) {
   float tone = clamp(lit, 0.0, 1.0);
@@ -185,54 +200,69 @@ void accumulateLayer(
 
 void main() {
   vec2 uv = vUv;
-  float t = uTime;
+  float t = uTime + uSeed;
+  float intensity = clamp(uIntensity, 0.0, 1.0);
+  // 1.0 = card wash, 0.0 = hero/portfolio field.
+  float cardAmt = clamp(uCardMode, 0.0, 1.0);
 
   float presence = compositionCover(uv);
   // Soft cover warp — sky breaks without hard cutouts.
-  float nWarp = fbm(uv * vec2(3.0, 1.8) + vec2(t * 0.01, 0.25));
+  float nWarp = fbm(uv * vec2(3.0, 1.8) + vec2(t * 0.01, 0.25 + uSeed));
   presence = clamp(presence * (0.72 + 0.40 * nWarp), 0.0, 1.0);
+  // Cards want a fuller soft field, not a hero sky/ground split.
+  float cardPresence = clamp(0.55 + 0.45 * nWarp, 0.0, 1.0);
+  presence = mix(presence, cardPresence, cardAmt);
 
   if (presence < 0.02) {
     gl_FragColor = vec4(0.0);
     return;
   }
 
-  float legibility = textLegibilityMask(uv);
-  float heightWin = smoothstep(0.02, 0.20, uv.y) * smoothstep(0.995, 0.48, uv.y);
-  float heightLow = smoothstep(0.40, 0.04, uv.y);
+  float legibility = mix(textLegibilityMask(uv), cardSoftMask(uv), cardAmt);
+  float heightWin = mix(
+    smoothstep(0.02, 0.20, uv.y) * smoothstep(0.995, 0.48, uv.y),
+    smoothstep(0.0, 0.22, uv.y) * smoothstep(1.0, 0.55, uv.y),
+    cardAmt
+  );
+  float heightLow = mix(
+    smoothstep(0.40, 0.04, uv.y),
+    smoothstep(0.55, 0.08, uv.y),
+    cardAmt
+  );
 
   float cover = 0.0;
   vec3 cloudCol = vec3(0.0);
+  vec2 seedOff = vec2(uSeed * 0.37, uSeed * -0.21);
 
   // Far haze — slow, sparse (depth cue). Wider loft = softer cotton.
   accumulateLayer(
     uv, presence, 0.28,
-    vec2(2.1, 1.0), vec2(0.2, 0.3),
-    0.012, 0.04, 3.1, 0.14, 0.95, heightWin,
+    vec2(2.1, 1.0), vec2(0.2, 0.3) + seedOff,
+    0.012, 0.04, 3.1, 0.14, mix(0.95, 0.70, cardAmt), heightWin,
     cover, cloudCol
   );
 
   // Mid banks.
   accumulateLayer(
     uv, presence, 0.55,
-    vec2(1.45, 0.78), vec2(1.7, 0.1),
-    0.028, 0.055, 2.0, 0.13, 1.25, heightWin,
+    vec2(1.45, 0.78), vec2(1.7, 0.1) + seedOff * 1.3,
+    0.028, 0.055, 2.0, 0.13, mix(1.25, 0.95, cardAmt), heightWin,
     cover, cloudCol
   );
 
   // Near cumulus — main soft cotton masses (faster parallax).
   accumulateLayer(
     uv, presence, 0.95,
-    vec2(0.95, 0.64), vec2(-1.2, 0.05),
-    0.048, 0.075, 1.25, 0.12, 1.50, heightWin,
+    vec2(0.95, 0.64), vec2(-1.2, 0.05) - seedOff,
+    0.048, 0.075, 1.25, 0.12, mix(1.50, 1.10, cardAmt), heightWin,
     cover, cloudCol
   );
 
-  // Lower wisps.
+  // Lower wisps — fade out in card mode to keep the wash lighter.
   accumulateLayer(
     uv, presence, 1.15,
     vec2(1.35, 0.88), vec2(0.5, -0.3),
-    0.070, 0.09, 1.45, 0.13, 1.25, heightLow,
+    0.070, 0.09, 1.45, 0.13, 1.25 * (1.0 - cardAmt), heightLow,
     cover, cloudCol
   );
 
@@ -253,9 +283,10 @@ void main() {
   float grain = (hash21(uv * uResolution + fract(t * 17.0)) - 0.5) * 0.004;
   rgb = clamp(rgb + grain, 0.0, 1.0);
 
-  // Soft alpha knee — feathered cotton.
-  float alpha = (1.0 - exp(-cover * 2.6)) * PEAK_ALPHA * legibility;
-  alpha = clamp(alpha, 0.0, PEAK_ALPHA);
+  // Soft alpha knee — feathered cotton. Intensity dials hero vs card wash.
+  float peak = PEAK_ALPHA * intensity;
+  float alpha = (1.0 - exp(-cover * 2.6)) * peak * legibility;
+  alpha = clamp(alpha, 0.0, peak);
 
   gl_FragColor = vec4(rgb * alpha, alpha);
 }

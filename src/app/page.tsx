@@ -27,7 +27,9 @@ export default function Home() {
         <Reasons />
         <Cause />
         <Comparison />
-        <Portfolio />
+      </div>
+      <Portfolio />
+      <div className="mx-auto flex w-full max-w-[1280px] flex-col items-stretch gap-14 px-6 md:gap-20 md:px-10 lg:px-12">
         <MoreTestimonials />
         <StartProcess />
         <Collaboration />

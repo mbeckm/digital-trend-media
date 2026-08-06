@@ -13,7 +13,8 @@
     "motion": "^12.43.0",
     "next": "16.3.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "shadow-plugin": "^2.1.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

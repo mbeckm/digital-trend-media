@@ -32,7 +32,7 @@ export function Hero() {
         media.style.setProperty("--hero-p", "1");
         return;
       }
-            const distance = Math.max(window.innerHeight * 0.4, 260);
+      const distance = Math.max(window.innerHeight * 0.4, 260);
       const p = Math.min(1, Math.max(0, window.scrollY / distance));
       media.style.setProperty("--hero-p", p.toFixed(4));
     };
@@ -74,24 +74,14 @@ export function Hero() {
               Einfach erklärt.
             </p>
           </div>
-          <p className="max-w-[46rem] text-center text-[clamp(1.0625rem,1.5vw,1.375rem)] font-semibold leading-[1.35] text-black">
-            Digital Trend Media macht Erklärfilme, die eure Zielgruppe von eurem
-            Angebot begeistern.
-            <br className="hidden sm:block" />
-            Denn Menschen kaufen nur, was sie auch verstehen.
+          <p className="mx-auto max-w-[40rem] text-pretty text-center font-[family-name:var(--font-inter-tight)] text-[clamp(1.25rem,2vw,1.5rem)] font-medium leading-[1.35] tracking-[-0.015em] text-black">
+            Menschen kaufen nur, was sie auch verstehen. Wir machen Erklärfilme,
+            die eure Zielgruppe begeistern und aus Interesse Anfragen machen.
           </p>
         </div>
       </div>
 
-      <a
-        id="kontakt"
-        href="#kontakt"
-        className="inline-flex min-h-[64px] min-w-[280px] items-center justify-center rounded-full border-[3px] border-[#e5f0ff] px-12 py-4 text-[18px] font-semibold text-white outline outline-[0.3px] outline-[#cbcfd7] transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-[0_0_28px_#00142e55] active:translate-y-0 active:scale-[0.98] md:min-w-[420px]"
-        style={{
-          backgroundImage: "var(--gradient-blue)",
-          boxShadow: "var(--shadow-cta)",
-        }}
-      >
+      <a id="kontakt" href="#kontakt" className="hero-cta">
         Kostenloses Erstgespräch
       </a>
 

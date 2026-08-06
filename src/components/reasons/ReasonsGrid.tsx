@@ -45,7 +45,7 @@ function ReasonCard({
     <motion.article
       ref={ref}
       data-in-view={onScreen}
-      className="reason-card flex flex-col rounded-2xl border border-[#e3e8f4] bg-white p-2 shadow-[0_1px_2px_rgba(12,26,58,0.04),0_10px_28px_-16px_rgba(12,26,58,0.14)] transition-shadow duration-300 hover:shadow-[0_1px_2px_rgba(12,26,58,0.05),0_18px_40px_-18px_rgba(12,26,58,0.20)]"
+      className="reason-card flex flex-col rounded-2xl bg-white p-2 smooth-shadow-ring-md shadow-[#0c1a3a] transition-shadow duration-300 hover:smooth-shadow-ring-lg"
       initial={
         reduceMotion
           ? { opacity: 1 }
