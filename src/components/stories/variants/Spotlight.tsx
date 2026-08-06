@@ -11,7 +11,7 @@ import { VideoShell } from "@/components/stories/VideoShell";
  */
 function Featured({ study }: { study: CaseStudy }) {
   return (
-    <article className="grid overflow-hidden rounded-[var(--radius-media)] bg-[#f4f7fc] outline outline-1 outline-black/6 lg:grid-cols-[1.15fr_1fr]">
+    <article className="grid overflow-hidden rounded-[var(--radius-media)] bg-[#f4f7fc] smooth-shadow-ring-md shadow-[#0c1a3a] lg:grid-cols-[1.15fr_1fr]">
       <VideoShell
         title={`${study.name}, ${study.company}`}
         videoId={study.videoId}
@@ -55,7 +55,7 @@ function Featured({ study }: { study: CaseStudy }) {
 
 function SecondaryCard({ study }: { study: CaseStudy }) {
   return (
-    <article className="group flex flex-1 flex-col overflow-hidden rounded-[20px] bg-white outline outline-1 outline-black/8 transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-18px_rgba(12,26,58,0.35)]">
+    <article className="group flex flex-1 flex-col overflow-hidden rounded-[20px] bg-white smooth-shadow-ring-sm shadow-[#0c1a3a] transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-0.5 hover:smooth-shadow-ring-md">
       <VideoShell
         title={`${study.name}, ${study.company}`}
         videoId={study.videoId}

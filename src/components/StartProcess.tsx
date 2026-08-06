@@ -1,6 +1,6 @@
 "use client";
 
-import { SectionDek } from "@/components/SectionDek";
+import { SectionHeader } from "@/components/SectionHeader";
 import { EditorialSpine } from "@/components/process/EditorialSpine";
 import {
   AnalysisScene,
@@ -35,15 +35,10 @@ const steps = [
 export function StartProcess() {
   return (
     <section className="flex w-full flex-col items-stretch gap-8 py-10 md:gap-10 md:py-14">
-      <div className="flex w-full flex-col gap-4 md:gap-5">
-        <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(2rem,4vw,3rem)] font-bold leading-[1.08] tracking-[-0.025em] text-black">
-          So könnt ihr mit uns starten
-        </h2>
-        <SectionDek
-          lead="So einfach wie ein Termin."
-          rest="Drei kurze Schritte zum kostenlosen Erstgespräch. Ohne Briefing, ohne Aufwand."
-        />
-      </div>
+      <SectionHeader
+        title="So könnt ihr mit uns starten"
+        lead="Drei kurze Schritte zum kostenlosen Erstgespräch. Ohne Briefing, ohne Aufwand."
+      />
       <EditorialSpine
         steps={steps}
         footer={

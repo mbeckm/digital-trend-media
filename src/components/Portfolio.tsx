@@ -28,6 +28,7 @@ import {
   filterFilms,
   type Film,
 } from "@/components/portfolio/data";
+import { RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { SectionDek } from "@/components/SectionDek";
 
 const spring = { type: "spring" as const, duration: 0.45, bounce: 0 };
@@ -74,6 +75,19 @@ export function Portfolio() {
 
   const onReset = () => setActive(emptyFilters);
   const onClose = useCallback(() => setSelectedId(null), []);
+
+  const onSkipToEnd = useCallback(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const top =
+      section.getBoundingClientRect().bottom +
+      window.scrollY -
+      Math.min(72, window.innerHeight * 0.08);
+    window.scrollTo({
+      top: Math.max(0, top),
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  }, [reduceMotion]);
 
   const measure = useCallback(() => {
     const wall = wallRef.current;
@@ -208,16 +222,21 @@ export function Portfolio() {
       >
         {/* Editorial intro — normal page flow, outside the wall experience. */}
         <div className="mx-auto flex w-full max-w-[1280px] flex-col px-6 pb-10 pt-4 md:px-10 md:pb-12 lg:px-12 lg:pb-14">
-          <header className="flex max-w-[44rem] flex-col gap-5 md:gap-6">
-            <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(3rem,6.5vw,4.75rem)] font-bold leading-[0.98] tracking-[-0.035em] text-black">
+          <RevealGroup className="flex max-w-[44rem] flex-col gap-5 md:gap-6">
+            <RevealItem
+              as="h2"
+              className="font-[family-name:var(--font-inter-tight)] text-[clamp(3rem,6.5vw,4.75rem)] font-bold leading-[0.98] tracking-[-0.035em] text-black"
+            >
               Von Hä? zu Aha!
-            </h2>
-            <SectionDek
-              tone="light"
-              lead="Über 100 Filme. Für Unternehmen aus ganz unterschiedlichen Branchen."
-              rest="Von Fintech bis Industrie, von Onboarding bis Pitch. Jedes Projekt eine eigene Geschichte."
-            />
-          </header>
+            </RevealItem>
+            <RevealItem soft>
+              <SectionDek
+                tone="light"
+                lead="Über 100 Filme. Für Unternehmen aus ganz unterschiedlichen Branchen."
+                rest="Von Fintech bis Industrie, von Onboarding bis Pitch. Jedes Projekt eine eigene Geschichte."
+              />
+            </RevealItem>
+          </RevealGroup>
         </div>
 
         {/* Immersive wall only: sky, expand shell, tiles, scrub. */}
@@ -301,6 +320,7 @@ export function Portfolio() {
           active={active}
           onChange={onChange}
           onReset={onReset}
+          onSkipToEnd={onSkipToEnd}
           resultCount={results.length}
           visible={showFilterDock}
         />
@@ -334,7 +354,6 @@ function Tile({
         opacity: 1,
         scale: 1,
         zIndex: 1,
-        boxShadow: "0 8px 28px -16px rgba(0, 20, 46, 0.28)",
       }}
       exit={{ opacity: 0, scale: 0.98 }}
       transition={
@@ -348,7 +367,6 @@ function Tile({
               },
               scale: hoverOut,
               zIndex: { delay: 0, duration: 0 },
-              boxShadow: hoverOut,
             }
       }
       whileHover={
@@ -357,8 +375,6 @@ function Tile({
           : {
               scale: 1.03,
               zIndex: 40,
-              boxShadow:
-                "0 18px 40px -16px rgba(0, 20, 46, 0.4), 0 0 0 1px rgba(0, 20, 46, 0.08)",
               transition: hoverIn,
             }
       }
@@ -376,7 +392,7 @@ function Tile({
       }
       onClick={onOpen}
       aria-label={`${film.client}: ${film.title} öffnen`}
-      className={`portfolio-tile group relative isolate overflow-hidden rounded-[10px] bg-[oklch(0.14_0.03_258)] text-left outline outline-1 outline-black/10 ${span}`}
+      className={`portfolio-tile group relative isolate overflow-hidden rounded-[10px] bg-[oklch(0.14_0.03_258)] text-left smooth-shadow-ring-xs shadow-[#00142e] transition-[box-shadow] duration-300 ease-out hover:smooth-shadow-ring-md ${span}`}
     >
       <motion.div
         layoutId={`film-media-${film.id}`}
