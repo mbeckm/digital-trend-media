@@ -237,11 +237,42 @@ body {
   }
 }
 
+/* Hero scroll scrub: shared --hero-p on .hero (smoothstepped in JS).
+   Copy dissolves up + soft blur; film expands into the frame. */
+.hero {
+  --hero-p: 0;
+}
+
+.hero-clouds {
+  opacity: calc(1 - var(--hero-p) * 0.55);
+  transition: none;
+}
+
+.hero-copy {
+  /* Copy clears a little ahead of full expand so the film can own the frame. */
+  --hero-fade: min(1, var(--hero-p) * 1.1);
+  opacity: calc(1 - var(--hero-fade));
+  transform: translate3d(0, calc(var(--hero-fade) * -20px), 0)
+    scale(calc(1 - var(--hero-fade) * 0.02));
+  filter: blur(calc(var(--hero-fade) * 8px));
+  transform-origin: center top;
+  will-change: opacity, transform, filter;
+}
+
+.hero-cta-scroll {
+  /* CTA leaves first — quiet hierarchy as attention moves to the film. */
+  --hero-fade: min(1, var(--hero-p) * 1.38);
+  opacity: calc(1 - var(--hero-fade));
+  transform: translate3d(0, calc(var(--hero-fade) * -14px), 0);
+  filter: blur(calc(var(--hero-fade) * 6px));
+  will-change: opacity, transform, filter;
+}
+
 /* Hero player: inset cinematic band → full 16:9 viewing size on scroll */
 .hero-media {
   --hero-p: 0;
-  --hero-w-start: 70%;
-  --hero-h-start: clamp(240px, 32vw, 440px);
+  --hero-w-start: 68%;
+  --hero-h-start: clamp(240px, 30vw, 420px);
   --hero-r-start: 36px;
   /* The end state is a true 16:9 frame scaled to the viewport: height-capped on
      wide screens (138.667vh = 78vh × 16/9) and full-bleed on narrow ones, so the
@@ -261,9 +292,10 @@ body {
     var(--hero-r-start) + (var(--hero-r-end) - var(--hero-r-start)) *
       var(--hero-p)
   );
-  opacity: calc(0.82 + 0.18 * var(--hero-p));
+  opacity: calc(0.78 + 0.22 * var(--hero-p));
+  transform: scale(calc(0.985 + 0.015 * var(--hero-p)));
   transform-origin: center center;
-  will-change: width, height, border-radius, opacity;
+  will-change: width, height, border-radius, opacity, transform;
 }
 
 /* Past this viewport aspect the player is height-capped rather than full-bleed,
@@ -274,27 +306,25 @@ body {
   }
 }
 
-@keyframes hero-media-expand {
-  from {
-    width: var(--hero-w-start);
-    height: var(--hero-h-start);
-    border-radius: var(--hero-r-start);
-    opacity: 0.82;
-  }
-  to {
-    width: var(--hero-w-end);
-    height: var(--hero-h-end);
-    border-radius: var(--hero-r-end);
-    opacity: 1;
-  }
+/* Legacy class kept as no-op so any cached markup stays harmless. */
+.hero-media--css-scroll {
 }
 
-@supports (animation-timeline: scroll()) {
-  .hero-media--css-scroll {
-    animation: hero-media-expand linear both;
-    animation-timeline: scroll(root);
-    /* Finishes while the player is still in frame, not after it scrolls past */
-    animation-range: 0 40vh;
+/* After expand settles, sticky keeps the film on screen through hold travel. */
+.hero-pin-sticky {
+  position: sticky;
+  top: max(0px, calc((100vh - min(56.25vw, 78vh)) / 2));
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-pin {
+    height: auto !important;
+  }
+
+  .hero-pin-sticky {
+    position: relative;
+    top: auto;
   }
 }
 
@@ -307,8 +337,15 @@ body {
   margin-inline: auto;
   border-radius: calc(var(--pw-r-start) * (1 - var(--pw-p)));
   box-shadow:
-    0 28px 80px -36px oklch(0.4 0.04 255 / calc(0.28 * (1 - var(--pw-p)))),
-    0 0 0 1px oklch(0.55 0.03 250 / calc(0.12 * (1 - var(--pw-p))));
+    /* smooth-shadow-xl layers, alpha-scaled by expand progress so the shell
+       sheds elevation as it goes full-bleed */
+    0 40px 80px 0 rgb(0 20 46 / calc(0.06 * (1 - var(--pw-p)))),
+    0 20px 40px 0 rgb(0 20 46 / calc(0.05 * (1 - var(--pw-p)))),
+    0 10px 20px 0 rgb(0 20 46 / calc(0.04 * (1 - var(--pw-p)))),
+    0 5px 10px 0 rgb(0 20 46 / calc(0.03 * (1 - var(--pw-p)))),
+    0 2px 4px 0 rgb(0 20 46 / calc(0.02 * (1 - var(--pw-p)))),
+    0 0 0 var(--smooth-ring-width, 1px)
+      rgb(0 20 46 / calc(0.08 * (1 - var(--pw-p))));
   overflow: clip;
   overflow-clip-margin: 28px;
   will-change: width, border-radius, box-shadow;
@@ -329,12 +366,21 @@ body {
     animation: none;
   }
 
+  .hero-copy,
+  .hero-cta-scroll,
+  .hero-clouds {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
   .hero-media,
   .hero-media--css-scroll {
     width: var(--hero-w-end);
     height: var(--hero-h-end);
     border-radius: var(--hero-r-end);
     opacity: 1;
+    transform: none;
     animation: none;
   }
 

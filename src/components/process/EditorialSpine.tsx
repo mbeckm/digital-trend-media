@@ -3,6 +3,7 @@
 import { motion, useInView, useReducedMotion } from "motion/react";
 import { useRef, type ComponentType, type ReactNode } from "react";
 
+import { easeOut } from "@/components/motion/reveal";
 import "./process.css";
 
 export type SpineStep = {
@@ -19,6 +20,7 @@ type EditorialSpineProps = {
 };
 
 const spring = { type: "spring" as const, duration: 0.55, bounce: 0.1 };
+const softTween = { duration: 0.7, ease: easeOut };
 
 export function EditorialSpine({ steps, footer }: EditorialSpineProps) {
   return (
@@ -53,11 +55,11 @@ function SpineStepRow({ step, index }: { step: SpineStep; index: number }) {
       <motion.div
         className="spine__copy"
         initial={
-          reduceMotion ? { opacity: 1 } : { opacity: 0, y: 14 }
+          reduceMotion ? { opacity: 1 } : { opacity: 0, y: 14, filter: "blur(4px)" }
         }
-        whileInView={{ opacity: 1, y: 0 }}
+        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         viewport={{ once: true, margin: "-8% 0px" }}
-        transition={{ ...spring, delay: 0.04 }}
+        transition={{ ...softTween, delay: 0.04 }}
       >
         <span className="spine__meta">{step.meta}</span>
         <h3 className="spine__title">{step.title}</h3>
@@ -84,7 +86,7 @@ function SpineStepRow({ step, index }: { step: SpineStep; index: number }) {
         }
         whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
         viewport={{ once: true, margin: "-8% 0px" }}
-        transition={{ ...spring, delay: 0.08 }}
+        transition={{ ...softTween, delay: 0.08 }}
       >
         <step.Scene />
       </motion.div>

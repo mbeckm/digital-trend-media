@@ -8,6 +8,7 @@ import {
 } from "react";
 
 import { CloudsVolumetric } from "@/components/clouds/CloudsVolumetric";
+import { Reveal } from "@/components/motion/reveal";
 import { CaseStudyLink } from "@/components/stories/CaseStudyLink";
 import { CASE_STUDIES, type CaseStudy } from "@/components/stories/data";
 import { StoriesHeader } from "@/components/stories/StoriesHeader";
@@ -208,28 +209,30 @@ export function CinemaStories() {
     >
       <div className="flex w-full flex-col gap-8 md:flex-row md:items-end md:justify-between md:gap-10">
         <StoriesHeader />
-        <div className="hidden shrink-0 gap-2 md:flex">
+        <Reveal soft delay={0.12} className="hidden shrink-0 gap-2 md:flex">
           <ScrollButton direction="prev" onClick={() => scrollBy(-1)} />
           <ScrollButton direction="next" onClick={() => scrollBy(1)} />
-        </div>
+        </Reveal>
       </div>
 
-      <div
-        ref={scrollerRef}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={endDrag}
-        onPointerCancel={endDrag}
-        className="stories-cinema-track -mx-6 flex cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto px-6 pt-1 pb-10 [scrollbar-width:none] md:-mx-10 md:gap-6 md:px-10 md:pb-12 lg:-mx-12 lg:gap-7 lg:px-12 [&::-webkit-scrollbar]:hidden"
-      >
-        {CASE_STUDIES.map((study, index) => (
-          <CinemaCard
-            key={study.slug}
-            study={study}
-            seed={index * 2.7}
-          />
-        ))}
-      </div>
+      <Reveal soft delay={0.1}>
+        <div
+          ref={scrollerRef}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          className="stories-cinema-track -mx-6 flex cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto px-6 pt-1 pb-10 [scrollbar-width:none] md:-mx-10 md:gap-6 md:px-10 md:pb-12 lg:-mx-12 lg:gap-7 lg:px-12 [&::-webkit-scrollbar]:hidden"
+        >
+          {CASE_STUDIES.map((study, index) => (
+            <CinemaCard
+              key={study.slug}
+              study={study}
+              seed={index * 2.7}
+            />
+          ))}
+        </div>
+      </Reveal>
     </section>
   );
 }

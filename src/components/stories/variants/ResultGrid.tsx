@@ -17,7 +17,7 @@ function ResultCard({ study }: { study: CaseStudy }) {
         videoId={study.videoId}
         duration={study.duration}
         sizes="(max-width: 768px) 100vw, 33vw"
-        className="aspect-[4/3] rounded-[20px] transition-transform duration-500 ease-out group-hover:scale-[1.01]"
+        className="aspect-[4/3] rounded-[20px] smooth-shadow-ring-sm shadow-[#0c1a3a] transition-transform duration-500 ease-out group-hover:scale-[1.01]"
         fade
       />
       <div className="flex flex-col gap-3 px-0.5">

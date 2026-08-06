@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+
 const items = [
   {
     q: "Wie teuer ist eine Produktion?",
@@ -69,19 +71,22 @@ export function Faq() {
       id="faq"
       className="flex w-full flex-col items-stretch gap-8 py-10 md:gap-10 md:py-14"
     >
-      <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(2rem,4vw,3rem)] font-bold leading-[1.08] tracking-[-0.025em] text-black">
-        Häufige Fragen
-      </h2>
+      <Reveal>
+        <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(2rem,4vw,3rem)] font-bold leading-[1.08] tracking-[-0.025em] text-black">
+          Häufige Fragen
+        </h2>
+      </Reveal>
 
-      <div className="flex w-full flex-col">
+      <RevealGroup stagger={0.05} delayChildren={0.06} className="flex w-full flex-col">
         {items.map((item, i) => {
           const open = openIndex === i;
           const panelId = `faq-panel-${i}`;
           const buttonId = `faq-button-${i}`;
 
           return (
-            <div
+            <RevealItem
               key={item.q}
+              soft
               className="border-b border-[var(--color-border)] first:border-t"
             >
               <button
@@ -113,10 +118,10 @@ export function Faq() {
                   </p>
                 </div>
               </div>
-            </div>
+            </RevealItem>
           );
         })}
-      </div>
+      </RevealGroup>
     </section>
   );
 }

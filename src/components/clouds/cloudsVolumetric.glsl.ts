@@ -135,11 +135,11 @@ float textLegibilityMask(vec2 uv) {
  * Higher uIntensity (hover) opens the field so the pointer can sculpt more.
  */
 float cardSoftMask(vec2 uv) {
-  float edge = smoothstep(0.0, 0.28, uv.x) * smoothstep(1.0, 0.72, uv.x)
-    * smoothstep(0.0, 0.24, uv.y) * smoothstep(1.0, 0.76, uv.y);
+  float edge = smoothstep(0.0, 0.32, uv.x) * smoothstep(1.0, 0.68, uv.x)
+    * smoothstep(0.0, 0.28, uv.y) * smoothstep(1.0, 0.72, uv.y);
   float rim = 1.0 - edge;
-  float open = smoothstep(0.2, 0.5, uIntensity);
-  return mix(mix(0.28, 1.0, rim * rim), mix(0.55, 1.0, rim), open);
+  float open = smoothstep(0.1, 0.32, uIntensity);
+  return mix(mix(0.14, 0.85, rim * rim), mix(0.32, 0.95, rim), open);
 }
 
 /** Soft pigment: blue belly → white tops. No specular / silver rim. */

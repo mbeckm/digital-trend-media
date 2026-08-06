@@ -27,10 +27,10 @@ const IDLE_FRAME_MS_FULL = 1000 / 30;
 const IDLE_FRAME_MS_SUBTLE = 1000 / 20;
 const POINTER_ACTIVE_MS = 220;
 const INTENSITY_FULL = 1;
-const INTENSITY_SUBTLE = 0.22;
+const INTENSITY_SUBTLE = 0.12;
 /** Soft bloom when the pointer is over a card text area. */
-const INTENSITY_SUBTLE_HOVER = 0.48;
-const SUBTLE_POINTER_STRENGTH = 0.85;
+const INTENSITY_SUBTLE_HOVER = 0.28;
+const SUBTLE_POINTER_STRENGTH = 0.55;
 
 const CANVAS_STYLE: CSSProperties = {
   position: "absolute",

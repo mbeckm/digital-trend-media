@@ -1,6 +1,6 @@
 "use client";
 
-import { SectionDek } from "@/components/SectionDek";
+import { SectionHeader } from "@/components/SectionHeader";
 import { EditorialSpine } from "@/components/process/EditorialSpine";
 import {
   KickoffScene,
@@ -46,15 +46,11 @@ export function Collaboration() {
       id="prozess"
       className="flex w-full flex-col items-stretch gap-8 py-10 md:gap-10 md:py-14"
     >
-      <div className="flex w-full flex-col gap-4 md:gap-5">
-        <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(2rem,4vw,3rem)] font-bold leading-[1.08] tracking-[-0.025em] text-black">
-          So läuft die Zusammenarbeit ab
-        </h2>
-        <SectionDek
-          lead="Vier klare Schritte."
-          rest="Weniger als drei Stunden eurer Zeit. Ihr bringt das Wissen, wir übersetzen es in Story, Bilder und Bewegung."
-        />
-      </div>
+      <SectionHeader
+        title="So läuft die Zusammenarbeit ab"
+        lead="Vier klare Schritte."
+        rest="Weniger als drei Stunden eurer Zeit. Ihr bringt das Wissen, wir übersetzen es in Story, Bilder und Bewegung."
+      />
       <EditorialSpine
         steps={steps}
         footer={
