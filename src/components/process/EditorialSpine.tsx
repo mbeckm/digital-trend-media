@@ -44,7 +44,6 @@ function SpineStepRow({ step, index }: { step: SpineStep; index: number }) {
   const onScreen = useInView(ref, { margin: "-10% 0px -10% 0px" });
   const reduceMotion = useReducedMotion();
   const flip = index % 2 === 1;
-  const fromX = flip ? -28 : 28;
 
   return (
     <li
@@ -77,10 +76,8 @@ function SpineStepRow({ step, index }: { step: SpineStep; index: number }) {
 
       <motion.div
         className="spine__media"
-        initial={
-          reduceMotion ? { opacity: 1 } : { opacity: 0, x: fromX }
-        }
-        whileInView={{ opacity: 1, x: 0 }}
+        initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-8% 0px" }}
         transition={{ ...softTween, delay: 0.08 }}
       >

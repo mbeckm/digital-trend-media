@@ -9,11 +9,11 @@ const links = [
 
 export function Nav() {
   return (
-    <header className="w-full px-6 py-6 md:px-10 lg:px-12">
-      <div className="mx-auto flex h-10 w-full max-w-[1280px] items-center justify-between gap-4">
+    <header className="w-full px-5 py-5 md:px-10 md:py-6 lg:px-12">
+      <div className="mx-auto flex h-10 w-full max-w-[1280px] items-center justify-between gap-3 md:gap-4">
         <a
           href="#top"
-          className="font-[family-name:var(--font-inter-tight)] text-base font-bold leading-5 text-black"
+          className="min-w-0 shrink font-[family-name:var(--font-inter-tight)] text-[0.9375rem] font-bold leading-5 text-black md:text-base"
         >
           Digital Trend Media
         </a>
@@ -32,7 +32,7 @@ export function Nav() {
           href={CALENDLY_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-10 items-center rounded-full border-2 border-[#d9d9d9] px-4 text-base font-semibold leading-5 text-black transition-[border-color,transform] hover:border-[#2b6ecb] active:scale-[0.98]"
+          className="inline-flex h-9 shrink-0 items-center rounded-full border-2 border-[#d9d9d9] px-3 text-sm font-semibold leading-5 text-black transition-[border-color,transform] hover:border-[#2b6ecb] active:scale-[0.98] md:h-10 md:px-4 md:text-base"
         >
           Termin vereinbaren
         </a>

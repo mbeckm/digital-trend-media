@@ -8,6 +8,7 @@
   --spine-surface: #f4f7fc;
   --spine-ease: cubic-bezier(0.23, 1, 0.32, 1);
   width: 100%;
+  overflow-x: clip;
 }
 
 .spine__track {
@@ -28,12 +29,32 @@
 .spine__step {
   position: relative;
   display: grid;
-  grid-template-columns: 2.25rem 1fr;
-  gap: 1rem 1.25rem;
-  align-items: center;
+  /* Mobile: node | copy+media stacked. Desktop overrides to 3 cols. */
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  gap: 0.85rem 1rem;
+  align-items: start;
 }
 
-/* Connect node centers only — never past the last node into the CTA. */
+/* Mobile placement — DOM is copy → node → media; pin them explicitly. */
+.spine__node {
+  grid-column: 1;
+  grid-row: 1;
+  /* Optical align with title line (meta sits above). */
+  margin-top: 1.35rem;
+}
+
+.spine__copy {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.spine__media {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* Connect node centers only — never past the last node into the CTA.
+   On mobile the node sits near the top of the step (title row). */
 .spine__step:not(:first-child)::before,
 .spine__step:not(:last-child)::after {
   content: "";
@@ -48,25 +69,39 @@
 
 .spine__step:not(:first-child)::before {
   top: 0;
-  height: 50%;
+  /* Reach node center: margin-top + half node height */
+  height: calc(1.35rem + 1.125rem);
 }
 
 .spine__step:not(:last-child)::after {
-  top: 50%;
+  top: calc(1.35rem + 1.125rem);
   bottom: calc(-1 * var(--spine-gap));
-}
-
-@media (min-width: 768px) {
-  .spine__step:not(:first-child)::before,
-  .spine__step:not(:last-child)::after {
-    left: 50%;
-  }
 }
 
 @media (min-width: 768px) {
   .spine__step {
     grid-template-columns: minmax(0, 1fr) 2.75rem minmax(0, 1fr);
     gap: 1.25rem 1.5rem;
+    align-items: center;
+  }
+
+  .spine__node {
+    margin-top: 0;
+  }
+
+  .spine__step:not(:first-child)::before,
+  .spine__step:not(:last-child)::after {
+    left: 50%;
+  }
+
+  .spine__step:not(:first-child)::before {
+    top: 0;
+    height: 50%;
+  }
+
+  .spine__step:not(:last-child)::after {
+    top: 50%;
+    bottom: calc(-1 * var(--spine-gap));
   }
 
   .spine__step--flip .spine__copy {
@@ -134,6 +169,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  min-width: 0;
   max-width: 22rem;
 }
 
@@ -180,6 +216,7 @@
   background: var(--spine-surface);
 }
 
+/* Keep enter motion from briefly overflowing the page on narrow viewports. */
 @media (min-width: 768px) {
   .spine__step:not(.spine__step--flip) .spine-scene {
     margin-right: auto;
