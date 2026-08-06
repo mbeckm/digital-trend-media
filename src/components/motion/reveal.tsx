@@ -20,13 +20,13 @@ export const revealStagger = 0.09;
 const viewport = { once: true, margin: "-8% 0px -8% 0px", amount: 0.05 as const };
 
 export const revealItem = {
-  hidden: { opacity: 0, y: 16, filter: "blur(6px)" },
-  visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0 },
 };
 
 export const revealSoft = {
-  hidden: { opacity: 0, y: 12, filter: "blur(4px)" },
-  visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0 },
 };
 
 type RevealProps = {

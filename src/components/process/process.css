@@ -387,11 +387,10 @@
   height: 2.75rem;
   border-radius: 999px;
   border: 2.5px solid var(--scene-ink);
-  background: rgb(234 241 253 / 0.4);
+  background: rgb(255 255 255 / 0.92);
   box-shadow:
     inset 0 0 0 1px rgb(255 255 255 / 0.65),
     var(--smooth-shadow-xs);
-  backdrop-filter: blur(1px);
 }
 
 .scene-analysis__handle {

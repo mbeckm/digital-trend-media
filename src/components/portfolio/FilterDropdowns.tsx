@@ -92,13 +92,11 @@ function FilterDropdown({
             initial={{
               opacity: 0,
               y: dropUp ? 8 : -8,
-              filter: "blur(4px)",
             }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            animate={{ opacity: 1, y: 0 }}
             exit={{
               opacity: 0,
               y: dropUp ? 6 : -6,
-              filter: "blur(4px)",
             }}
             transition={{ type: "spring", duration: 0.3, bounce: 0 }}
             className={`absolute z-50 max-h-64 w-full min-w-[11rem] overflow-auto rounded-2xl bg-white p-1.5 smooth-shadow-ring-lg shadow-[#0c1a3a] ${
