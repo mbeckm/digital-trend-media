@@ -1,10 +1,10 @@
 "use client";
 
-import { YouTubeFacade } from "@/components/YouTubeEmbed";
+import { VimeoFacade, type VimeoVideo } from "@/components/VimeoEmbed";
 
 type VideoShellProps = {
   title: string;
-  videoId: string;
+  video: VimeoVideo;
   duration?: string;
   sizes?: string;
   className?: string;
@@ -13,12 +13,12 @@ type VideoShellProps = {
 };
 
 /**
- * Relative frame for YouTubeFacade. Keeps play + poster isolated from
+ * Relative frame for VimeoFacade. Keeps play + poster isolated from
  * surrounding links so cards can link to the case study page.
  */
 export function VideoShell({
   title,
-  videoId,
+  video,
   duration,
   sizes = "(max-width: 768px) 100vw, 50vw",
   className = "",
@@ -28,7 +28,7 @@ export function VideoShell({
     <div
       className={`relative isolate overflow-hidden bg-[#0c1a3a] outline outline-1 outline-black/10 ${className}`}
     >
-      <YouTubeFacade videoId={videoId} title={title} sizes={sizes} />
+      <VimeoFacade video={video} title={title} sizes={sizes} />
       {fade ? (
         <span
           aria-hidden

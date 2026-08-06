@@ -7,6 +7,7 @@ import {
   CalendarScene,
   PathScene,
 } from "@/components/process/scenes";
+import { CALENDLY_URL } from "@/lib/calendly";
 
 const steps = [
   {
@@ -42,7 +43,12 @@ export function StartProcess() {
       <EditorialSpine
         steps={steps}
         footer={
-          <a href="#kontakt" className="hero-cta">
+          <a
+            href={CALENDLY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hero-cta"
+          >
             Termin buchen
           </a>
         }

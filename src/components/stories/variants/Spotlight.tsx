@@ -14,7 +14,7 @@ function Featured({ study }: { study: CaseStudy }) {
     <article className="grid overflow-hidden rounded-[var(--radius-media)] bg-[#f4f7fc] smooth-shadow-ring-md shadow-[#0c1a3a] lg:grid-cols-[1.15fr_1fr]">
       <VideoShell
         title={`${study.name}, ${study.company}`}
-        videoId={study.videoId}
+        video={study.video}
         duration={study.duration}
         sizes="(max-width: 1024px) 100vw, 55vw"
         className="aspect-[16/10] min-h-[280px] lg:aspect-auto lg:min-h-[420px]"
@@ -58,7 +58,7 @@ function SecondaryCard({ study }: { study: CaseStudy }) {
     <article className="group flex flex-1 flex-col overflow-hidden rounded-[20px] bg-white smooth-shadow-ring-sm shadow-[#0c1a3a] transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-0.5 hover:smooth-shadow-ring-md">
       <VideoShell
         title={`${study.name}, ${study.company}`}
-        videoId={study.videoId}
+        video={study.video}
         duration={study.duration}
         sizes="(max-width: 768px) 100vw, 40vw"
         className="aspect-[16/10]"

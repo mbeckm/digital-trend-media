@@ -8,6 +8,7 @@ import {
   ScriptScene,
   StoryboardScene,
 } from "@/components/process/scenes";
+import { CALENDLY_URL } from "@/lib/calendly";
 
 const steps = [
   {
@@ -57,7 +58,9 @@ export function Collaboration() {
           <p className="max-w-[40rem] text-balance text-center font-[family-name:var(--font-inter-tight)] text-[clamp(1.25rem,2.2vw,1.625rem)] font-medium leading-[1.55] tracking-[-0.015em] text-black">
             Lasst uns starten.{" "}
             <a
-              href="#kontakt"
+              href={CALENDLY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="mx-0.5 inline-flex items-center rounded-full bg-[var(--color-footer)] px-3.5 py-1 align-middle text-[0.78em] font-semibold leading-none text-white no-underline transition-[transform,opacity] hover:opacity-90 active:scale-[0.98]"
             >
               Projekt beantragen

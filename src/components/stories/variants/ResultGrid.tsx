@@ -14,7 +14,7 @@ function ResultCard({ study }: { study: CaseStudy }) {
     <article className="group flex flex-col gap-5">
       <VideoShell
         title={`${study.name}, ${study.company}`}
-        videoId={study.videoId}
+        video={study.video}
         duration={study.duration}
         sizes="(max-width: 768px) 100vw, 33vw"
         className="aspect-[4/3] rounded-[20px] smooth-shadow-ring-sm shadow-[#0c1a3a] transition-transform duration-500 ease-out group-hover:scale-[1.01]"

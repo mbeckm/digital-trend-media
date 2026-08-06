@@ -1,20 +1,31 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useRef, useState } from "react";
+import { useState } from "react";
 
-/** Placeholder reels used until real customer films are available. */
-export const DEMO_VIDEO_ID = "IfjM4Gy1OLA";
-export const PORTFOLIO_VIDEO_ID = "MlLw7KdEyA8";
+export type VimeoVideo = {
+  id: string;
+  hash?: string;
+};
 
-const EMBED_BASE = "https://www.youtube-nocookie.com/embed";
+/** Hero / showreel — last video in the client doc. */
+export const PRIMARY_VIDEO: VimeoVideo = {
+  id: "558966248",
+  hash: "c04f295b02",
+};
 
-function embedSrc(videoId: string, params: Record<string, string>) {
-  return `${EMBED_BASE}/${videoId}?${new URLSearchParams(params).toString()}`;
+const EMBED_BASE = "https://player.vimeo.com/video";
+
+export function vimeoPosterSrc(video: VimeoVideo) {
+  const params = new URLSearchParams({ id: video.id });
+  if (video.hash) params.set("hash", video.hash);
+  return `/api/vimeo-poster?${params.toString()}`;
 }
 
-export function youTubePoster(videoId: string) {
-  return `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
+function embedSrc(video: VimeoVideo, params: Record<string, string>) {
+  const query = new URLSearchParams(params);
+  if (video.hash) query.set("h", video.hash);
+  return `${EMBED_BASE}/${video.id}?${query.toString()}`;
 }
 
 export function PlayIcon({ size = 26 }: { size?: number }) {
@@ -30,25 +41,28 @@ export function PlayIcon({ size = 26 }: { size?: number }) {
 }
 
 /** Full player with controls, mounted only once the viewer asks for it. */
-export function YouTubePlayer({
-  videoId,
+export function VimeoPlayer({
+  video,
   title,
 }: {
-  videoId: string;
+  video: VimeoVideo;
   title: string;
 }) {
   return (
     <div className="video-cover">
       <iframe
-        src={embedSrc(videoId, {
+        src={embedSrc(video, {
           autoplay: "1",
-          rel: "0",
-          modestbranding: "1",
-          playsinline: "1",
+          autopause: "0",
+          title: "0",
+          byline: "0",
+          portrait: "0",
+          dnt: "1",
         })}
         title={title}
-        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+        allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
         referrerPolicy="strict-origin-when-cross-origin"
+        allowFullScreen
       />
     </div>
   );
@@ -58,53 +72,26 @@ export function YouTubePlayer({
  * Muted, looping video used as ambient art direction. Not interactive — it sits
  * behind or beside real content, so it stays out of the tab order.
  */
-export function YouTubeBackground({
-  videoId = DEMO_VIDEO_ID,
+export function VimeoBackground({
+  video = PRIMARY_VIDEO,
   title,
 }: {
-  videoId?: string;
+  video?: VimeoVideo;
   title: string;
 }) {
-  const frameRef = useRef<HTMLIFrameElement>(null);
-
-  // cc_load_policy=0 is ignored when the viewer has captions on by default, so
-  // the caption module is unloaded via the player API once it reports ready.
-  const hideCaptions = useCallback(() => {
-    const send = () => {
-      const player = frameRef.current?.contentWindow;
-      if (!player) return;
-      for (const captionModule of ["captions", "cc"]) {
-        player.postMessage(
-          JSON.stringify({
-            event: "command",
-            func: "unloadModule",
-            args: [captionModule],
-          }),
-          "*",
-        );
-      }
-    };
-    [0, 500, 1500, 3000].forEach((delay) => window.setTimeout(send, delay));
-  }, []);
-
   return (
     <div className="video-cover video-cover--bleed pointer-events-none select-none">
       <iframe
-        ref={frameRef}
-        onLoad={hideCaptions}
-        src={embedSrc(videoId, {
+        src={embedSrc(video, {
+          background: "1",
           autoplay: "1",
-          mute: "1",
+          muted: "1",
           loop: "1",
-          playlist: videoId,
-          controls: "0",
-          modestbranding: "1",
-          rel: "0",
-          playsinline: "1",
-          disablekb: "1",
-          iv_load_policy: "3",
-          cc_load_policy: "0",
-          enablejsapi: "1",
+          autopause: "0",
+          title: "0",
+          byline: "0",
+          portrait: "0",
+          dnt: "1",
         })}
         title={title}
         allow="autoplay; encrypted-media; picture-in-picture"
@@ -119,19 +106,19 @@ export function YouTubeBackground({
  * Click-to-play thumbnail. The iframe is only mounted after interaction so a
  * page full of case studies doesn't load a player per card.
  */
-export function YouTubeFacade({
-  videoId = DEMO_VIDEO_ID,
+export function VimeoFacade({
+  video,
   title,
   sizes = "(max-width: 768px) 100vw, 50vw",
 }: {
-  videoId?: string;
+  video: VimeoVideo;
   title: string;
   sizes?: string;
 }) {
   const [playing, setPlaying] = useState(false);
 
   if (playing) {
-    return <YouTubePlayer videoId={videoId} title={title} />;
+    return <VimeoPlayer video={video} title={title} />;
   }
 
   return (
@@ -142,9 +129,10 @@ export function YouTubeFacade({
       className="group absolute inset-0 block h-full w-full cursor-pointer"
     >
       <Image
-        src={youTubePoster(videoId)}
+        src={vimeoPosterSrc(video)}
         alt=""
         fill
+        unoptimized
         className="object-cover"
         sizes={sizes}
       />

@@ -5,10 +5,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { X } from "lucide-react";
 
-import {
-  YouTubePlayer,
-  youTubePoster,
-} from "@/components/YouTubeEmbed";
+import { VimeoPlayer, vimeoPosterSrc } from "@/components/VimeoEmbed";
 import type { Film } from "@/components/portfolio/data";
 
 const spring = { type: "spring" as const, duration: 0.45, bounce: 0 };
@@ -23,9 +20,10 @@ export function WallPoster({
   return (
     <>
       <Image
-        src={youTubePoster(film.videoId)}
+        src={vimeoPosterSrc(film.video)}
         alt=""
         fill
+        unoptimized
         className="object-cover transition-[transform,filter] duration-500 ease-out group-hover:scale-[1.03]"
         sizes={sizes}
       />
@@ -112,7 +110,7 @@ export function FilmExpand({
                 transition={reduceMotion ? { duration: 0 } : spring}
               >
                 {showPlayer ? (
-                  <YouTubePlayer videoId={film.videoId} title={film.title} />
+                  <VimeoPlayer video={film.video} title={film.title} />
                 ) : (
                   <WallPoster
                     film={film}

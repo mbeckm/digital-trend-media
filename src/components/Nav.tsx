@@ -1,3 +1,5 @@
+import { CALENDLY_URL } from "@/lib/calendly";
+
 const links = [
   { href: "#prozess", label: "Produktionsprozess" },
   { href: "#portfolio", label: "Portfolio" },
@@ -27,7 +29,9 @@ export function Nav() {
           ))}
         </nav>
         <a
-          href="#kontakt"
+          href={CALENDLY_URL}
+          target="_blank"
+          rel="noopener noreferrer"
           className="inline-flex h-10 items-center rounded-full border-2 border-[#d9d9d9] px-4 text-base font-semibold leading-5 text-black transition-[border-color,transform] hover:border-[#2b6ecb] active:scale-[0.98]"
         >
           Termin vereinbaren

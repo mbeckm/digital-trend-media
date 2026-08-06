@@ -33,7 +33,7 @@ function CinemaCard({
       <div className="relative">
         <VideoShell
           title={`${study.name}, ${study.company}`}
-          videoId={study.videoId}
+          video={study.video}
           duration={study.duration}
           sizes="(max-width: 768px) 90vw, 640px"
           className="aspect-video rounded-none outline-none"
