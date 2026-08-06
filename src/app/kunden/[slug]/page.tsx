@@ -43,7 +43,7 @@ export default async function CaseStudyPage({
 
       <VideoShell
         title={`${study.name}, ${study.company}`}
-        videoId={study.videoId}
+        video={study.video}
         duration={study.duration}
         sizes="100vw"
         className="aspect-video rounded-[var(--radius-media)]"

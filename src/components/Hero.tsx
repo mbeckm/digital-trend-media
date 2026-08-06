@@ -10,7 +10,8 @@ import {
   revealStagger,
   revealTransition,
 } from "@/components/motion/reveal";
-import { YouTubeBackground } from "@/components/YouTubeEmbed";
+import { PRIMARY_VIDEO, VimeoBackground } from "@/components/VimeoEmbed";
+import { CALENDLY_URL } from "@/lib/calendly";
 
 const enterTransition = revealTransition;
 const stagger = revealStagger;
@@ -156,7 +157,9 @@ export function Hero() {
         <div className="hero-cta-scroll">
           <motion.a
             id="kontakt"
-            href="#kontakt"
+            href={CALENDLY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="hero-cta"
             initial={
               showMotion
@@ -187,7 +190,10 @@ export function Hero() {
           }}
         >
           <div ref={mediaRef} className="hero-media relative overflow-hidden">
-            <YouTubeBackground title="Digital Trend Media Showreel" />
+            <VimeoBackground
+              video={PRIMARY_VIDEO}
+              title="Digital Trend Media Showreel"
+            />
           </div>
         </motion.div>
       </div>

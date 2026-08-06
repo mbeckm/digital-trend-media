@@ -120,7 +120,7 @@ body {
   animation-delay: 0.32s;
 }
 
-/* YouTube iframes can't use object-fit, so cover is done with aspect-ratio + minimums */
+/* Vimeo iframes can't use object-fit, so cover is done with aspect-ratio + minimums */
 .video-cover {
   position: absolute;
   inset: 0;
@@ -140,7 +140,7 @@ body {
   border: 0;
 }
 
-/* Ambient players zoom slightly so a non-16:9 master doesn't show YouTube's pillarbox */
+/* Ambient players zoom slightly so a non-16:9 master doesn't show pillarboxing */
 .video-cover--bleed {
   --video-overscan: 1.18;
 }
