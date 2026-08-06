@@ -80,6 +80,23 @@ const FALLBACK_FULL: CSSProperties = {
   opacity: 0.7,
 };
 
+/** Skip WebGL on narrow viewports — CSS fallback is enough and saves GPU. */
+const MOBILE_CLOUD_QUERY = "(max-width: 767px)";
+
+function usePreferCloudFallback() {
+  const [preferFallback, setPreferFallback] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia(MOBILE_CLOUD_QUERY);
+    const sync = () => setPreferFallback(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
+
+  return preferFallback;
+}
+
 function compileShader(
   gl: WebGLRenderingContext,
   type: number,
@@ -611,13 +628,19 @@ export function CloudsVolumetric({
   const hostRef = useRef<HTMLDivElement>(null);
   const [near, setNear] = useState(false);
   const [live, setLive] = useState(false);
+  const preferFallback = usePreferCloudFallback();
   const subtle = variant === "subtle";
   const intensity = subtle ? INTENSITY_SUBTLE : INTENSITY_FULL;
   const dprCap = subtle ? INTERNAL_DPR_CAP_SUBTLE : INTERNAL_DPR_CAP_FULL;
   const idleFrameMs = subtle ? IDLE_FRAME_MS_SUBTLE : IDLE_FRAME_MS_FULL;
 
-  // Only consider a slot when the field is near the viewport.
+  // Only consider a slot when the field is near the viewport (and not on mobile).
   useEffect(() => {
+    if (preferFallback) {
+      setNear(false);
+      return;
+    }
+
     const host = hostRef.current;
     if (!host) return;
 
@@ -647,11 +670,11 @@ export function CloudsVolumetric({
       io.disconnect();
       if (leaveTimer) window.clearTimeout(leaveTimer);
     };
-  }, []);
+  }, [preferFallback]);
 
   // Cap concurrent WebGL contexts across the page.
   useEffect(() => {
-    if (!near) {
+    if (preferFallback || !near) {
       setLive(false);
       return;
     }
@@ -661,7 +684,7 @@ export function CloudsVolumetric({
       () => setLive(true),
       () => setLive(false),
     );
-  }, [near, subtle]);
+  }, [near, subtle, preferFallback]);
 
   const showFallback = !live;
 

@@ -166,15 +166,17 @@ body {
 .hero-cta {
   position: relative;
   display: inline-flex;
-  min-height: 64px;
-  min-width: 280px;
+  min-height: 56px;
+  min-width: 0;
+  width: min(100%, 20rem);
+  max-width: calc(100vw - 3rem);
   align-items: center;
   justify-content: center;
-  padding: 1rem 3rem;
+  padding: 0.9rem 1.75rem;
   border: 0;
   border-radius: 9999px;
   color: #fff;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
   letter-spacing: -0.01em;
   text-decoration: none;
@@ -215,7 +217,12 @@ body {
 
 @media (min-width: 768px) {
   .hero-cta {
+    min-height: 64px;
+    width: auto;
     min-width: 420px;
+    max-width: none;
+    padding: 1rem 3rem;
+    font-size: 18px;
   }
 }
 
@@ -284,14 +291,15 @@ body {
 /* Hero player: inset cinematic band → full 16:9 viewing size on scroll */
 .hero-media {
   --hero-p: 0;
-  --hero-w-start: 68%;
-  --hero-h-start: clamp(240px, 30vw, 420px);
-  --hero-r-start: 36px;
+  /* Mobile: wider, shorter band so the start state reads as 16:9-ish, not a tall slab. */
+  --hero-w-start: 86%;
+  --hero-h-start: clamp(160px, 48vw, 240px);
+  --hero-r-start: 20px;
   /* The end state is a true 16:9 frame scaled to the viewport: height-capped on
-     wide screens (138.667vh = 78vh × 16/9) and full-bleed on narrow ones, so the
+     wide screens (138.667svh = 78svh × 16/9) and full-bleed on narrow ones, so the
      whole film stays visible instead of being cropped into a letterbox strip. */
-  --hero-w-end: min(100%, 138.667vh);
-  --hero-h-end: min(56.25vw, 78vh);
+  --hero-w-end: min(100%, 138.667svh);
+  --hero-h-end: min(56.25vw, 78svh);
   --hero-r-end: 0px;
   width: calc(
     var(--hero-w-start) + (var(--hero-w-end) - var(--hero-w-start)) *
@@ -310,6 +318,14 @@ body {
   transform-origin: center center;
 }
 
+@media (min-width: 768px) {
+  .hero-media {
+    --hero-w-start: 68%;
+    --hero-h-start: clamp(240px, 30vw, 420px);
+    --hero-r-start: 36px;
+  }
+}
+
 /* Past this viewport aspect the player is height-capped rather than full-bleed,
    so it keeps a radius to read as a deliberate frame instead of a clipped edge. */
 @media (min-aspect-ratio: 1387 / 1000) {
@@ -325,7 +341,7 @@ body {
 /* After expand settles, sticky keeps the film on screen through hold travel. */
 .hero-pin-sticky {
   position: sticky;
-  top: max(0px, calc((100vh - min(56.25vw, 78vh)) / 2));
+  top: max(0px, calc((100svh - min(56.25vw, 78svh)) / 2));
   z-index: 1;
 }
 

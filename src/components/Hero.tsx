@@ -25,6 +25,12 @@ function smoothstep(t: number) {
 /** Extra scroll after full-bleed so the film can sit before Benefits. */
 const HOLD_VH = 0.48;
 const HOLD_MIN = 280;
+const HOLD_VH_MOBILE = 0.32;
+const HOLD_MIN_MOBILE = 180;
+const EXPAND_VH = 0.52;
+const EXPAND_MIN = 340;
+const EXPAND_VH_MOBILE = 0.42;
+const EXPAND_MIN_MOBILE = 240;
 
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -41,17 +47,24 @@ export function Hero() {
     if (!section || !media) return;
 
     const reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobileQuery = window.matchMedia("(max-width: 767px)");
     let frame = 0;
 
+    const viewportHeight = () =>
+      window.visualViewport?.height ?? window.innerHeight;
+
     const mediaEndHeight = () =>
-      Math.min(window.innerWidth * 0.5625, window.innerHeight * 0.78);
+      Math.min(window.innerWidth * 0.5625, viewportHeight() * 0.78);
 
     const layoutPin = () => {
       if (!pin || reduceQuery.matches) {
         pin?.style.removeProperty("height");
         return;
       }
-      const hold = Math.max(window.innerHeight * HOLD_VH, HOLD_MIN);
+      const vh = viewportHeight();
+      const hold = mobileQuery.matches
+        ? Math.max(vh * HOLD_VH_MOBILE, HOLD_MIN_MOBILE)
+        : Math.max(vh * HOLD_VH, HOLD_MIN);
       // Sticky stage = full film height + hold travel after expand settles.
       pin.style.height = `${mediaEndHeight() + hold}px`;
     };
@@ -68,7 +81,10 @@ export function Hero() {
       layoutPin();
 
       // Expand finishes before the hold — then p stays at 1 while sticky.
-      const expandDistance = Math.max(window.innerHeight * 0.52, 340);
+      const vh = viewportHeight();
+      const expandDistance = mobileQuery.matches
+        ? Math.max(vh * EXPAND_VH_MOBILE, EXPAND_MIN_MOBILE)
+        : Math.max(vh * EXPAND_VH, EXPAND_MIN);
       const raw = Math.min(1, Math.max(0, window.scrollY / expandDistance));
       const p = smoothstep(raw);
 
@@ -90,12 +106,16 @@ export function Hero() {
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     reduceQuery.addEventListener("change", onScroll);
+    mobileQuery.addEventListener("change", onScroll);
+    window.visualViewport?.addEventListener("resize", onScroll);
 
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       reduceQuery.removeEventListener("change", onScroll);
+      mobileQuery.removeEventListener("change", onScroll);
+      window.visualViewport?.removeEventListener("resize", onScroll);
     };
   }, []);
 
@@ -154,7 +174,7 @@ export function Hero() {
           </motion.div>
         </div>
 
-        <div className="hero-cta-scroll">
+        <div className="hero-cta-scroll w-full px-6 flex justify-center">
           <motion.a
             id="kontakt"
             href={CALENDLY_URL}
