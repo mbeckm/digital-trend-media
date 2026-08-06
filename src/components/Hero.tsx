@@ -10,7 +10,7 @@ import {
   revealStagger,
   revealTransition,
 } from "@/components/motion/reveal";
-import { PRIMARY_VIDEO, VimeoBackground } from "@/components/VimeoEmbed";
+import { PRIMARY_VIDEO, VimeoHeroPlayer } from "@/components/VimeoEmbed";
 import { CALENDLY_URL } from "@/lib/calendly";
 
 const enterTransition = revealTransition;
@@ -161,12 +161,8 @@ export function Hero() {
             target="_blank"
             rel="noopener noreferrer"
             className="hero-cta"
-            initial={
-              showMotion
-                ? { opacity: 0, y: 12, filter: "blur(5px)" }
-                : false
-            }
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            initial={showMotion ? { opacity: 0, y: 12 } : false}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ ...enterTransition, delay: showMotion ? 0.32 : 0 }}
           >
             Kostenloses Erstgespräch
@@ -178,11 +174,9 @@ export function Hero() {
         <motion.div
           className="hero-pin-sticky flex w-full justify-center"
           initial={
-            showMotion
-              ? { opacity: 0, y: 28, scale: 0.97, filter: "blur(6px)" }
-              : false
+            showMotion ? { opacity: 0, y: 28, scale: 0.97 } : false
           }
-          animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{
             ...enterTransition,
             duration: 1.05,
@@ -190,7 +184,7 @@ export function Hero() {
           }}
         >
           <div ref={mediaRef} className="hero-media relative overflow-hidden">
-            <VimeoBackground
+            <VimeoHeroPlayer
               video={PRIMARY_VIDEO}
               title="Digital Trend Media Showreel"
             />
