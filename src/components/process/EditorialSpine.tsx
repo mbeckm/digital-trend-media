@@ -54,10 +54,8 @@ function SpineStepRow({ step, index }: { step: SpineStep; index: number }) {
     >
       <motion.div
         className="spine__copy"
-        initial={
-          reduceMotion ? { opacity: 1 } : { opacity: 0, y: 14, filter: "blur(4px)" }
-        }
-        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 14 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-8% 0px" }}
         transition={{ ...softTween, delay: 0.04 }}
       >
@@ -80,11 +78,9 @@ function SpineStepRow({ step, index }: { step: SpineStep; index: number }) {
       <motion.div
         className="spine__media"
         initial={
-          reduceMotion
-            ? { opacity: 1 }
-            : { opacity: 0, x: fromX, filter: "blur(4px)" }
+          reduceMotion ? { opacity: 1 } : { opacity: 0, x: fromX }
         }
-        whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+        whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: "-8% 0px" }}
         transition={{ ...softTween, delay: 0.08 }}
       >

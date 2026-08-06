@@ -122,9 +122,9 @@ export function FilmExpand({
 
             <motion.div
               className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto p-5 sm:p-7 lg:p-8"
-              initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
               transition={
                 reduceMotion
                   ? { duration: 0 }

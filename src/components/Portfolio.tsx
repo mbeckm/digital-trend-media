@@ -267,7 +267,7 @@ export function Portfolio() {
               <motion.div
                 ref={wallRef}
                 style={pinScroll ? { y: wallY } : undefined}
-                className="isolate grid w-full auto-rows-[minmax(160px,22vw)] grid-flow-dense grid-cols-2 gap-1.5 pb-28 will-change-transform sm:auto-rows-[minmax(180px,16vw)] sm:gap-2 sm:pb-32 md:grid-cols-4 lg:auto-rows-[minmax(200px,14vw)] lg:pb-36 xl:grid-cols-6"
+                className="isolate grid w-full auto-rows-[minmax(160px,22vw)] grid-flow-dense grid-cols-2 gap-1.5 pb-28 sm:auto-rows-[minmax(180px,16vw)] sm:gap-2 sm:pb-32 md:grid-cols-4 lg:auto-rows-[minmax(200px,14vw)] lg:pb-36 xl:grid-cols-6"
               >
                 <AnimatePresence mode="popLayout" initial={false}>
                   {results.map((film, index) => {

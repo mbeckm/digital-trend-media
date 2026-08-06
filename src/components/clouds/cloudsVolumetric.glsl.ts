@@ -251,6 +251,7 @@ void main() {
   );
 
   // Near cumulus — main soft cotton masses (faster parallax).
+  // Card washes stop here (2–3 layers) to cut fragment cost on multi-card strips.
   accumulateLayer(
     uv, presence, 0.95,
     vec2(0.95, 0.64), vec2(-1.2, 0.05) - seedOff,
@@ -258,13 +259,15 @@ void main() {
     cover, cloudCol
   );
 
-  // Lower wisps — fade out in card mode to keep the wash lighter.
-  accumulateLayer(
-    uv, presence, 1.15,
-    vec2(1.35, 0.88), vec2(0.5, -0.3),
-    0.070, 0.09, 1.45, 0.13, 1.25 * (1.0 - cardAmt), heightLow,
-    cover, cloudCol
-  );
+  // Lower wisps — hero/portfolio only.
+  if (cardAmt < 0.5) {
+    accumulateLayer(
+      uv, presence, 1.15,
+      vec2(1.35, 0.88), vec2(0.5, -0.3),
+      0.070, 0.09, 1.45, 0.13, 1.25, heightLow,
+      cover, cloudCol
+    );
+  }
 
   cover = clamp(cover, 0.0, 1.0);
   if (cover < 0.02) {

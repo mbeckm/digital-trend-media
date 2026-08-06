@@ -100,11 +100,10 @@
 .cause-card {
   position: relative;
   border-radius: 14px;
-  background: rgb(255 255 255 / 92%);
+  background: rgb(255 255 255 / 96%);
   box-shadow:
     var(--smooth-shadow-lg),
     0 0 0 var(--smooth-ring-width, 1px) rgb(255 255 255 / 55%);
-  backdrop-filter: blur(10px);
   width: min(88%, 420px);
   padding: 18px 18px 16px;
 }
@@ -427,7 +426,7 @@
     linear-gradient(#d7e3f6 0 8px, transparent 8px) 0 44px / 55% 8px no-repeat,
     linear-gradient(#9dbdea 0 22px, transparent 22px) 0 64px / 28% 22px
       no-repeat;
-  filter: blur(5px);
+  filter: blur(4px);
   opacity: 0.9;
   animation: cause-b-focus 7.4s var(--cause-ease-in-out) 500ms infinite both;
 }
@@ -448,18 +447,18 @@
 @keyframes cause-b-focus {
   0%,
   18% {
-    filter: blur(5.5px);
-    opacity: 0.85;
+    opacity: 0.72;
+    transform: scale(1.01);
   }
   34%,
   48% {
-    filter: blur(2.2px);
     opacity: 1;
+    transform: scale(1);
   }
   62%,
   100% {
-    filter: blur(5.5px);
-    opacity: 0.85;
+    opacity: 0.72;
+    transform: scale(1.01);
   }
 }
 

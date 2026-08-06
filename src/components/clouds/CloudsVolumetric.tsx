@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useRef, type CSSProperties } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
+
+import { requestCloudSlot } from "./cloudSlots";
 import { FRAG, VERT } from "./cloudsVolumetric.glsl";
 
 type CloudsProps = {
@@ -19,18 +26,21 @@ const VELOCITY_SMOOTH = 8;
 const PRESENCE_IN = 5;
 const PRESENCE_OUT = 3.2;
 const DRIFT_TIME_SCALE = 1;
-// Soft cloud field upscales cleanly; ~0.65 CSS px cuts fragment cost ~2.4× vs 1×.
-const INTERNAL_DPR_CAP_FULL = 0.65;
-const INTERNAL_DPR_CAP_SUBTLE = 0.4;
-/** Full rate while the pointer is interacting; ambient drift can run cheaper. */
-const IDLE_FRAME_MS_FULL = 1000 / 30;
-const IDLE_FRAME_MS_SUBTLE = 1000 / 20;
+// Soft field upscales cleanly; lower internal res cuts fragment cost hard.
+const INTERNAL_DPR_CAP_FULL = 0.5;
+const INTERNAL_DPR_CAP_SUBTLE = 0.28;
+/** Ambient drift can run cheap; pointer interaction still bumps to full rate. */
+const IDLE_FRAME_MS_FULL = 1000 / 24;
+const IDLE_FRAME_MS_SUBTLE = 1000 / 12;
 const POINTER_ACTIVE_MS = 220;
 const INTENSITY_FULL = 1;
 const INTENSITY_SUBTLE = 0.12;
 /** Soft bloom when the pointer is over a card text area. */
 const INTENSITY_SUBTLE_HOVER = 0.28;
 const SUBTLE_POINTER_STRENGTH = 0.55;
+/** Keep context a beat after leaving so short scrolls don't thrash mount. */
+const LEAVE_UNMOUNT_MS = 480;
+const NEAR_ROOT_MARGIN = "120px 0px";
 
 const CANVAS_STYLE: CSSProperties = {
   position: "absolute",
@@ -39,8 +49,35 @@ const CANVAS_STYLE: CSSProperties = {
   height: "100%",
   display: "block",
   pointerEvents: "none",
-  // Soft bilinear upscale from the lower internal resolution.
   imageRendering: "auto",
+};
+
+const HOST_STYLE: CSSProperties = {
+  position: "absolute",
+  inset: 0,
+  overflow: "hidden",
+  pointerEvents: "none",
+};
+
+/** Soft CSS stand-in while WebGL is deferred / slot-starved. */
+const FALLBACK_SUBTLE: CSSProperties = {
+  ...HOST_STYLE,
+  background: `
+    radial-gradient(120% 90% at 12% 18%, rgb(255 255 255 / 0.55) 0%, transparent 55%),
+    radial-gradient(90% 80% at 88% 22%, rgb(210 230 250 / 0.45) 0%, transparent 50%),
+    radial-gradient(100% 70% at 50% 100%, rgb(170 205 240 / 0.35) 0%, transparent 55%)
+  `,
+  opacity: 0.55,
+};
+
+const FALLBACK_FULL: CSSProperties = {
+  ...HOST_STYLE,
+  background: `
+    radial-gradient(90% 70% at 20% 30%, rgb(255 255 255 / 0.5) 0%, transparent 55%),
+    radial-gradient(80% 60% at 80% 20%, rgb(190 220 245 / 0.4) 0%, transparent 50%),
+    radial-gradient(100% 50% at 50% 0%, rgb(160 200 235 / 0.28) 0%, transparent 60%)
+  `,
+  opacity: 0.7,
 };
 
 function compileShader(
@@ -159,16 +196,24 @@ function disposeResources(gl: WebGLRenderingContext, res: GlResources | null) {
   gl.deleteProgram(res.program);
 }
 
-export function CloudsVolumetric({
+type CanvasProps = {
+  className?: string;
+  subtle: boolean;
+  seed: number;
+  intensity: number;
+  dprCap: number;
+  idleFrameMs: number;
+};
+
+function CloudsCanvas({
   className,
-  variant = "full",
-  seed = 0,
-}: CloudsProps) {
+  subtle,
+  seed,
+  intensity,
+  dprCap,
+  idleFrameMs,
+}: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const subtle = variant === "subtle";
-  const intensity = subtle ? INTENSITY_SUBTLE : INTENSITY_FULL;
-  const dprCap = subtle ? INTERNAL_DPR_CAP_SUBTLE : INTERNAL_DPR_CAP_FULL;
-  const idleFrameMs = subtle ? IDLE_FRAME_MS_SUBTLE : IDLE_FRAME_MS_FULL;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -178,7 +223,10 @@ export function CloudsVolumetric({
       alpha: true,
       antialias: false,
       premultipliedAlpha: true,
-      powerPreference: subtle ? "low-power" : "high-performance",
+      // Prefer shared GPU with screen capture / other tabs over max fill-rate.
+      powerPreference: "default",
+      // Fail fast if the browser is already at its context limit.
+      failIfMajorPerformanceCaveat: false,
     });
     if (!gl) return;
 
@@ -359,7 +407,6 @@ export function CloudsVolumetric({
       raf = 0;
       if (!shouldAnimate()) return;
 
-      // Idle drift does not need 60fps — throttle when the pointer is quiet.
       if (!isPointerActive(now) && now - lastDrawTs < idleFrameMs) {
         raf = requestAnimationFrame(frame);
         return;
@@ -451,7 +498,9 @@ export function CloudsVolumetric({
       pointerInside = false;
     };
 
-    const host = subtle ? canvas.parentElement : null;
+    // Outer CloudsVolumetric host is pointer-events: none; listen on its parent
+    // (the card surface) so hover still blooms the wash.
+    const interactionHost = subtle ? canvas.parentElement?.parentElement : null;
 
     const onHostPointerEnter = (e: PointerEvent) => {
       const uv = clientToUv(e.clientX, e.clientY);
@@ -474,14 +523,14 @@ export function CloudsVolumetric({
       pointerInside = false;
     };
 
-    if (subtle && host) {
-      host.addEventListener("pointerenter", onHostPointerEnter, {
+    if (subtle && interactionHost) {
+      interactionHost.addEventListener("pointerenter", onHostPointerEnter, {
         passive: true,
       });
-      host.addEventListener("pointermove", onHostPointerMove, {
+      interactionHost.addEventListener("pointermove", onHostPointerMove, {
         passive: true,
       });
-      host.addEventListener("pointerleave", onHostPointerLeave, {
+      interactionHost.addEventListener("pointerleave", onHostPointerLeave, {
         passive: true,
       });
     } else if (!subtle) {
@@ -525,10 +574,10 @@ export function CloudsVolumetric({
       } else {
         motionMq.removeListener(onMotionChange);
       }
-      if (subtle && host) {
-        host.removeEventListener("pointerenter", onHostPointerEnter);
-        host.removeEventListener("pointermove", onHostPointerMove);
-        host.removeEventListener("pointerleave", onHostPointerLeave);
+      if (subtle && interactionHost) {
+        interactionHost.removeEventListener("pointerenter", onHostPointerEnter);
+        interactionHost.removeEventListener("pointermove", onHostPointerMove);
+        interactionHost.removeEventListener("pointerleave", onHostPointerLeave);
       } else if (!subtle) {
         window.removeEventListener("pointermove", onPointerMove);
         document.removeEventListener("pointerout", onPointerOut);
@@ -541,9 +590,6 @@ export function CloudsVolumetric({
       canvas.removeEventListener("webglcontextrestored", onContextRestored);
       disposeResources(gl, resources);
       resources = null;
-      // Deliberately not calling WEBGL_lose_context here: getContext() hands back
-      // the same context object for a given canvas, so forcing the loss would
-      // leave a permanently dead context behind on any remount (Strict Mode).
     };
   }, [subtle, intensity, dprCap, idleFrameMs, seed]);
 
@@ -554,5 +600,89 @@ export function CloudsVolumetric({
       style={CANVAS_STYLE}
       aria-hidden
     />
+  );
+}
+
+export function CloudsVolumetric({
+  className,
+  variant = "full",
+  seed = 0,
+}: CloudsProps) {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [near, setNear] = useState(false);
+  const [live, setLive] = useState(false);
+  const subtle = variant === "subtle";
+  const intensity = subtle ? INTENSITY_SUBTLE : INTENSITY_FULL;
+  const dprCap = subtle ? INTERNAL_DPR_CAP_SUBTLE : INTERNAL_DPR_CAP_FULL;
+  const idleFrameMs = subtle ? IDLE_FRAME_MS_SUBTLE : IDLE_FRAME_MS_FULL;
+
+  // Only consider a slot when the field is near the viewport.
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+
+    let leaveTimer = 0;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        const visible = Boolean(entry?.isIntersecting);
+        if (visible) {
+          if (leaveTimer) {
+            window.clearTimeout(leaveTimer);
+            leaveTimer = 0;
+          }
+          setNear(true);
+        } else {
+          leaveTimer = window.setTimeout(() => {
+            setNear(false);
+            leaveTimer = 0;
+          }, LEAVE_UNMOUNT_MS);
+        }
+      },
+      { rootMargin: NEAR_ROOT_MARGIN, threshold: 0 },
+    );
+    io.observe(host);
+
+    return () => {
+      io.disconnect();
+      if (leaveTimer) window.clearTimeout(leaveTimer);
+    };
+  }, []);
+
+  // Cap concurrent WebGL contexts across the page.
+  useEffect(() => {
+    if (!near) {
+      setLive(false);
+      return;
+    }
+
+    return requestCloudSlot(
+      subtle ? "subtle" : "full",
+      () => setLive(true),
+      () => setLive(false),
+    );
+  }, [near, subtle]);
+
+  const showFallback = !live;
+
+  return (
+    <div
+      ref={hostRef}
+      className={className}
+      style={
+        showFallback ? (subtle ? FALLBACK_SUBTLE : FALLBACK_FULL) : HOST_STYLE
+      }
+      aria-hidden
+    >
+      {live ? (
+        <CloudsCanvas
+          subtle={subtle}
+          seed={seed}
+          intensity={intensity}
+          dprCap={dprCap}
+          idleFrameMs={idleFrameMs}
+        />
+      ) : null}
+    </div>
   );
 }
