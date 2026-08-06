@@ -1,4 +1,5 @@
 import { CauseStage, type CauseVariantId } from "@/components/cause/CauseStage";
+import { SectionDek } from "@/components/SectionDek";
 
 export function Cause({
   variant = "decision-paralysis",
@@ -7,14 +8,14 @@ export function Cause({
 }) {
   return (
     <section className="flex w-full flex-col items-stretch gap-8 py-10 md:gap-10 md:py-14">
-      <div className="flex w-full flex-col items-start gap-3 md:gap-4">
+      <div className="flex w-full flex-col items-start gap-4 md:gap-5">
         <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(2rem,4vw,3rem)] font-bold leading-[1.08] tracking-[-0.025em] text-black">
           Die Ursache
         </h2>
-        <p className="max-w-[62ch] font-[family-name:var(--font-inter-tight)] text-[clamp(1.0625rem,1.5vw,1.375rem)] leading-[1.35] text-black">
-          Eure Zielgruppe versteht den Mehrwert eures Angebots nicht schnell
-          genug.
-        </p>
+        <SectionDek
+          lead="Zu viele Botschaften. Keine klare Aussage."
+          rest="Website, Vertrieb, Ads, Social: überall andere Signale. Am Ende kommuniziert nichts wirklich auf den Punkt, was euer Angebot ist."
+        />
       </div>
       <CauseStage variant={variant} />
     </section>

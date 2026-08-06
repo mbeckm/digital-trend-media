@@ -149,7 +149,7 @@ export function YouTubeFacade({
         sizes={sizes}
       />
       <span className="absolute inset-0 bg-black/40 transition-colors duration-300 group-hover:bg-black/30" />
-      <span className="absolute left-1/2 top-1/2 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-[0_6px_24px_#00142e4d] transition-transform duration-300 group-hover:scale-105 group-active:scale-95">
+      <span className="absolute left-1/2 top-1/2 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white smooth-shadow-lg shadow-[#00142e] transition-transform duration-300 group-hover:scale-105 group-active:scale-95">
         <PlayIcon />
       </span>
     </button>

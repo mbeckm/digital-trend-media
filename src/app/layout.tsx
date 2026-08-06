@@ -13,7 +13,7 @@ const interTight = Inter_Tight({
 });
 
 export const metadata: Metadata = {
-  title: "Digital Trend Media — Komplexes. Einfach erklärt.",
+  title: "Digital Trend Media. Komplexes. Einfach erklärt.",
   description:
     "Digital Trend Media macht Erklärfilme, die eure Zielgruppe von eurem Angebot begeistern. Denn Menschen kaufen nur, was sie auch verstehen.",
 };

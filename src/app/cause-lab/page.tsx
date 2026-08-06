@@ -25,7 +25,7 @@ export default function CauseLabPage() {
         </p>
       </div>
 
-      <div className="sticky top-4 z-50 flex flex-wrap gap-1 rounded-full border border-[#dfe4f6] bg-white/90 p-1 shadow-[0_8px_24px_-16px_rgba(12,26,58,0.35)] backdrop-blur">
+      <div className="sticky top-4 z-50 flex flex-wrap gap-1 rounded-full bg-white/90 p-1 smooth-shadow-ring-md shadow-[#0c1a3a] backdrop-blur">
         {CAUSE_VARIANTS.map((variant) => (
           <button
             key={variant.id}

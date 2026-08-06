@@ -10,7 +10,7 @@ const chips = ["Schneller", "Günstiger", "Alles aus einer Hand"];
 export function Combined() {
   return (
     <CauseVariantShell>
-      <div className="cause-card__eyebrow">Ihr Angebot — unklar</div>
+      <div className="cause-card__eyebrow">Ihr Angebot: unklar</div>
       <div className="cause-e__chips">
         {chips.map((chip) => (
           <span key={chip} className="cause-e__chip cause-anim">
@@ -25,7 +25,7 @@ export function Combined() {
           <span className="cause-e__scramble-a">Mehrwert</span>
           <span className="cause-e__scramble-b">????</span>
         </span>
-        <span>—</span>
+        <span>…</span>
         <span>oder?</span>
       </p>
       <div className="cause-e__action">

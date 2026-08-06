@@ -39,30 +39,25 @@ const items = [
 
 function PlusIcon({ open }: { open: boolean }) {
   return (
-    <svg
-      viewBox="0 0 30 30"
-      width="30"
-      height="30"
-      className={`shrink-0 transition-transform duration-300 ${
-        open ? "rotate-[315deg]" : ""
+    <span
+      className={`relative flex size-9 shrink-0 items-center justify-center rounded-full transition-[background-color,color,transform] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] group-active:scale-[0.96] ${
+        open
+          ? "bg-[var(--color-footer)] text-white"
+          : "bg-[#eaf1fd] text-[var(--color-footer)]"
       }`}
       aria-hidden
     >
-      <path
-        fillRule="evenodd"
-        d="M15 26.808L15 3.192"
-        fill="none"
-        stroke="#979797"
-        strokeWidth="4"
+      <span
+        className={`absolute h-[1.5px] w-3.5 rounded-full bg-current transition-transform duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+          open ? "rotate-45" : ""
+        }`}
       />
-      <path
-        fillRule="evenodd"
-        d="M3.192 15L26.808 15"
-        fill="none"
-        stroke="#979797"
-        strokeWidth="4"
+      <span
+        className={`absolute h-[1.5px] w-3.5 rounded-full bg-current transition-transform duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+          open ? "-rotate-45" : "rotate-90"
+        }`}
       />
-    </svg>
+    </span>
   );
 }
 
@@ -72,41 +67,48 @@ export function Faq() {
   return (
     <section
       id="faq"
-      className="flex w-full flex-col items-center gap-6 rounded-2xl bg-[#f8f8f8] px-6 py-10 md:px-10 md:py-14"
+      className="flex w-full flex-col items-stretch gap-8 py-10 md:gap-10 md:py-14"
     >
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(1.75rem,3vw,2.25rem)] font-semibold leading-[1.2] text-black">
-          Häufige Fragen
-        </h2>
-        <p className="font-[family-name:var(--font-inter-tight)] text-[clamp(1rem,1.2vw,1.125rem)] leading-7 text-black">
-          So läuft eine Zusammenarbeit mit Digital Trend Media ab.
-        </p>
-      </div>
+      <h2 className="font-[family-name:var(--font-inter-tight)] text-[clamp(2rem,4vw,3rem)] font-bold leading-[1.08] tracking-[-0.025em] text-black">
+        Häufige Fragen
+      </h2>
 
-      <div className="flex w-full flex-col gap-6 rounded-xl border border-[#bebebe] bg-white p-6">
+      <div className="flex w-full flex-col">
         {items.map((item, i) => {
           const open = openIndex === i;
+          const panelId = `faq-panel-${i}`;
+          const buttonId = `faq-button-${i}`;
+
           return (
             <div
               key={item.q}
-              className="border-b border-[#e2e2e2] pb-2 pt-1 last:border-b-0"
+              className="border-b border-[var(--color-border)] first:border-t"
             >
               <button
+                id={buttonId}
                 type="button"
-                className="flex w-full items-center justify-between gap-4 text-left"
+                className="group flex w-full items-center justify-between gap-4 py-5 text-left md:py-6"
                 aria-expanded={open}
+                aria-controls={panelId}
                 onClick={() => setOpenIndex(open ? -1 : i)}
               >
-                <span className="text-base font-medium text-black">{item.q}</span>
+                <span className="font-[family-name:var(--font-inter-tight)] text-[clamp(1.0625rem,1.4vw,1.25rem)] font-semibold leading-snug tracking-[-0.015em] text-black">
+                  {item.q}
+                </span>
                 <PlusIcon open={open} />
               </button>
               <div
-                className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
-                  open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                id={panelId}
+                role="region"
+                aria-labelledby={buttonId}
+                className={`grid transition-[grid-template-rows,opacity] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+                  open
+                    ? "grid-rows-[1fr] opacity-100"
+                    : "grid-rows-[0fr] opacity-0"
                 }`}
               >
                 <div className="overflow-hidden">
-                  <p className="mt-2 max-w-[68ch] text-base font-medium text-[#838383]">
+                  <p className="max-w-[62ch] pb-5 text-[15px] font-medium leading-[1.55] tracking-[-0.01em] text-pretty text-[var(--color-muted)] md:pb-6 md:text-base">
                     {item.a}
                   </p>
                 </div>

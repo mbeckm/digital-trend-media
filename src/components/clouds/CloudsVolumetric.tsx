@@ -3,7 +3,13 @@
 import { useEffect, useRef, type CSSProperties } from "react";
 import { FRAG, VERT } from "./cloudsVolumetric.glsl";
 
-type CloudsProps = { className?: string };
+type CloudsProps = {
+  className?: string;
+  /** "full" for hero/portfolio; "subtle" for soft card washes. */
+  variant?: "full" | "subtle";
+  /** Offsets noise/drift so multiple cards don't look identical. */
+  seed?: number;
+};
 
 const WAKE_LEN = 10;
 const WAKE_DECAY = 1.15;
@@ -14,10 +20,17 @@ const PRESENCE_IN = 5;
 const PRESENCE_OUT = 3.2;
 const DRIFT_TIME_SCALE = 1;
 // Soft cloud field upscales cleanly; ~0.65 CSS px cuts fragment cost ~2.4× vs 1×.
-const INTERNAL_DPR_CAP = 0.65;
+const INTERNAL_DPR_CAP_FULL = 0.65;
+const INTERNAL_DPR_CAP_SUBTLE = 0.4;
 /** Full rate while the pointer is interacting; ambient drift can run cheaper. */
-const IDLE_FRAME_MS = 1000 / 30;
+const IDLE_FRAME_MS_FULL = 1000 / 30;
+const IDLE_FRAME_MS_SUBTLE = 1000 / 20;
 const POINTER_ACTIVE_MS = 220;
+const INTENSITY_FULL = 1;
+const INTENSITY_SUBTLE = 0.22;
+/** Soft bloom when the pointer is over a card text area. */
+const INTENSITY_SUBTLE_HOVER = 0.48;
+const SUBTLE_POINTER_STRENGTH = 0.85;
 
 const CANVAS_STYLE: CSSProperties = {
   position: "absolute",
@@ -87,6 +100,9 @@ type GlResources = {
     uPointerVel: WebGLUniformLocation | null;
     uPointerStrength: WebGLUniformLocation | null;
     uWake: Array<WebGLUniformLocation | null>;
+    uIntensity: WebGLUniformLocation | null;
+    uSeed: WebGLUniformLocation | null;
+    uCardMode: WebGLUniformLocation | null;
   };
 };
 
@@ -130,6 +146,9 @@ function buildResources(gl: WebGLRenderingContext): GlResources | null {
       uPointerVel: gl.getUniformLocation(program, "uPointerVel"),
       uPointerStrength: gl.getUniformLocation(program, "uPointerStrength"),
       uWake,
+      uIntensity: gl.getUniformLocation(program, "uIntensity"),
+      uSeed: gl.getUniformLocation(program, "uSeed"),
+      uCardMode: gl.getUniformLocation(program, "uCardMode"),
     },
   };
 }
@@ -140,8 +159,16 @@ function disposeResources(gl: WebGLRenderingContext, res: GlResources | null) {
   gl.deleteProgram(res.program);
 }
 
-export function CloudsVolumetric({ className }: CloudsProps) {
+export function CloudsVolumetric({
+  className,
+  variant = "full",
+  seed = 0,
+}: CloudsProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const subtle = variant === "subtle";
+  const intensity = subtle ? INTENSITY_SUBTLE : INTENSITY_FULL;
+  const dprCap = subtle ? INTERNAL_DPR_CAP_SUBTLE : INTERNAL_DPR_CAP_FULL;
+  const idleFrameMs = subtle ? IDLE_FRAME_MS_SUBTLE : IDLE_FRAME_MS_FULL;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -151,7 +178,7 @@ export function CloudsVolumetric({ className }: CloudsProps) {
       alpha: true,
       antialias: false,
       premultipliedAlpha: true,
-      powerPreference: "high-performance",
+      powerPreference: subtle ? "low-power" : "high-performance",
     });
     if (!gl) return;
 
@@ -193,14 +220,16 @@ export function CloudsVolumetric({ className }: CloudsProps) {
     };
 
     const isPointerActive = (now: number) =>
-      now - lastPointerActivity < POINTER_ACTIVE_MS || hasActiveWake();
+      now - lastPointerActivity < POINTER_ACTIVE_MS ||
+      hasActiveWake() ||
+      (subtle && (pointerInside || presence > 0.02));
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
       const w = rect.width;
       const h = rect.height;
       if (w < 1 || h < 1) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, INTERNAL_DPR_CAP);
+      const dpr = Math.min(window.devicePixelRatio || 1, dprCap);
       const bw = Math.max(1, Math.floor(w * dpr));
       const bh = Math.max(1, Math.floor(h * dpr));
       if (canvas.width !== bw || canvas.height !== bh) {
@@ -289,8 +318,17 @@ export function CloudsVolumetric({ className }: CloudsProps) {
         gl.uniform2f(locs.uPointerVel, velocitySmooth.x, velocitySmooth.y);
       }
       if (locs.uPointerStrength) {
-        gl.uniform1f(locs.uPointerStrength, presence);
+        gl.uniform1f(
+          locs.uPointerStrength,
+          subtle ? presence * SUBTLE_POINTER_STRENGTH : presence,
+        );
       }
+      const liveIntensity = subtle
+        ? intensity + (INTENSITY_SUBTLE_HOVER - intensity) * presence
+        : intensity;
+      if (locs.uIntensity) gl.uniform1f(locs.uIntensity, liveIntensity);
+      if (locs.uSeed) gl.uniform1f(locs.uSeed, seed);
+      if (locs.uCardMode) gl.uniform1f(locs.uCardMode, subtle ? 1 : 0);
       for (let i = 0; i < WAKE_LEN; i++) {
         const loc = locs.uWake[i];
         if (loc) {
@@ -322,7 +360,7 @@ export function CloudsVolumetric({ className }: CloudsProps) {
       if (!shouldAnimate()) return;
 
       // Idle drift does not need 60fps — throttle when the pointer is quiet.
-      if (!isPointerActive(now) && now - lastDrawTs < IDLE_FRAME_MS) {
+      if (!isPointerActive(now) && now - lastDrawTs < idleFrameMs) {
         raf = requestAnimationFrame(frame);
         return;
       }
@@ -413,13 +451,48 @@ export function CloudsVolumetric({ className }: CloudsProps) {
       pointerInside = false;
     };
 
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    document.addEventListener("pointerout", onPointerOut, { passive: true });
-    document.documentElement.addEventListener(
-      "mouseleave",
-      onDocumentLeave,
-      { passive: true },
-    );
+    const host = subtle ? canvas.parentElement : null;
+
+    const onHostPointerEnter = (e: PointerEvent) => {
+      const uv = clientToUv(e.clientX, e.clientY);
+      pointerTarget.x = uv.x;
+      pointerTarget.y = uv.y;
+      pointerInside = true;
+      lastPointerActivity = performance.now();
+      ensureLoop();
+    };
+
+    const onHostPointerMove = (e: PointerEvent) => {
+      const uv = clientToUv(e.clientX, e.clientY);
+      pointerTarget.x = uv.x;
+      pointerTarget.y = uv.y;
+      pointerInside = true;
+      lastPointerActivity = performance.now();
+    };
+
+    const onHostPointerLeave = () => {
+      pointerInside = false;
+    };
+
+    if (subtle && host) {
+      host.addEventListener("pointerenter", onHostPointerEnter, {
+        passive: true,
+      });
+      host.addEventListener("pointermove", onHostPointerMove, {
+        passive: true,
+      });
+      host.addEventListener("pointerleave", onHostPointerLeave, {
+        passive: true,
+      });
+    } else if (!subtle) {
+      window.addEventListener("pointermove", onPointerMove, { passive: true });
+      document.addEventListener("pointerout", onPointerOut, { passive: true });
+      document.documentElement.addEventListener(
+        "mouseleave",
+        onDocumentLeave,
+        { passive: true },
+      );
+    }
 
     const onContextLost = (e: Event) => {
       e.preventDefault();
@@ -452,12 +525,18 @@ export function CloudsVolumetric({ className }: CloudsProps) {
       } else {
         motionMq.removeListener(onMotionChange);
       }
-      window.removeEventListener("pointermove", onPointerMove);
-      document.removeEventListener("pointerout", onPointerOut);
-      document.documentElement.removeEventListener(
-        "mouseleave",
-        onDocumentLeave,
-      );
+      if (subtle && host) {
+        host.removeEventListener("pointerenter", onHostPointerEnter);
+        host.removeEventListener("pointermove", onHostPointerMove);
+        host.removeEventListener("pointerleave", onHostPointerLeave);
+      } else if (!subtle) {
+        window.removeEventListener("pointermove", onPointerMove);
+        document.removeEventListener("pointerout", onPointerOut);
+        document.documentElement.removeEventListener(
+          "mouseleave",
+          onDocumentLeave,
+        );
+      }
       canvas.removeEventListener("webglcontextlost", onContextLost);
       canvas.removeEventListener("webglcontextrestored", onContextRestored);
       disposeResources(gl, resources);
@@ -466,7 +545,7 @@ export function CloudsVolumetric({ className }: CloudsProps) {
       // the same context object for a given canvas, so forcing the loss would
       // leave a permanently dead context behind on any remount (Strict Mode).
     };
-  }, []);
+  }, [subtle, intensity, dprCap, idleFrameMs, seed]);
 
   return (
     <canvas

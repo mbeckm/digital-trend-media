@@ -89,9 +89,7 @@
   border: 1px solid #d5dbe8;
   border-radius: 5px;
   background: #fff;
-  box-shadow:
-    0 1px 2px rgb(12 26 58 / 6%),
-    0 10px 24px -14px rgb(12 26 58 / 22%);
+  box-shadow: var(--smooth-shadow-sm);
   animation: scene-window-in 700ms var(--reason-ease-out) both;
 }
 
@@ -314,7 +312,7 @@
   border: 1px solid #ecd5d5;
   border-radius: 4px;
   background: #fdf4f4;
-  box-shadow: 0 1px 3px rgb(12 26 58 / 10%);
+  box-shadow: var(--smooth-shadow-xs);
   color: #b45353;
   font-family: var(--font-inter-tight), system-ui, sans-serif;
   font-size: 9px;
@@ -368,7 +366,7 @@
   border: 1px solid var(--scene-inert);
   border-radius: 6px;
   background: #fff;
-  box-shadow: 0 1px 2px rgb(12 26 58 / 4%);
+  box-shadow: var(--smooth-shadow-xs);
   width: var(--w);
   height: var(--scene-row-h);
   padding: 0 7px;
@@ -567,9 +565,7 @@
   border: 1px solid #e2e7f3;
   border-radius: 9px;
   background: #fff;
-  box-shadow:
-    0 1px 2px rgb(12 26 58 / 5%),
-    0 12px 26px -16px rgb(12 26 58 / 24%);
+  box-shadow: var(--smooth-shadow-sm);
   width: 76%;
   max-width: 254px;
   padding: 9px;
