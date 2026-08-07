@@ -194,7 +194,7 @@ export function FilterDockPill({
           }}
           className="pointer-events-auto fixed bottom-5 left-1/2 z-40 w-[min(100%-1.25rem,40rem)] -translate-x-1/2 sm:bottom-7"
         >
-          <div className="rounded-[1.75rem] bg-white/80 px-1.5 pb-1 pt-2.5 smooth-shadow-ring-xl shadow-[#0c1a3a] backdrop-blur-xl sm:rounded-[2rem] sm:px-2 sm:pb-1.5 sm:pt-3">
+          <div className="rounded-[1.75rem] bg-white/80 p-2.5 smooth-shadow-ring-xl shadow-[#0c1a3a] backdrop-blur-xl sm:rounded-[2rem] sm:p-3">
             <div
               className={`grid items-stretch gap-1 sm:gap-1.5 ${
                 hasActive
@@ -227,7 +227,7 @@ export function FilterDockPill({
             <button
               type="button"
               onClick={onSkipToEnd}
-              className="mx-auto mt-1.5 block w-full rounded-full px-2 py-1.5 text-center font-[family-name:var(--font-inter)] text-[12px] font-medium tracking-[-0.01em] text-black/40 transition-colors hover:bg-black/[0.03] hover:text-black/65 active:scale-[0.99] sm:mt-1 sm:py-1"
+              className="mx-auto mt-2 block w-full rounded-full px-2 py-1 text-center font-[family-name:var(--font-inter)] text-[12px] font-medium tracking-[-0.01em] text-black/40 transition-colors hover:bg-black/[0.03] hover:text-black/65 active:scale-[0.99] sm:mt-2.5 sm:py-0.5"
             >
               Zum Ende springen
             </button>
