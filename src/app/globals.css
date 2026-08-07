@@ -63,11 +63,13 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
   min-height: 100%;
+  overflow-x: clip;
   background: var(--color-page);
   color: var(--color-ink);
   font-family: var(--font-inter), system-ui, sans-serif;
@@ -418,10 +420,62 @@ body {
   }
 }
 
-/* Cinema stories: grab-to-drag strip */
+/* Cinema stories: break out of page gutter with shadow room + soft edge fades */
+.stories-cinema-bleed {
+  --stories-gutter: 24px;
+  --stories-shadow-y: 44px;
+  position: relative;
+  width: calc(100% + 2 * var(--stories-gutter));
+  margin-inline: calc(-1 * var(--stories-gutter));
+}
+
+@media (min-width: 768px) {
+  .stories-cinema-bleed {
+    --stories-gutter: 40px;
+    --stories-shadow-y: 48px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .stories-cinema-bleed {
+    --stories-gutter: 48px;
+  }
+}
+
+.stories-cinema-bleed::before,
+.stories-cinema-bleed::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: min(40px, var(--stories-gutter));
+  z-index: 2;
+  pointer-events: none;
+}
+
+.stories-cinema-bleed::before {
+  left: 0;
+  background: linear-gradient(to right, var(--color-page), transparent);
+}
+
+.stories-cinema-bleed::after {
+  right: 0;
+  background: linear-gradient(to left, var(--color-page), transparent);
+}
+
 .stories-cinema-track {
   user-select: none;
   -webkit-user-select: none;
+  padding-inline: var(--stories-gutter);
+  scroll-padding-inline: var(--stories-gutter);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.stories-cinema-slide {
+  /* Keep box-shadow inside the overflow clip — padding on the track alone
+     does not reserve paint space for descendant shadows in Chromium. */
+  padding-block: 12px var(--stories-shadow-y);
 }
 
 .stories-cinema-track.is-dragging {
