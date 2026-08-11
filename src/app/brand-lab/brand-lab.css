@@ -1,0 +1,223 @@
+/* Scoped art direction for /brand-lab — does not affect the main site. */
+.brand-lab {
+  --bl-page: #f6f1e8;
+  --bl-ink: #1c1917;
+  --bl-muted: #6b6560;
+  --bl-surface: #fffbf4;
+  --bl-surface-soft: #efe8dc;
+  --bl-blue: #2563c7;
+  --bl-blue-deep: #1a4a9c;
+  --bl-band: var(--bl-blue);
+  --bl-yellow: #ffd23f;
+  --bl-orange: #ff6b35;
+  --bl-green: #2dbe6c;
+  --bl-red: #ff4d4d;
+  --bl-border: #e0d6c6;
+  --bl-radius-sm: 10px;
+  --bl-radius-md: 16px;
+  --bl-radius-lg: 24px;
+  --bl-radius-xl: 32px;
+  --bl-shadow-pop: 4px 4px 0 var(--bl-ink);
+  --bl-shadow-soft: 0 12px 40px rgb(28 25 23 / 0.08);
+  --bl-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --bl-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --bl-container: 1200px;
+  --bl-gutter: clamp(1.25rem, 4vw, 2.5rem);
+
+  min-height: 100vh;
+  background: var(--bl-page);
+  color: var(--bl-ink);
+  font-family: var(--font-brand-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-synthesis: none;
+}
+
+.brand-lab ::selection {
+  background: var(--bl-yellow);
+  color: var(--bl-ink);
+}
+
+.brand-lab .bl-display {
+  font-family: var(--font-brand-display), system-ui, sans-serif;
+  font-optical-sizing: auto;
+}
+
+.brand-lab .bl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.65rem 1.25rem;
+  border: 2.5px solid var(--bl-ink);
+  border-radius: var(--bl-radius-sm);
+  background: var(--bl-yellow);
+  color: var(--bl-ink);
+  font-family: var(--font-brand-display), system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  box-shadow: var(--bl-shadow-pop);
+  transition:
+    transform 160ms var(--bl-ease-out),
+    box-shadow 160ms var(--bl-ease-out),
+    background-color 160ms var(--bl-ease-out);
+}
+
+.brand-lab .bl-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--bl-ink);
+}
+
+.brand-lab .bl-btn:active {
+  transform: translate(2px, 2px) scale(0.96);
+  box-shadow: 2px 2px 0 var(--bl-ink);
+}
+
+.brand-lab .bl-btn--blue {
+  background: var(--bl-blue);
+  color: #fff;
+}
+
+.brand-lab .bl-btn--ghost {
+  background: var(--bl-surface);
+  box-shadow: none;
+}
+
+.brand-lab .bl-btn--ghost:hover {
+  box-shadow: 3px 3px 0 var(--bl-ink);
+}
+
+.brand-lab .bl-btn--warm {
+  background: linear-gradient(
+    135deg,
+    var(--bl-yellow) 0%,
+    var(--bl-orange) 100%
+  );
+  color: var(--bl-ink);
+}
+
+/* —— Clouds + Cast variant (client palette) —— */
+.brand-lab.brand-lab--clouds {
+  --bl-page: #fffaf7;
+  --bl-ink: #2a2430;
+  --bl-muted: #6f6578;
+  --bl-surface: #ffffff;
+  --bl-surface-soft: #f3ebf4;
+  --bl-blue: #5bb4e8;
+  --bl-blue-deep: #3b7fc4;
+  --bl-band: #5a6db5;
+  --bl-yellow: #f5c84b;
+  --bl-orange: #e07a4a;
+  --bl-green: #6bbf8a;
+  --bl-red: #e58ca3;
+  --bl-lavender: #a389bd;
+  --bl-pink: #e891a8;
+  --bl-border: #e4d5e0;
+  --bl-cloud: linear-gradient(
+    105deg,
+    #e891a8 0%,
+    #d4a0c4 22%,
+    #a389bd 48%,
+    #6fa0d8 76%,
+    #5bb4e8 100%
+  );
+}
+
+.brand-lab.brand-lab--clouds ::selection {
+  background: var(--bl-lavender);
+  color: #fff;
+}
+
+.brand-lab .bl-clouds {
+  background: var(--bl-cloud, transparent);
+}
+
+.brand-lab.brand-lab--clouds .bl-btn--blue {
+  background: var(--bl-blue-deep);
+}
+
+/* Stronger cloud presence in the hero — closer to Canva wash */
+.brand-lab.brand-lab--clouds #top > .bl-clouds {
+  opacity: 1;
+}
+
+.brand-lab.brand-lab--clouds #top {
+  background: transparent;
+}
+
+.brand-lab .bl-media {
+  position: relative;
+  overflow: hidden;
+  border: 2.5px solid var(--bl-ink);
+  border-radius: var(--bl-radius-lg);
+  background: #111;
+  outline: 1px solid rgb(0 0 0 / 0.08);
+  outline-offset: -1px;
+}
+
+.brand-lab .bl-sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border: 2px solid var(--bl-ink);
+  border-radius: 999px;
+  font-family: var(--font-brand-display), system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 2px 2px 0 var(--bl-ink);
+}
+
+@keyframes bl-wiggle {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes bl-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes bl-draw-in {
+  from {
+    opacity: 0;
+    stroke-dashoffset: 120;
+  }
+  to {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .brand-lab .bl-wiggle {
+    animation: bl-wiggle 2.8s ease-in-out infinite;
+  }
+
+  .brand-lab .bl-bob {
+    animation: bl-bob 3.2s ease-in-out infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-lab .bl-btn:hover,
+  .brand-lab .bl-btn:active {
+    transform: none;
+    box-shadow: var(--bl-shadow-pop);
+  }
+}

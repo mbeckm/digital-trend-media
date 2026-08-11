@@ -1,0 +1,1016 @@
+/* Main site comic landing — styles scoped under .comic */
+
+.comic {
+  --comic-ink: #1a001a;
+  --comic-white: #fffaff;
+  --comic-page: #f7f3fb;
+  --comic-purple: #604bb8;
+  --comic-yellow: #ffb800;
+  --comic-pink: #ff52e3;
+  --comic-blue: #0099ff;
+  --comic-muted: #4a3a4a;
+  --comic-container: 1416px;
+  --comic-gutter: clamp(1.25rem, 4vw, 3rem);
+  --comic-radius: 12px;
+  --comic-border-thick: 5px 10px 10px 5px;
+  --comic-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Space above every section CTA — matches gap-12 / md:gap-16 stacks */
+  --comic-cta-space: 3rem;
+
+  /* Shared with ScrollFlipCard */
+  --card-white: var(--comic-white);
+  --card-ink: var(--comic-ink);
+  --card-page: var(--comic-page);
+  --card-w: 440px;
+  --card-h: 600px;
+
+  min-height: 100vh;
+  background: var(--comic-page);
+  color: var(--comic-ink);
+  font-family: var(--font-card-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-synthesis: none;
+}
+
+.comic ::selection {
+  background: var(--comic-yellow);
+  color: var(--comic-ink);
+}
+
+.comic-display {
+  font-family: var(--font-card-display), Impact, sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.comic-shell {
+  width: 100%;
+  max-width: var(--comic-container);
+  margin-inline: auto;
+  padding-inline: var(--comic-gutter);
+}
+
+/* Arcade comic push — ink well under a yellow face that slams flush on press */
+.comic-cta {
+  --comic-cta-depth-x: 9px;
+  --comic-cta-depth-y: 12px;
+  --comic-cta-hover-x: -2px;
+  --comic-cta-hover-y: -3px;
+
+  display: inline-flex;
+  margin-top: var(--comic-cta-space);
+  /* Bottom-right ink shelf = travel distance on press */
+  padding: 0 var(--comic-cta-depth-x) var(--comic-cta-depth-y) 0;
+  border: none;
+  border-radius: calc(var(--comic-radius) + 2px);
+  background: var(--comic-ink);
+  color: var(--comic-ink);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  outline-offset: 4px;
+}
+
+.comic-cta__face {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.15rem 3.5rem;
+  border-style: solid;
+  border-color: var(--comic-ink);
+  border-width: 4px;
+  border-radius: var(--comic-radius);
+  background: var(--comic-yellow);
+  color: var(--comic-ink);
+  font-family: var(--font-card-sans), system-ui, sans-serif;
+  font-size: clamp(1.125rem, 2.4vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  transform: translate(0, 0);
+  /* Snappy smash down; springier pop back on release */
+  transition: transform 170ms var(--comic-ease);
+  will-change: transform;
+}
+
+.comic-cta:hover .comic-cta__face {
+  transform: translate(var(--comic-cta-hover-x), var(--comic-cta-hover-y));
+}
+
+.comic-cta:active .comic-cta__face {
+  /* Flush into the ink well — full depth travel */
+  transform: translate(var(--comic-cta-depth-x), var(--comic-cta-depth-y));
+  transition-duration: 55ms;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.comic-panel {
+  border-style: solid;
+  border-color: var(--comic-ink);
+  border-width: var(--comic-border-thick);
+  border-radius: var(--comic-radius);
+  background: var(--comic-white);
+}
+
+.comic-section-title {
+  font-family: var(--font-card-display), Impact, sans-serif;
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  text-wrap: balance;
+  text-align: center;
+}
+
+.comic-section-lead {
+  max-width: 42ch;
+  margin-inline: auto;
+  font-size: clamp(1.125rem, 2.4vw, 2.5rem);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 1.2;
+  text-wrap: pretty;
+  text-align: center;
+}
+
+.comic-hero {
+  position: relative;
+  overflow: clip;
+  padding: 5.5rem var(--comic-gutter) 4rem;
+  background-image: radial-gradient(
+    ellipse 97% 118% at 63% 130%,
+    oklab(74.7% 0.091 0.151) 0%,
+    oklab(71.1% 0.133 0.132) 17%,
+    oklab(67.4% 0.197 0.072) 35%,
+    oklab(70.9% 0.198 -0.104) 62%,
+    oklab(48.9% 0.045 -0.149) 100%
+  );
+}
+
+.comic-hero__clouds {
+  position: absolute;
+  inset: auto -15% -20% -20%;
+  width: 130%;
+  height: min(90vw, 900px);
+  background: url("/images/comic/clouds-overlay.png") center / cover no-repeat;
+  mix-blend-mode: screen;
+  filter: brightness(0.91);
+  pointer-events: none;
+}
+
+.comic-hero__title {
+  /* Opaque mix — alpha gradients punch through to the purple behind clipped text */
+  background-image: linear-gradient(
+    in oklab 180deg,
+    #fff 39%,
+    color-mix(in oklab, oklab(50% 0.123 -0.193) 20%, #fff) 91.5%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: var(--font-card-display), Impact, sans-serif;
+  font-size: clamp(3.5rem, 11vw, 8rem);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.comic-hero__subtitle {
+  margin-top: 0;
+  background-image: linear-gradient(
+    in oklab 180deg,
+    #fff 39%,
+    color-mix(in oklab, oklab(50% 0.123 -0.193) 20%, #fff) 91.5%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: var(--font-card-display), Impact, sans-serif;
+  font-size: clamp(1.5rem, 4.5vw, 4rem);
+  letter-spacing: -0.02em;
+  line-height: 1.22;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.comic-hero__tag {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  padding: 0.75rem 1.5rem;
+  border-style: solid;
+  border-color: var(--comic-ink);
+  border-width: 4px 9px 12px 4px;
+  border-radius: var(--comic-radius);
+  background: var(--comic-white);
+  color: var(--comic-ink);
+  font-size: clamp(0.95rem, 1.6vw, 1.5rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.25;
+  text-align: center;
+  rotate: -0.9deg;
+}
+
+/* Cast + player — cast anchored to the player top */
+.comic-hero__stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1112px;
+  margin-inline: auto;
+  /* Space under the tag so the cast reads as its own beat */
+  margin-top: clamp(8.5rem, 14vw, 12rem);
+}
+
+.comic-hero__player-wrap {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+}
+
+.comic-hero__cast {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: min(84%, 920px);
+  height: clamp(13rem, 23vw, 17rem);
+  overflow: hidden;
+  /* Shift down so the cast sits ON the player (no gap), hips tucked under */
+  translate: -50% 38%;
+  pointer-events: none;
+  user-select: none;
+}
+
+.comic-hero__figurines {
+  display: block;
+  width: 94%;
+  height: auto;
+  max-width: none;
+  flex-shrink: 0;
+  transform: translateX(-3%);
+}
+
+.comic-hero__player {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 2px solid #000;
+  border-radius: var(--comic-radius);
+  background: var(--comic-ink);
+  box-shadow: 4px 13px 28px rgb(0 0 0 / 0.24);
+}
+
+@media (max-width: 700px) {
+  .comic-hero__stage {
+    margin-top: 7rem;
+  }
+
+  .comic-hero__cast {
+    width: min(88%, 24rem);
+    height: 11rem;
+    translate: -50% 30%;
+  }
+
+  .comic-hero__figurines {
+    width: 96%;
+    transform: translateX(-1.25%);
+  }
+}
+
+.comic-logo-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  align-items: center;
+  padding: 1.75rem var(--comic-gutter);
+  background: var(--comic-white);
+  border-block: 3px solid var(--comic-ink);
+}
+
+.comic-logo-strip img {
+  width: auto;
+  height: 2.75rem;
+  max-width: 100%;
+  margin-inline: auto;
+  object-fit: contain;
+  filter: grayscale(1);
+  opacity: 0.72;
+}
+
+.comic-help {
+  background: var(--comic-purple);
+  color: var(--comic-white);
+  padding-block: clamp(4rem, 8vw, 7.5rem);
+  display: flex;
+  flex-direction: column;
+  /* Paper section rhythm: 80px between intro / cards / benefits */
+  gap: 5rem;
+}
+
+.comic-help__after {
+  gap: clamp(2.5rem, 4.5vw, 4rem);
+  padding-top: clamp(1.75rem, 3.5vw, 3rem);
+}
+
+.comic-help__payoff {
+  width: 100%;
+  text-align: center;
+  font-size: clamp(1.75rem, 4vw, 4rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--comic-white);
+  text-wrap: balance;
+  margin: 0 0 clamp(0.5rem, 1.5vw, 1.25rem);
+}
+
+.comic-help__benefits {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: clamp(0.5rem, 1.5vw, 1.25rem);
+}
+
+@media (min-width: 768px) {
+  .comic-help__benefits {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.75rem;
+  }
+}
+
+.comic-help .card-flip-scene {
+  /* Tall scrub track: scroll drives flips while cards stay pinned */
+  height: 360vh;
+}
+
+.comic-help .card-flip-scene__sticky {
+  position: sticky;
+  /* Pin when the card row sits in the vertical middle of the viewport */
+  top: max(5.5rem, calc(50vh - min(300px, 39vh)));
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  padding: 0;
+  perspective: 1400px;
+  perspective-origin: 50% 45%;
+}
+
+.comic-help .comic-help__intro .comic-section-lead {
+  max-width: 52rem;
+  letter-spacing: -0.07em;
+}
+
+.comic-help .flip-card-row {
+  width: min(1416px, 100%);
+  margin-inline: auto;
+  padding-inline: var(--comic-gutter);
+  gap: 1.5rem;
+}
+
+.comic-help .flip-card-slot {
+  flex: 1 1 440px;
+  max-width: 440px;
+}
+
+/* Large flip cards — Paper: fixed 600px tall, ~440px wide, 40px / 24px type */
+.comic-help .flip-card {
+  aspect-ratio: auto;
+  width: 100%;
+  height: min(600px, 78vh);
+  max-height: min(600px, 78vh);
+}
+
+.comic-help .flip-card__face {
+  gap: 2rem;
+  padding: clamp(1.5rem, 3vw, 3rem);
+  border-width: 6px 12px 12px 6px;
+}
+
+.comic-help .flip-card__media {
+  flex: 0 0 auto;
+  height: clamp(160px, 28vh, 250px);
+  border-width: 3px;
+  border-radius: 12px;
+}
+
+.comic-help .flip-card__copy {
+  gap: 1rem;
+}
+
+.comic-help .flip-card__title {
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-align: left;
+}
+
+.comic-help .flip-card__body {
+  font-size: clamp(1.05rem, 1.8vw, 1.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+}
+
+.comic-benefit-shell {
+  transform-origin: center center;
+  animation: comic-benefit-wiggle 3.6s ease-in-out infinite;
+  animation-delay: var(--wiggle-delay, 0s);
+}
+
+.comic-benefit-shell.is-active,
+.comic-benefit-shell.is-reduced {
+  animation-play-state: paused;
+}
+
+.comic-benefit-shell.is-reduced {
+  animation: none;
+}
+
+.comic-benefit {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1.25rem 2rem;
+  border-style: solid;
+  border-color: var(--comic-ink);
+  border-width: 4px 8px 12px 4px;
+  border-radius: 8px;
+  background: var(--comic-pink);
+  color: var(--comic-white);
+  transform-origin: center center;
+  will-change: transform;
+  touch-action: manipulation;
+  overflow: visible;
+}
+
+/* Expand the hover field so approach + pierce have room to play.
+   Keep horizontal inset small so neighboring chips don’t steal hover. */
+.comic-benefit::before {
+  content: "";
+  position: absolute;
+  inset: -56px -12px;
+  z-index: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .comic-benefit.is-active,
+  .comic-benefit-shell.is-active {
+    z-index: 2;
+  }
+
+  /* No system pointer while engaged — you morph into the chip */
+  .comic-benefit.is-active {
+    cursor: none;
+  }
+}
+
+.comic-benefit__body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.comic-benefit__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  line-height: 0;
+  overflow: visible;
+  color: var(--comic-white);
+}
+
+.comic-benefit__icon svg {
+  display: block;
+  overflow: visible;
+}
+
+.comic-benefit__label {
+  margin: 0;
+  font-size: clamp(1.25rem, 2.2vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 1.2;
+}
+
+.comic-benefit__slime {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.comic-benefit__cursor-track,
+.comic-benefit__bulge-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform, opacity;
+}
+
+.comic-benefit.is-inside {
+  /* Avoid filter here — it creates a containing block and clips icon strokes */
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--comic-white) 18%, transparent);
+}
+
+.comic-benefit.is-crossing {
+  box-shadow: none;
+}
+
+/* Crisp comic sticker — same language as the chips / CTA, not a blurry goo */
+.comic-benefit__cursor {
+  border-radius: 999px;
+  border: 3px solid var(--comic-ink);
+  background:
+    radial-gradient(
+      120% 90% at 30% 28%,
+      color-mix(in oklab, var(--comic-white) 55%, var(--comic-yellow)) 0%,
+      var(--comic-yellow) 42%,
+      color-mix(in oklab, var(--comic-yellow) 78%, #e08900) 100%
+    );
+  box-shadow:
+    1px 2px 0 var(--comic-ink),
+    inset 0 1px 0 rgb(255 255 255 / 0.45);
+  translate: -50% -50%;
+  will-change: width, height;
+}
+
+/* Membrane kiss — clearly a chip sibling, not a second glitch orb */
+.comic-benefit__bulge {
+  border-radius: 999px;
+  border: 3px solid var(--comic-ink);
+  background: var(--comic-pink);
+  box-shadow:
+    1px 2px 0 var(--comic-ink),
+    inset 0 1px 0 rgb(255 255 255 / 0.28);
+  translate: -50% -50%;
+  will-change: width, height;
+}
+
+.comic-benefit.is-crossing .comic-benefit__cursor {
+  background:
+    radial-gradient(
+      120% 90% at 30% 28%,
+      color-mix(in oklab, var(--comic-white) 40%, var(--comic-yellow)) 0%,
+      var(--comic-yellow) 50%,
+      color-mix(in oklab, var(--comic-yellow) 70%, var(--comic-pink)) 100%
+    );
+}
+
+@keyframes comic-benefit-wiggle {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  20% {
+    transform: translate3d(1.5px, -2px, 0) rotate(1.15deg);
+  }
+  40% {
+    transform: translate3d(-1.5px, 1px, 0) rotate(-0.9deg);
+  }
+  60% {
+    transform: translate3d(1px, 1.5px, 0) rotate(0.7deg);
+  }
+  80% {
+    transform: translate3d(-1px, -1px, 0) rotate(-0.55deg);
+  }
+}
+
+.comic-customers {
+  position: relative;
+  overflow: clip;
+  padding-block: clamp(4rem, 8vw, 7.5rem);
+}
+
+.comic-customers__character {
+  position: absolute;
+  left: clamp(-1rem, 2vw, 1rem);
+  bottom: 4rem;
+  width: clamp(120px, 16vw, 220px);
+  height: auto;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.comic-compare {
+  position: relative;
+  overflow: clip;
+  padding-block: clamp(4rem, 8vw, 7.5rem);
+}
+
+.comic-compare__character {
+  position: absolute;
+  right: clamp(-0.5rem, 1vw, 1.5rem);
+  top: clamp(8rem, 18vw, 14rem);
+  width: clamp(110px, 14vw, 200px);
+  height: auto;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.comic-compare-table {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--comic-radius);
+  outline: 3px solid var(--comic-purple);
+  background: var(--comic-white);
+}
+
+.comic-compare-table__head {
+  display: grid;
+  grid-template-columns: 1.05fr 1.2fr 1.2fr;
+  background: var(--comic-purple);
+  color: var(--comic-white);
+  border-bottom: 1px solid var(--comic-ink);
+}
+
+.comic-compare-table__row {
+  display: grid;
+  grid-template-columns: 1.05fr 1.2fr 1.2fr;
+  border-bottom: 1px solid var(--comic-ink);
+}
+
+.comic-compare-table__row:last-child {
+  border-bottom: 0;
+}
+
+.comic-compare-table__cell {
+  padding: 1rem 1.15rem;
+  font-size: clamp(0.95rem, 1.4vw, 1.5rem);
+  line-height: 1.3;
+}
+
+.comic-compare-table__cell--us {
+  background: color-mix(in oklab, var(--comic-purple) 10%, transparent);
+}
+
+.comic-faq-item {
+  border-bottom: 3px solid #000;
+}
+
+.comic-faq-item button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 0.5rem;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: clamp(1.15rem, 2.2vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+
+.comic-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+  padding: clamp(4rem, 8vw, 7.5rem) var(--comic-gutter);
+  background: var(--comic-ink);
+  color: var(--comic-white);
+}
+
+.comic-footer a {
+  color: var(--comic-blue);
+  text-decoration: none;
+  font-weight: 900;
+  font-size: clamp(1rem, 1.6vw, 2rem);
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+
+.comic-footer a:hover {
+  opacity: 0.8;
+}
+
+.comic-footer__contact a {
+  color: var(--comic-pink);
+}
+
+.comic-koto-stage iframe {
+  pointer-events: none;
+}
+
+
+.comic-portfolio-tile {
+  position: relative;
+  overflow: hidden;
+  border: 2.5px solid var(--comic-ink);
+  border-radius: 12px;
+  background: #000;
+  cursor: pointer;
+}
+
+.comic-film-expand {
+  border-style: solid;
+  border-color: var(--comic-ink);
+  border-width: var(--comic-border-thick);
+  border-radius: var(--comic-radius);
+  background: var(--comic-white);
+  color: var(--comic-ink);
+  box-shadow: 4px 8px 0 rgb(26 0 26 / 0.18);
+}
+
+.comic-film-expand__media {
+  background: #000;
+  border-bottom: 3px solid var(--comic-ink);
+}
+
+@media (min-width: 1024px) {
+  .comic-film-expand__media {
+    border-bottom: 0;
+    border-right: 3px solid var(--comic-ink);
+  }
+}
+
+.comic-film-expand__title {
+  font-family: var(--font-card-display), Impact, sans-serif;
+  font-size: clamp(1.65rem, 3.2vw, 2.4rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.comic-film-expand__summary {
+  max-width: 38ch;
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.35;
+  text-wrap: pretty;
+  color: var(--comic-muted);
+}
+
+.comic-film-expand__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.comic-film-expand__item {
+  display: flex;
+  gap: 0.75rem;
+  font-size: clamp(0.95rem, 1.3vw, 1.05rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.comic-film-expand__bullet {
+  margin-top: 0.4em;
+  width: 0.55rem;
+  height: 0.55rem;
+  flex-shrink: 0;
+  border: 2px solid var(--comic-ink);
+  border-radius: 999px;
+  background: var(--comic-yellow);
+}
+
+.comic-film-expand__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-style: solid;
+  border-color: var(--comic-ink);
+  border-width: 2px 4px 4px 2px;
+  border-radius: 999px;
+  background: var(--comic-white);
+  color: var(--comic-ink);
+  transition:
+    transform 160ms var(--comic-ease),
+    background-color 160ms var(--comic-ease);
+}
+
+.comic-film-expand__close:hover {
+  background: var(--comic-yellow);
+}
+
+.comic-film-expand__close:active {
+  transform: scale(0.96);
+}
+
+.comic-film-expand__cta {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: auto;
+  padding: 0.75rem 1.35rem;
+  border-style: solid;
+  border-color: var(--comic-ink);
+  border-width: 3px 7px 8px 3px;
+  border-radius: var(--comic-radius);
+  background: var(--comic-yellow);
+  color: var(--comic-ink);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-decoration: none;
+  box-shadow: 1px 2px 8px rgb(0 0 0 / 0.18);
+  transition:
+    transform 160ms var(--comic-ease),
+    box-shadow 160ms var(--comic-ease);
+}
+
+.comic-film-expand__cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 2px 5px 12px rgb(0 0 0 / 0.22);
+}
+
+.comic-film-expand__cta:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 1px 1px 4px rgb(0 0 0 / 0.16);
+}
+
+.comic-portfolio-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: center;
+}
+
+.comic-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.95rem;
+  border-style: solid;
+  border-color: var(--comic-ink);
+  border-width: 2px 5px 5px 2px;
+  border-radius: 999px;
+  background: var(--comic-white);
+  color: var(--comic-ink);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+}
+
+.comic-chip[data-active="true"] {
+  background: var(--comic-purple);
+  color: var(--comic-white);
+}
+
+.comic-chip select {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+@media (max-width: 900px) {
+  .comic-logo-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .comic-logo-strip > :nth-child(n + 4) {
+    display: none;
+  }
+
+  .comic-compare-table__head,
+  .comic-compare-table__row {
+    grid-template-columns: 1fr;
+  }
+
+  .comic-compare-table__head > :first-child {
+    display: none;
+  }
+
+  .comic-customers__character,
+  .comic-compare__character {
+    display: none;
+  }
+
+  .comic-help .card-flip-scene {
+    height: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .comic {
+    --comic-cta-space: 4rem;
+  }
+}
+
+/* Testimonials marquee — full-bleed, scrollable, auto-drifts via JS */
+.comic-testimonial-bleed::before,
+.comic-testimonial-bleed::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: min(2.5rem, var(--comic-gutter));
+  z-index: 2;
+  pointer-events: none;
+}
+
+.comic-testimonial-bleed::before {
+  left: 0;
+  background: linear-gradient(to right, var(--comic-white), transparent);
+}
+
+.comic-testimonial-bleed::after {
+  right: 0;
+  background: linear-gradient(to left, var(--comic-white), transparent);
+}
+
+.comic-testimonial-track {
+  display: flex;
+  gap: 1.25rem;
+  padding-inline: var(--comic-gutter);
+  scroll-padding-inline: var(--comic-gutter);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  /* No scroll-snap — it fights the infinite auto-drift */
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  user-select: none;
+  -webkit-user-select: none;
+  padding-block: 0.25rem 0.75rem;
+}
+
+.comic-testimonial-track::-webkit-scrollbar {
+  display: none;
+}
+
+.comic-testimonial-track.is-dragging {
+  scroll-behavior: auto;
+}
+
+.comic-testimonial-track.is-dragging * {
+  pointer-events: none;
+}
+
+.comic-testimonial-slide {
+  width: min(78vw, 22.5rem);
+}
+
+@media (min-width: 640px) {
+  .comic-testimonial-slide {
+    width: min(62vw, 26rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comic-cta,
+  .comic-cta__face,
+  .comic-chip {
+    transition: none;
+  }
+
+  .comic-benefit-shell {
+    animation: none;
+  }
+
+  .comic-testimonial-track {
+    scroll-snap-type: x mandatory;
+  }
+
+  .comic-testimonial-slide {
+    scroll-snap-align: center;
+  }
+}
