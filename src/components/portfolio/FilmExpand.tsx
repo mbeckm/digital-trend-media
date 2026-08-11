@@ -35,14 +35,17 @@ export function WallPoster({
 export function FilmExpand({
   film,
   onClose,
+  variant = "default",
 }: {
   film: Film | null;
   onClose: () => void;
+  variant?: "default" | "comic";
 }) {
   const reduceMotion = useReducedMotion();
   const closeRef = useRef<HTMLButtonElement>(null);
   const titleId = useId();
   const [showPlayer, setShowPlayer] = useState(false);
+  const isComic = variant === "comic";
 
   const handleClose = useCallback(() => {
     setShowPlayer(false);
@@ -86,7 +89,11 @@ export function FilmExpand({
           <motion.button
             type="button"
             aria-label="Schließen"
-            className="absolute inset-0 cursor-default bg-black/70"
+            className={
+              isComic
+                ? "absolute inset-0 cursor-default bg-[var(--comic-ink)]/55"
+                : "absolute inset-0 cursor-default bg-black/70"
+            }
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -99,11 +106,21 @@ export function FilmExpand({
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            className="relative z-10 flex max-h-[min(92vh,900px)] w-full max-w-[1080px] flex-col overflow-hidden rounded-[28px] bg-[#0c0f14] text-white smooth-shadow-ring-2xl smooth-ring-white/12 shadow-black md:rounded-[32px] lg:flex-row"
+            className={
+              isComic
+                ? "comic-film-expand relative z-10 flex max-h-[min(92vh,900px)] w-full max-w-[1080px] flex-col overflow-hidden lg:flex-row"
+                : "relative z-10 flex max-h-[min(92vh,900px)] w-full max-w-[1080px] flex-col overflow-hidden rounded-[28px] bg-[#0c0f14] text-white smooth-shadow-ring-2xl smooth-ring-white/12 shadow-black md:rounded-[32px] lg:flex-row"
+            }
             transition={reduceMotion ? { duration: 0 } : spring}
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="relative aspect-video w-full shrink-0 bg-black lg:aspect-auto lg:w-[58%] lg:min-h-[420px]">
+            <div
+              className={
+                isComic
+                  ? "comic-film-expand__media relative aspect-video w-full shrink-0 lg:aspect-auto lg:w-[58%] lg:min-h-[420px]"
+                  : "relative aspect-video w-full shrink-0 bg-black lg:aspect-auto lg:w-[58%] lg:min-h-[420px]"
+              }
+            >
               <motion.div
                 layoutId={`film-media-${film.id}`}
                 className="absolute inset-0 overflow-hidden"
@@ -121,7 +138,11 @@ export function FilmExpand({
             </div>
 
             <motion.div
-              className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto p-5 sm:p-7 lg:p-8"
+              className={
+                isComic
+                  ? "comic-film-expand__body flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto p-5 sm:p-7 lg:p-8"
+                  : "flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto p-5 sm:p-7 lg:p-8"
+              }
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
@@ -132,56 +153,92 @@ export function FilmExpand({
               }
             >
               <div className="flex items-start justify-between gap-4">
-                <div className="flex min-w-0 flex-col gap-2">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/45">
-                    {film.client} · {film.branche}
-                  </p>
-                  <h3
-                    id={titleId}
-                    className="font-[family-name:var(--font-inter-tight)] text-[clamp(1.5rem,3vw,2.15rem)] font-bold leading-[1.08] tracking-[-0.03em]"
-                  >
+                {isComic ? (
+                  <h3 id={titleId} className="comic-film-expand__title min-w-0">
                     {film.title}
                   </h3>
-                </div>
+                ) : (
+                  <div className="flex min-w-0 flex-col gap-2">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/45">
+                      {film.client} · {film.branche}
+                    </p>
+                    <h3
+                      id={titleId}
+                      className="font-[family-name:var(--font-inter-tight)] text-[clamp(1.5rem,3vw,2.15rem)] font-bold leading-[1.08] tracking-[-0.03em]"
+                    >
+                      {film.title}
+                    </h3>
+                  </div>
+                )}
                 <button
                   ref={closeRef}
                   type="button"
                   onClick={handleClose}
                   aria-label="Case Study schließen"
-                  className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white transition-[background-color,transform] hover:bg-white/15 active:scale-[0.96]"
+                  className={
+                    isComic
+                      ? "comic-film-expand__close"
+                      : "flex size-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white transition-[background-color,transform] hover:bg-white/15 active:scale-[0.96]"
+                  }
                 >
                   <X className="size-5" strokeWidth={2} />
                 </button>
               </div>
 
-              <p className="text-pretty text-[15px] leading-[1.55] text-white/70 sm:text-[16px]">
+              <p
+                className={
+                  isComic
+                    ? "comic-film-expand__summary"
+                    : "text-pretty text-[15px] leading-[1.55] text-white/70 sm:text-[16px]"
+                }
+              >
                 {film.summary}
               </p>
 
-              <ul className="flex flex-col gap-2.5">
+              <ul
+                className={
+                  isComic
+                    ? "comic-film-expand__list"
+                    : "flex flex-col gap-2.5"
+                }
+              >
                 {film.highlights.map((point) => (
                   <li
                     key={point}
-                    className="flex gap-3 text-[14px] leading-snug text-white/85 sm:text-[15px]"
+                    className={
+                      isComic
+                        ? "comic-film-expand__item"
+                        : "flex gap-3 text-[14px] leading-snug text-white/85 sm:text-[15px]"
+                    }
                   >
                     <span
                       aria-hidden
-                      className="mt-1.5 size-1.5 shrink-0 rounded-full bg-white/55"
+                      className={
+                        isComic
+                          ? "comic-film-expand__bullet"
+                          : "mt-1.5 size-1.5 shrink-0 rounded-full bg-white/55"
+                      }
                     />
                     <span>{point}</span>
                   </li>
                 ))}
               </ul>
 
-              <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-white/10 pt-5 text-[12px] text-white/40">
-                <span>{film.stil}</span>
-                <span aria-hidden>·</span>
-                <span>{film.videoart}</span>
-              </div>
+              {!isComic ? (
+                <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-white/10 pt-5 text-[12px] text-white/40">
+                  <span>{film.stil}</span>
+                  <span aria-hidden>·</span>
+                  <span>{film.videoart}</span>
+                </div>
+              ) : null}
 
               <a
                 href={film.caseHref}
-                className="inline-flex w-fit items-center gap-2 rounded-full bg-white px-5 py-2.5 text-[14px] font-semibold text-black transition-transform active:scale-[0.96]"
+                className={
+                  isComic
+                    ? "comic-film-expand__cta mt-auto"
+                    : "inline-flex w-fit items-center gap-2 rounded-full bg-white px-5 py-2.5 text-[14px] font-semibold text-black transition-transform active:scale-[0.96]"
+                }
               >
                 Vollständige Case Study
                 <span aria-hidden>→</span>
