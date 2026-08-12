@@ -58,6 +58,7 @@ html {
   justify-content: center;
   gap: clamp(0.75rem, 1.6vw, 1.5rem);
   width: min(1180px, 100%);
+  overflow: visible;
 }
 
 .flip-card-slot {
@@ -66,6 +67,7 @@ html {
   max-width: 360px;
   transform: rotate(var(--card-tilt, 0deg));
   transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .flip-card {
@@ -76,6 +78,7 @@ html {
   margin-inline: auto;
   transform-style: preserve-3d;
   will-change: transform;
+  transform-origin: center bottom;
 }
 
 .flip-card__face {
@@ -94,6 +97,7 @@ html {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform-style: preserve-3d;
+  z-index: 1;
 }
 
 .flip-card__face--back {
@@ -119,6 +123,18 @@ html {
   pointer-events: none;
 }
 
+.flip-card__media-motion {
+  position: absolute;
+  inset: 0;
+  transform-origin: center 40%;
+  will-change: transform;
+}
+
+.flip-card__media-motion img {
+  position: absolute;
+  inset: 0;
+}
+
 .flip-card__copy {
   display: flex;
   flex-direction: column;
@@ -137,23 +153,24 @@ html {
   text-wrap: balance;
 }
 
-/* Hero heading gradient, swept horizontally as a post-land glimmer */
+/* Stronger post-land glimmer — yellow → white → pink sweep */
 .flip-card__title.is-glimmering {
   background-image: linear-gradient(
     in oklab 90deg,
     var(--card-ink) 0%,
-    var(--card-ink) 34%,
-    #fff 46%,
-    color-mix(in oklab, oklab(50% 0.123 -0.193) 20%, #fff) 52%,
-    var(--card-ink) 64%,
+    var(--card-ink) 28%,
+    #ffb800 40%,
+    #fff 48%,
+    #ff52e3 56%,
+    var(--card-ink) 68%,
     var(--card-ink) 100%
   );
-  background-size: 240% 100%;
+  background-size: 260% 100%;
   background-position: 100% 50%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: flip-title-glimmer 1.15s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: flip-title-glimmer 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes flip-title-glimmer {
@@ -162,6 +179,197 @@ html {
   }
   to {
     background-position: 0% 50%;
+  }
+}
+
+/* Comic impact burst — spawn under the card, then drift out */
+.flip-card__burst {
+  position: absolute;
+  inset: -6% -8%;
+  z-index: 0;
+  pointer-events: none;
+  transform: translateZ(-4px);
+  overflow: visible;
+}
+
+.flip-card__burst-star,
+.flip-card__burst-spark {
+  position: absolute;
+  display: block;
+  opacity: 0;
+}
+
+.flip-card__burst-star {
+  width: 36px;
+  height: 36px;
+  background: #ffb800;
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+  filter: drop-shadow(0 0 8px color-mix(in oklab, #ffb800 80%, transparent));
+  animation: flip-burst-star 0.75s cubic-bezier(0.12, 0.8, 0.2, 1) forwards;
+}
+
+/* Start tucked near the card corners, then shoot outward */
+.flip-card__burst-star[data-i="0"] {
+  top: 10%;
+  left: 12%;
+  --dx: -92px;
+  --dy: -100px;
+  animation-delay: 0ms;
+}
+.flip-card__burst-star[data-i="1"] {
+  top: 8%;
+  right: 12%;
+  width: 42px;
+  height: 42px;
+  background: #ff52e3;
+  --dx: 98px;
+  --dy: -108px;
+  animation-delay: 30ms;
+}
+.flip-card__burst-star[data-i="2"] {
+  top: 42%;
+  left: 6%;
+  width: 28px;
+  height: 28px;
+  background: #fffaf0;
+  --dx: -110px;
+  --dy: -8px;
+  animation-delay: 50ms;
+}
+.flip-card__burst-star[data-i="3"] {
+  top: 40%;
+  right: 6%;
+  width: 32px;
+  height: 32px;
+  background: #ffb800;
+  --dx: 114px;
+  --dy: 4px;
+  animation-delay: 40ms;
+}
+.flip-card__burst-star[data-i="4"] {
+  bottom: 12%;
+  left: 14%;
+  width: 40px;
+  height: 40px;
+  background: #ff52e3;
+  --dx: -88px;
+  --dy: 96px;
+  animation-delay: 60ms;
+}
+.flip-card__burst-star[data-i="5"] {
+  bottom: 10%;
+  right: 12%;
+  width: 34px;
+  height: 34px;
+  background: #ffe566;
+  --dx: 90px;
+  --dy: 90px;
+  animation-delay: 55ms;
+}
+
+.flip-card__burst-spark {
+  width: 10px;
+  height: 10px;
+  border-radius: 1px;
+  background: #fff;
+  box-shadow: 0 0 10px #ffb800;
+  animation: flip-burst-spark 0.7s cubic-bezier(0.12, 0.8, 0.2, 1) forwards;
+}
+
+.flip-card__burst-spark[data-i="0"] {
+  top: 18%;
+  left: 18%;
+  --dx: -72px;
+  --dy: -64px;
+}
+.flip-card__burst-spark[data-i="1"] {
+  top: 16%;
+  right: 18%;
+  --dx: 76px;
+  --dy: -68px;
+  animation-delay: 20ms;
+}
+.flip-card__burst-spark[data-i="2"] {
+  top: 50%;
+  left: 10%;
+  --dx: -88px;
+  --dy: 10px;
+  background: #ff52e3;
+  animation-delay: 35ms;
+}
+.flip-card__burst-spark[data-i="3"] {
+  top: 48%;
+  right: 10%;
+  --dx: 90px;
+  --dy: 12px;
+  background: #ffb800;
+  animation-delay: 30ms;
+}
+.flip-card__burst-spark[data-i="4"] {
+  bottom: 18%;
+  left: 20%;
+  --dx: -64px;
+  --dy: 72px;
+  background: #ffe566;
+  animation-delay: 45ms;
+}
+.flip-card__burst-spark[data-i="5"] {
+  bottom: 16%;
+  right: 18%;
+  --dx: 68px;
+  --dy: 74px;
+  background: #ff52e3;
+  animation-delay: 40ms;
+}
+
+@keyframes flip-burst-star {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.2) rotate(-24deg);
+  }
+  14% {
+    opacity: 1;
+    transform: translate(
+        calc(var(--dx, 0px) * 0.18),
+        calc(var(--dy, 0px) * 0.18)
+      )
+      scale(1.35)
+      rotate(8deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx, 0px), var(--dy, 0px)) scale(0.7)
+      rotate(28deg);
+  }
+}
+
+@keyframes flip-burst-spark {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.3);
+  }
+  16% {
+    opacity: 1;
+    transform: translate(
+        calc(var(--dx, 0px) * 0.22),
+        calc(var(--dy, 0px) * 0.22)
+      )
+      scale(1.25);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx, 0px), var(--dy, 0px)) scale(0.35);
   }
 }
 
@@ -215,6 +423,10 @@ html {
     color: var(--card-ink);
     -webkit-background-clip: unset;
     background-clip: unset;
+  }
+
+  .flip-card__burst {
+    display: none !important;
   }
 
   .card-flip-scene {

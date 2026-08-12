@@ -429,6 +429,14 @@
   height: 360vh;
 }
 
+.comic-help .flip-card-row {
+  width: min(1416px, 100%);
+  margin-inline: auto;
+  padding-inline: var(--comic-gutter);
+  gap: 1.5rem;
+  overflow: visible;
+}
+
 .comic-help .card-flip-scene__sticky {
   position: sticky;
   /* Pin when the card row sits in the vertical middle of the viewport */
@@ -441,18 +449,12 @@
   padding: 0;
   perspective: 1400px;
   perspective-origin: 50% 45%;
+  overflow: visible;
 }
 
 .comic-help .comic-help__intro .comic-section-lead {
   max-width: 52rem;
   letter-spacing: -0.07em;
-}
-
-.comic-help .flip-card-row {
-  width: min(1416px, 100%);
-  margin-inline: auto;
-  padding-inline: var(--comic-gutter);
-  gap: 1.5rem;
 }
 
 .comic-help .flip-card-slot {
@@ -466,6 +468,7 @@
   width: 100%;
   height: min(600px, 78vh);
   max-height: min(600px, 78vh);
+  transform-origin: center bottom;
 }
 
 .comic-help .flip-card__face {
@@ -677,28 +680,34 @@
   padding-block: clamp(4rem, 8vw, 7.5rem);
 }
 
+.comic-customers__trail {
+  width: 100%;
+  isolation: isolate;
+}
+
+/* Stickers float above logos/copy; pointer-events stay on interactive UI. */
+.comic-customers__trail > .comic-shell {
+  position: relative;
+  z-index: 1;
+}
+
+.comic-customers__trail [data-cursor-trail-item] {
+  z-index: 2;
+}
+
 .comic-compare {
   position: relative;
   overflow: clip;
   padding-block: clamp(4rem, 8vw, 7.5rem);
 }
 
-.comic-compare__character {
-  position: absolute;
-  right: clamp(-0.5rem, 1vw, 1.5rem);
-  top: clamp(8rem, 18vw, 14rem);
-  width: clamp(110px, 14vw, 200px);
-  height: auto;
-  pointer-events: none;
-  z-index: 1;
-}
-
 .comic-compare-table {
   --compare-pad-y: 24px;
   --compare-pad-x: 28px;
-  --compare-gap-line: color-mix(in oklab, var(--comic-ink) 12%, transparent);
+  --compare-gap-line: var(--comic-ink);
   --compare-cols: minmax(220px, 0.9fr) minmax(0, 1.2fr) minmax(0, 1.2fr);
-  --compare-us-tint: color-mix(in oklab, var(--comic-purple) 11%, var(--comic-white));
+  /* Soft wash under the yellow winner column — ties header to body */
+  --compare-us-tint: color-mix(in oklab, var(--comic-yellow) 16%, var(--comic-white));
   --compare-text: 1.125rem;
   --compare-head: 1.25rem;
 
@@ -706,9 +715,11 @@
   z-index: 2;
   width: 100%;
   overflow: hidden;
-  border-radius: 8px;
-  outline: 4px solid var(--comic-ink);
-  outline-offset: 0;
+  border-style: solid;
+  border-color: var(--comic-ink);
+  /* Same asymmetric stamp as chips / hero tag — not a SaaS outline */
+  border-width: 4px 8px 10px 4px;
+  border-radius: var(--comic-radius);
   background: var(--comic-white);
 }
 
@@ -720,18 +731,22 @@
 }
 
 .comic-compare-table__head {
-  background: var(--comic-purple);
-  color: var(--comic-white);
+  background: transparent;
+  border-bottom: 3px solid var(--comic-ink);
 }
 
 .comic-compare-table__row {
-  border-top: 1px solid var(--compare-gap-line);
+  border-top: 3px solid var(--comic-ink);
+}
+
+.comic-compare-table__row:first-of-type {
+  border-top: 0;
 }
 
 .comic-compare-table__cell {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 8px;
   min-width: 0;
   padding: var(--compare-pad-y) var(--compare-pad-x);
@@ -745,10 +760,10 @@
 
 .comic-compare-table__cell--corner {
   padding-block: 16px;
+  background: transparent;
 }
 
 .comic-compare-table__cell--col {
-  color: var(--comic-white);
   font-size: var(--compare-head);
   font-weight: 800;
   letter-spacing: -0.03em;
@@ -756,20 +771,37 @@
   text-wrap: balance;
 }
 
+.comic-compare-table__cell--col-us {
+  background: var(--comic-yellow);
+  color: var(--comic-ink);
+}
+
+.comic-compare-table__cell--col-them {
+  background: var(--comic-page);
+  color: var(--comic-muted);
+  font-weight: 700;
+}
+
 .comic-compare-table__cell--label {
   flex-direction: row;
   justify-content: flex-start;
-  align-items: center;
+  /* flex-start keeps the pair at the top of stretched rows;
+     icon is optically centered to the first text line via margin */
+  align-items: flex-start;
   gap: 12px;
+  line-height: 1.25;
   text-align: left;
   text-wrap: balance;
 }
 
 .comic-compare-table__icon {
+  display: block;
   flex-shrink: 0;
   width: 1.25em;
   height: 1.25em;
-  color: var(--comic-purple);
+  /* Match first-line box, then nudge to letterforms */
+  margin-top: 0.08em;
+  color: var(--comic-ink);
 }
 
 .comic-compare-table__cell--us {
@@ -1126,17 +1158,29 @@
     display: none;
   }
 
+  .comic-compare-table__head {
+    border-bottom: 0;
+  }
+
+  .comic-compare-table__row {
+    border-top: 0;
+  }
+
   .comic-compare-table__cell--col {
-    padding-block: 16px;
+    padding-block: 14px;
+  }
+
+  .comic-compare-table__cell--col-them {
+    border-top: 3px solid var(--comic-ink);
   }
 
   .comic-compare-table__cell--label {
     padding-block: 16px 8px;
-    border-top: 1px solid var(--compare-gap-line);
+    border-top: 3px solid var(--comic-ink);
   }
 
   .comic-compare-table__row:first-of-type .comic-compare-table__cell--label {
-    border-top: 0;
+    border-top: 3px solid var(--comic-ink);
   }
 
   .comic-compare-table__cell--us,
@@ -1166,16 +1210,12 @@
   }
 
   .comic-compare-table__mobile-label--us {
-    color: var(--comic-purple);
+    color: var(--comic-ink);
   }
 
   .comic-compare-table__value {
     font-size: var(--compare-text);
     line-height: 1.45;
-  }
-
-  .comic-compare__character {
-    display: none;
   }
 
   .comic-help .card-flip-scene {
@@ -1240,12 +1280,12 @@
 }
 
 .comic-testimonial-slide {
-  width: min(78vw, 22.5rem);
+  width: min(84vw, 26rem);
 }
 
 @media (min-width: 640px) {
   .comic-testimonial-slide {
-    width: min(62vw, 26rem);
+    width: min(58vw, 30rem);
   }
 }
 

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import {
   Clapperboard,
   Palette,
@@ -51,14 +50,6 @@ const rows: {
 export function ComicCompare() {
   return (
     <section className="comic-compare">
-      <Image
-        src="/images/comic/character-happy.png"
-        alt=""
-        width={238}
-        height={357}
-        className="comic-compare__character"
-      />
-
       <div className="comic-shell relative z-10 flex flex-col items-center gap-12 md:gap-16">
         <ComicSectionIntro
           title="Wir vs. Die Anderen"
@@ -76,13 +67,13 @@ export function ComicCompare() {
               role="columnheader"
             />
             <div
-              className="comic-compare-table__cell comic-compare-table__cell--col"
+              className="comic-compare-table__cell comic-compare-table__cell--col comic-compare-table__cell--col-us"
               role="columnheader"
             >
               Digital Trend Media
             </div>
             <div
-              className="comic-compare-table__cell comic-compare-table__cell--col"
+              className="comic-compare-table__cell comic-compare-table__cell--col comic-compare-table__cell--col-them"
               role="columnheader"
             >
               Andere Agenturen

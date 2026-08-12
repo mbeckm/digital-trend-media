@@ -32,19 +32,21 @@ export function ComicTestimonials() {
           title="Das sagen unsere Kunden"
           lead="Unsere Kunden erzählen von ihren Erfahrungen mit den Erklärfilmen von Digital Trend Media."
         />
+      </div>
 
-        {/* Large screens: wider 3-up grid that breathes past the shell gutters */}
-        <div className="hidden w-[calc(100%+2*var(--comic-gutter)+4rem)] max-w-none -mx-[calc(var(--comic-gutter)+2rem)] grid-cols-3 gap-5 lg:grid xl:gap-6 2xl:gap-7">
-          {studies.map((study, index) => (
-            <TestimonialCard
-              key={study.slug}
-              study={study}
-              index={index}
-              sizes="(min-width: 1024px) 34vw, 100vw"
-            />
-          ))}
-        </div>
+      {/* Large screens: centered editorial 3-up outside the shell so it can span wider */}
+      <div className="mx-auto mt-12 hidden w-[min(calc(100vw-3rem),1800px)] grid-cols-3 gap-6 md:mt-16 lg:grid xl:gap-8 2xl:gap-9">
+        {studies.map((study, index) => (
+          <TestimonialCard
+            key={study.slug}
+            study={study}
+            index={index}
+            sizes="(min-width: 1024px) 38vw, 100vw"
+          />
+        ))}
+      </div>
 
+      <div className="comic-shell mt-12 flex flex-col items-center gap-12 md:mt-16 md:gap-16">
         {/* Smaller screens: infinite horizontal marquee, still manually scrollable */}
         <TestimonialMarquee className="lg:hidden" />
 
@@ -86,7 +88,7 @@ function TestimonialCard({
 
       <div className="flex flex-1 flex-col gap-6 px-6 pt-6 md:px-8 md:pt-8">
         <div
-          className="mb-2 inline-flex w-fit flex-col gap-2 rounded-lg bg-white px-4 py-2"
+          className="mb-2 inline-flex w-fit flex-col gap-2.5 rounded-lg bg-white px-6 py-4 md:px-7 md:py-5"
           style={{
             borderStyle: "solid",
             borderColor: accent,
@@ -100,7 +102,7 @@ function TestimonialCard({
           >
             {study.metric}
           </p>
-          <p className="text-sm font-bold leading-5 text-[var(--comic-ink)]">
+          <p className="text-lg font-bold leading-snug text-[var(--comic-ink)]">
             {study.metricLabel}
           </p>
         </div>
@@ -111,12 +113,12 @@ function TestimonialCard({
 
         <div className="mt-auto flex items-end justify-between gap-4 pt-4">
           <div className="min-w-0">
-            <p className="text-base font-medium leading-6">{study.name}</p>
-            <p className="text-base leading-6">{study.company}</p>
+            <p className="text-lg font-medium leading-snug">{study.name}</p>
+            <p className="text-lg leading-snug">{study.company}</p>
           </div>
           <CaseStudyLink
             slug={study.slug}
-            className="shrink-0 !text-base !font-bold !text-[var(--comic-purple)]"
+            className="shrink-0 !text-lg !font-bold !leading-snug !text-[var(--comic-purple)]"
           >
             Zur Case Study
           </CaseStudyLink>
@@ -306,7 +308,7 @@ function TestimonialMarquee({ className = "" }: { className?: string }) {
         <TestimonialCard
           study={study}
           index={index}
-          sizes="(max-width: 1023px) 78vw, 360px"
+          sizes="(max-width: 1023px) 84vw, 420px"
         />
       </div>
     ));
