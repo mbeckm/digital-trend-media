@@ -150,13 +150,73 @@
 
 .comic-hero__clouds {
   position: absolute;
-  inset: auto -15% -20% -20%;
-  width: 130%;
-  height: min(90vw, 900px);
-  background: url("/images/comic/clouds-overlay.png") center / cover no-repeat;
-  mix-blend-mode: screen;
-  filter: brightness(0.91);
+  /* Bleed past the hero so bitmap edges stay outside overflow: clip */
+  inset: -14% -20% -24% -20%;
+  z-index: 0;
   pointer-events: none;
+  /* Soft plate fade — residual crop edges dissolve into the pink sky */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 12%,
+    #000 86%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 12%,
+    #000 86%,
+    transparent 100%
+  );
+}
+
+.comic-hero__cloud-layer {
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/comic/clouds-overlay-v2.png");
+  background-repeat: no-repeat;
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* Far sky — higher, softer, fills toward the top of the hero */
+.comic-hero__cloud-layer--back {
+  inset: -8% -12% -10% -12%;
+  background-size: 122% auto;
+  background-position: 48% 4%;
+  opacity: 0.45;
+}
+
+/* Mid bank — main body of clouds */
+.comic-hero__cloud-layer--mid {
+  background-size: 138% auto;
+  background-position: 40% 28%;
+  opacity: 0.72;
+}
+
+/* Near bank — denser, lower, stronger parallax contrast */
+.comic-hero__cloud-layer--front {
+  background-size: 155% auto;
+  background-position: 60% 55%;
+  opacity: 0.9;
+}
+
+@media (min-width: 1200px) {
+  .comic-hero__cloud-layer--back {
+    background-size: 112% auto;
+    background-position: 50% 0%;
+  }
+
+  .comic-hero__cloud-layer--mid {
+    background-size: 124% auto;
+    background-position: 38% 20%;
+  }
+
+  .comic-hero__cloud-layer--front {
+    background-size: 142% auto;
+    background-position: 64% 48%;
+  }
 }
 
 .comic-hero__title {
@@ -201,7 +261,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-top: 0.5rem;
+  margin-top: 1rem;
   margin-bottom: 0;
   padding: 0.75rem 1.5rem;
   border-style: solid;
@@ -227,8 +287,10 @@
   max-width: 1112px;
   margin-inline: auto;
   /* Space under the tag so the cast reads as its own beat */
-  margin-top: clamp(8.5rem, 14vw, 12rem);
+  margin-top: clamp(7.75rem, 13vw, 11rem);
 }
+
+
 
 .comic-hero__player-wrap {
   position: relative;
@@ -268,15 +330,15 @@
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border: 2px solid #000;
+  border: 2px solid var(--comic-ink);
   border-radius: var(--comic-radius);
   background: var(--comic-ink);
-  box-shadow: 4px 13px 28px rgb(0 0 0 / 0.24);
+  box-shadow: 4px 13px 28px rgb(26 0 26 / 0.24);
 }
 
 @media (max-width: 700px) {
   .comic-hero__stage {
-    margin-top: 7rem;
+    margin-top: 6.25rem;
   }
 
   .comic-hero__cast {
@@ -609,16 +671,6 @@
   padding-block: clamp(4rem, 8vw, 7.5rem);
 }
 
-.comic-customers__character {
-  position: absolute;
-  left: clamp(-1rem, 2vw, 1rem);
-  bottom: 4rem;
-  width: clamp(120px, 16vw, 220px);
-  height: auto;
-  pointer-events: none;
-  z-index: 1;
-}
-
 .comic-compare {
   position: relative;
   overflow: clip;
@@ -636,45 +688,111 @@
 }
 
 .comic-compare-table {
+  --compare-pad-y: 24px;
+  --compare-pad-x: 28px;
+  --compare-gap-line: color-mix(in oklab, var(--comic-ink) 12%, transparent);
+  --compare-cols: minmax(220px, 0.9fr) minmax(0, 1.2fr) minmax(0, 1.2fr);
+  --compare-us-tint: color-mix(in oklab, var(--comic-purple) 11%, var(--comic-white));
+  --compare-text: 1.125rem;
+  --compare-head: 1.25rem;
+
   position: relative;
   z-index: 2;
   width: 100%;
   overflow: hidden;
-  border-radius: var(--comic-radius);
-  outline: 3px solid var(--comic-purple);
+  border-radius: 8px;
+  outline: 4px solid var(--comic-ink);
+  outline-offset: 0;
   background: var(--comic-white);
 }
 
-.comic-compare-table__head {
+.comic-compare-table__head,
+.comic-compare-table__row {
   display: grid;
-  grid-template-columns: 1.05fr 1.2fr 1.2fr;
+  grid-template-columns: var(--compare-cols);
+  align-items: stretch;
+}
+
+.comic-compare-table__head {
   background: var(--comic-purple);
   color: var(--comic-white);
-  border-bottom: 1px solid var(--comic-ink);
 }
 
 .comic-compare-table__row {
-  display: grid;
-  grid-template-columns: 1.05fr 1.2fr 1.2fr;
-  border-bottom: 1px solid var(--comic-ink);
-}
-
-.comic-compare-table__row:last-child {
-  border-bottom: 0;
+  border-top: 1px solid var(--compare-gap-line);
 }
 
 .comic-compare-table__cell {
-  padding: 1rem 1.15rem;
-  font-size: clamp(0.95rem, 1.4vw, 1.5rem);
-  line-height: 1.3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  padding: var(--compare-pad-y) var(--compare-pad-x);
+  font-size: var(--compare-text);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.45;
+  color: var(--comic-ink);
+  text-wrap: pretty;
+}
+
+.comic-compare-table__cell--corner {
+  padding-block: 16px;
+}
+
+.comic-compare-table__cell--col {
+  color: var(--comic-white);
+  font-size: var(--compare-head);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.comic-compare-table__cell--label {
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  text-wrap: balance;
+}
+
+.comic-compare-table__icon {
+  flex-shrink: 0;
+  width: 1.25em;
+  height: 1.25em;
+  color: var(--comic-purple);
 }
 
 .comic-compare-table__cell--us {
-  background: color-mix(in oklab, var(--comic-purple) 10%, transparent);
+  background: var(--compare-us-tint);
+}
+
+.comic-compare-table__value {
+  margin: 0;
+}
+
+.comic-compare-table__mobile-label {
+  display: none;
 }
 
 .comic-faq-item {
-  border-bottom: 3px solid #000;
+  border-bottom: 3px solid var(--comic-ink);
+}
+
+@media (min-width: 901px) {
+  .comic-compare-table {
+    --compare-pad-y: 28px;
+    --compare-pad-x: 40px;
+    --compare-text: 1.25rem;
+    --compare-head: 1.5rem;
+  }
+
+  .comic-compare-table__cell--col {
+    padding-block: 24px;
+  }
 }
 
 .comic-faq-item button {
@@ -733,7 +851,7 @@
   overflow: hidden;
   border: 2.5px solid var(--comic-ink);
   border-radius: 12px;
-  background: #000;
+  background: var(--comic-ink);
   cursor: pointer;
 }
 
@@ -748,7 +866,7 @@
 }
 
 .comic-film-expand__media {
-  background: #000;
+  background: var(--comic-ink);
   border-bottom: 3px solid var(--comic-ink);
 }
 
@@ -847,7 +965,7 @@
   letter-spacing: -0.02em;
   line-height: 1.2;
   text-decoration: none;
-  box-shadow: 1px 2px 8px rgb(0 0 0 / 0.18);
+  box-shadow: 1px 2px 8px rgb(26 0 26 / 0.18);
   transition:
     transform 160ms var(--comic-ease),
     box-shadow 160ms var(--comic-ease);
@@ -855,35 +973,64 @@
 
 .comic-film-expand__cta:hover {
   transform: translateY(-2px);
-  box-shadow: 2px 5px 12px rgb(0 0 0 / 0.22);
+  box-shadow: 2px 5px 12px rgb(26 0 26 / 0.22);
 }
 
 .comic-film-expand__cta:active {
   transform: translateY(1px) scale(0.98);
-  box-shadow: 1px 1px 4px rgb(0 0 0 / 0.16);
+  box-shadow: 1px 1px 4px rgb(26 0 26 / 0.16);
 }
 
 .comic-portfolio-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.65rem;
+  gap: 12px;
   justify-content: center;
+}
+
+/* Secondary to the yellow CTA — quiet text control, sentence case */
+.comic-portfolio-more {
+  margin: 0;
+  padding: 0.35rem 0.25rem;
+  border: 0;
+  background: transparent;
+  color: var(--comic-purple);
+  font-family: var(--font-card-sans), system-ui, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  text-transform: none;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.28em;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.comic-portfolio-more:hover {
+  color: var(--comic-ink);
+}
+
+.comic-portfolio-more:active {
+  opacity: 0.75;
 }
 
 .comic-chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.55rem 0.95rem;
+  gap: 8px;
+  padding: 12px 20px;
   border-style: solid;
   border-color: var(--comic-ink);
   border-width: 2px 5px 5px 2px;
-  border-radius: 999px;
+  border-radius: var(--comic-radius);
   background: var(--comic-white);
   color: var(--comic-ink);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 700;
   letter-spacing: -0.02em;
+  line-height: 1.25;
   cursor: pointer;
 }
 
@@ -910,6 +1057,13 @@
     display: none;
   }
 
+  .comic-compare-table {
+    --compare-pad-y: 16px;
+    --compare-pad-x: 20px;
+    --compare-text: 1rem;
+    --compare-head: 1.125rem;
+  }
+
   .comic-compare-table__head,
   .comic-compare-table__row {
     grid-template-columns: 1fr;
@@ -919,7 +1073,54 @@
     display: none;
   }
 
-  .comic-customers__character,
+  .comic-compare-table__cell--col {
+    padding-block: 16px;
+  }
+
+  .comic-compare-table__cell--label {
+    padding-block: 16px 8px;
+    border-top: 1px solid var(--compare-gap-line);
+  }
+
+  .comic-compare-table__row:first-of-type .comic-compare-table__cell--label {
+    border-top: 0;
+  }
+
+  .comic-compare-table__cell--us,
+  .comic-compare-table__cell--them {
+    gap: 4px;
+    padding-block: 8px 16px;
+    background: transparent;
+  }
+
+  .comic-compare-table__cell--us {
+    padding-top: 4px;
+  }
+
+  .comic-compare-table__cell--them {
+    padding-top: 0;
+    padding-bottom: 20px;
+  }
+
+  .comic-compare-table__mobile-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: var(--comic-muted);
+  }
+
+  .comic-compare-table__mobile-label--us {
+    color: var(--comic-purple);
+  }
+
+  .comic-compare-table__value {
+    font-size: var(--compare-text);
+    line-height: 1.45;
+  }
+
   .comic-compare__character {
     display: none;
   }

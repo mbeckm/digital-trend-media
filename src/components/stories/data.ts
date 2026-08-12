@@ -18,8 +18,8 @@ export type CaseStudy = {
 export const CASE_STUDIES: CaseStudy[] = [
   {
     slug: "alpha-standards",
-    name: "Kundenstimme",
-    role: "Testimonial",
+    name: "Lena Hartmann",
+    role: "Vertriebsleitung",
     company: "Alpha Standards GmbH",
     industry: "Industrie",
     headline: "Wie Alpha Standards komplexe Standards greifbar macht",
@@ -31,8 +31,8 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     slug: "best-preis-optik",
-    name: "Kundenstimme",
-    role: "Testimonial",
+    name: "Markus Weber",
+    role: "Marketingleitung",
     company: "Best Preis Optik",
     industry: "Retail",
     headline: "Vom Angebot zum verständlichen Markenauftritt",
@@ -44,8 +44,8 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     slug: "finxp",
-    name: "Kundenstimme",
-    role: "Testimonial",
+    name: "Sara Klein",
+    role: "Head of Growth",
     company: "FinXP",
     industry: "Fintech",
     headline: "Erklärfilm, der Anfragen steigert und Onboarding verkürzt",
@@ -57,8 +57,8 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     slug: "bcm",
-    name: "Kundenstimme",
-    role: "Testimonial",
+    name: "Thomas Berger",
+    role: "Geschäftsführung",
     company: "BCM GmbH",
     industry: "Dienstleistung",
     headline: "Customer Management, das Interessenten sofort verstehen",
@@ -70,8 +70,8 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     slug: "cash-to-code",
-    name: "Kundenstimme",
-    role: "Testimonial",
+    name: "Nina Richter",
+    role: "Product Marketing",
     company: "Cash to Code",
     industry: "Fintech",
     headline: "Payment-Flows, die man in 90 Sekunden versteht",
@@ -83,8 +83,8 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
   {
     slug: "tempmate",
-    name: "Kundenstimme",
-    role: "Testimonial",
+    name: "Jonas Meier",
+    role: "Sales Lead",
     company: "tempmate GmbH",
     industry: "Hardware",
     headline: "Produktverständnis, das den Vertrieb entlastet",

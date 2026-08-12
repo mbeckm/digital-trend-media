@@ -28,14 +28,6 @@ const logos = [
 export function ComicCustomers() {
   return (
     <section className="comic-customers">
-      <Image
-        src="/images/comic/character-enthusiastic.png"
-        alt=""
-        width={267}
-        height={401}
-        className="comic-customers__character"
-      />
-
       <div className="comic-shell relative z-10 flex flex-col items-center gap-12 md:gap-16">
         <ComicSectionIntro
           title="So viele zufriedene Kunden!"

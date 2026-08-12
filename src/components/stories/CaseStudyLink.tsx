@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { caseStudyHref } from "@/components/stories/data";
@@ -24,16 +25,14 @@ export function CaseStudyLink({
   return (
     <Link href={caseStudyHref(slug)} className={`${base} ${className}`}>
       {children}
-      <span
+      <ArrowRight
         aria-hidden
         className={
           tone === "solid"
-            ? undefined
-            : "translate-x-0 transition-transform duration-200 ease-out group-hover/link:translate-x-0.5"
+            ? "size-[1em] shrink-0"
+            : "size-[1em] shrink-0 translate-x-0 transition-transform duration-200 ease-out group-hover/link:translate-x-0.5"
         }
-      >
-        →
-      </span>
+      />
     </Link>
   );
 }

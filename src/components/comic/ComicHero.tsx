@@ -1,6 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+  type MotionValue,
+} from "motion/react";
+import { useRef } from "react";
 
 import { ComicCta } from "@/components/comic/ComicUi";
 import { PRIMARY_VIDEO, VimeoFacade } from "@/components/VimeoEmbed";
@@ -38,10 +46,64 @@ export function ComicNav() {
   );
 }
 
-export function ComicHero() {
+function ComicHeroClouds({
+  scrollYProgress,
+  reduceMotion,
+}: {
+  scrollYProgress: MotionValue<number>;
+  reduceMotion: boolean | null;
+}) {
+  // Stronger scroll travel so the parallax is obvious while leaving the hero.
+  const yBack = useTransform(scrollYProgress, [0, 1], [0, -160]);
+  const yMid = useTransform(scrollYProgress, [0, 1], [0, -95]);
+  const yFront = useTransform(scrollYProgress, [0, 1], [0, -40]);
+
+  if (reduceMotion) {
+    return (
+      <div className="comic-hero__clouds" aria-hidden>
+        <div className="comic-hero__cloud-layer comic-hero__cloud-layer--mid" />
+      </div>
+    );
+  }
+
   return (
-    <section id="top" className="comic-hero">
-      <div className="comic-hero__clouds" aria-hidden />
+    <div className="comic-hero__clouds" aria-hidden>
+      <motion.div
+        className="comic-hero__cloud-layer comic-hero__cloud-layer--back"
+        style={{ y: yBack }}
+        animate={{ x: [-36, 36, -36] }}
+        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="comic-hero__cloud-layer comic-hero__cloud-layer--mid"
+        style={{ y: yMid }}
+        animate={{ x: [28, -40, 28] }}
+        transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="comic-hero__cloud-layer comic-hero__cloud-layer--front"
+        style={{ y: yFront }}
+        animate={{ x: [-20, 32, -20] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+      />
+    </div>
+  );
+}
+
+export function ComicHero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  return (
+    <section id="top" ref={sectionRef} className="comic-hero">
+      <ComicHeroClouds
+        scrollYProgress={scrollYProgress}
+        reduceMotion={reduceMotion}
+      />
 
       <div className="relative z-10 mx-auto flex w-full max-w-[70rem] flex-col items-center gap-0">
         <div className="flex w-full flex-col items-center">

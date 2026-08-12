@@ -71,10 +71,10 @@ function TestimonialCard({
 
   return (
     <article
-      className={`comic-panel flex flex-col overflow-hidden pb-6 ${className}`.trim()}
+      className={`comic-panel flex flex-col overflow-hidden pb-8 ${className}`.trim()}
       style={{ borderWidth: "5px 12px 15px 5px" }}
     >
-      <div className="relative h-[220px] border-b-[5px] border-black md:h-[260px]">
+      <div className="relative h-[220px] border-b-[5px] border-[var(--comic-ink)] md:h-[260px]">
         <Image
           src={poster}
           alt=""
@@ -84,9 +84,9 @@ function TestimonialCard({
         />
       </div>
 
-      <div className="flex flex-1 flex-col gap-5 px-5 pt-5">
+      <div className="flex flex-1 flex-col gap-6 px-6 pt-6 md:px-8 md:pt-8">
         <div
-          className="inline-flex w-fit flex-col rounded-lg bg-white px-4 py-2"
+          className="mb-2 inline-flex w-fit flex-col gap-2 rounded-lg bg-white px-4 py-2"
           style={{
             borderStyle: "solid",
             borderColor: accent,
@@ -109,16 +109,14 @@ function TestimonialCard({
           „{study.quote}“
         </blockquote>
 
-        <div className="mt-auto flex items-end justify-between gap-3 pt-2">
+        <div className="mt-auto flex items-end justify-between gap-4 pt-4">
           <div className="min-w-0">
-            <p className="text-sm font-medium leading-5">{study.name}</p>
-            <p className="text-sm leading-5">
-              {study.role} · {study.company}
-            </p>
+            <p className="text-base font-medium leading-6">{study.name}</p>
+            <p className="text-base leading-6">{study.company}</p>
           </div>
           <CaseStudyLink
             slug={study.slug}
-            className="shrink-0 !text-sm !font-bold !text-[var(--comic-purple)]"
+            className="shrink-0 !text-base !font-bold !text-[var(--comic-purple)]"
           >
             Zur Case Study
           </CaseStudyLink>

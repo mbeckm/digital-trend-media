@@ -14,12 +14,17 @@ import {
   type Film,
 } from "@/components/portfolio/data";
 
+const PAGE_SIZE = 12;
+
 export function ComicPortfolio() {
   const [active, setActive] = useState<FilterState>(emptyFilters);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
 
   const results = useMemo(() => filterFilms(active), [active]);
+  const visible = results.slice(0, visibleCount);
+  const hasMore = visibleCount < results.length;
   const selected =
     results.find((f) => f.id === selectedId) ??
     filterFilms(emptyFilters).find((f) => f.id === selectedId) ??
@@ -27,6 +32,12 @@ export function ComicPortfolio() {
 
   const onChange = (group: FilterGroup, value: string | null) => {
     setActive((prev) => ({ ...prev, [group]: value }));
+    setVisibleCount(PAGE_SIZE);
+  };
+
+  const resetFilters = () => {
+    setActive(emptyFilters);
+    setVisibleCount(PAGE_SIZE);
   };
 
   return (
@@ -62,7 +73,7 @@ export function ComicPortfolio() {
               <button
                 type="button"
                 className="comic-chip"
-                onClick={() => setActive(emptyFilters)}
+                onClick={resetFilters}
               >
                 Zurücksetzen
               </button>
@@ -77,22 +88,35 @@ export function ComicPortfolio() {
               <button
                 type="button"
                 className="font-semibold text-[var(--comic-purple)] underline-offset-4 hover:underline"
-                onClick={() => setActive(emptyFilters)}
+                onClick={resetFilters}
               >
                 Filter zurücksetzen
               </button>
             </div>
           ) : (
-            <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-7">
-              {results.slice(0, 12).map((film) => (
-                <ComicFilmTile
-                  key={film.id}
-                  film={film}
-                  reduceMotion={!!reduceMotion}
-                  hidden={selectedId === film.id}
-                  onOpen={() => setSelectedId(film.id)}
-                />
-              ))}
+            <div className="flex w-full flex-col items-center gap-8">
+              <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-7">
+                {visible.map((film) => (
+                  <ComicFilmTile
+                    key={film.id}
+                    film={film}
+                    reduceMotion={!!reduceMotion}
+                    hidden={selectedId === film.id}
+                    onOpen={() => setSelectedId(film.id)}
+                  />
+                ))}
+              </div>
+              {hasMore ? (
+                <button
+                  type="button"
+                  className="comic-portfolio-more"
+                  onClick={() =>
+                    setVisibleCount((count) => count + PAGE_SIZE)
+                  }
+                >
+                  Mehr Filme laden
+                </button>
+              ) : null}
             </div>
           )}
 
@@ -121,7 +145,7 @@ function ComicFilmTile({
   onOpen: () => void;
 }) {
   if (hidden) {
-    return <div className="aspect-[16/10] rounded-[12px] bg-black/5" aria-hidden />;
+    return <div className="aspect-[16/10] rounded-[12px] bg-[var(--comic-ink)]/5" aria-hidden />;
   }
 
   return (
@@ -148,7 +172,7 @@ function ComicFilmTile({
           sizes="(max-width: 640px) 100vw, 50vw"
         />
       </motion.div>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/90 via-black/45 to-transparent p-4 pt-16 md:p-5">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-[var(--comic-ink)]/90 via-[var(--comic-ink)]/45 to-transparent p-4 pt-16 md:p-5">
         <h3 className="text-[clamp(1.05rem,1.8vw,1.45rem)] font-bold leading-tight tracking-[-0.02em] text-white">
           {film.client}
         </h3>

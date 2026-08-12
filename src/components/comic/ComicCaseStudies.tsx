@@ -165,7 +165,7 @@ export function ComicCaseStudies() {
                       {featured.map((item) => (
                         <h2
                           key={item.film.id}
-                          className="w-max text-[clamp(2.5rem,4.2vw,4rem)] font-extrabold leading-[1.2] tracking-[-0.02em] text-black"
+                          className="w-max text-[clamp(2.5rem,4.2vw,4rem)] font-extrabold leading-[1.2] tracking-[-0.02em] text-[var(--comic-ink)]"
                         >
                           {item.company}
                         </h2>
@@ -192,7 +192,7 @@ export function ComicCaseStudies() {
                 </div>
 
                 {/* Right — Paper 831×486 ratio */}
-                <div className="comic-koto-stage relative aspect-[831/486] min-w-0 flex-[831] overflow-hidden rounded-[12px] bg-black">
+                <div className="comic-koto-stage relative aspect-[831/486] min-w-0 flex-[831] overflow-hidden rounded-[12px] bg-[var(--comic-ink)]">
                   {featured.map((item, index) => {
                     const offset = index - active;
                     const isActive = index === active;
@@ -238,7 +238,7 @@ export function ComicCaseStudies() {
               className="flex flex-col gap-6"
             >
               <div className="flex flex-col gap-3">
-                <h2 className="text-[clamp(2rem,8vw,3rem)] font-extrabold leading-[1.2] tracking-[-0.02em] text-black">
+                <h2 className="text-[clamp(2rem,8vw,3rem)] font-extrabold leading-[1.2] tracking-[-0.02em] text-[var(--comic-ink)]">
                   {item.company}
                 </h2>
                 <p className="text-[clamp(1.15rem,4.2vw,1.5rem)] font-medium leading-[1.25] tracking-[-0.05em] text-[var(--comic-ink)] text-pretty">
@@ -246,7 +246,7 @@ export function ComicCaseStudies() {
                 </p>
                 <FilmStudyLink className="text-[clamp(1.15rem,4.2vw,1.5rem)]" />
               </div>
-              <div className="comic-koto-stage relative aspect-[831/486] w-full overflow-hidden rounded-[12px] bg-black">
+              <div className="comic-koto-stage relative aspect-[831/486] w-full overflow-hidden rounded-[12px] bg-[var(--comic-ink)]">
                 <KotoVideo
                   film={item.film}
                   company={item.company}
@@ -344,7 +344,7 @@ function KotoVideo({
   active: boolean;
 }) {
   return (
-    <div className="absolute inset-0 overflow-hidden bg-black">
+    <div className="absolute inset-0 overflow-hidden bg-[var(--comic-ink)]">
       <AutoplayVimeo
         video={film.video}
         title={`${company} Erklärfilm`}
