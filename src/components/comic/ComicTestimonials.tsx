@@ -34,13 +34,13 @@ export function ComicTestimonials() {
         />
 
         {/* Large screens: wider 3-up grid that breathes past the shell gutters */}
-        <div className="hidden w-[calc(100%+2*var(--comic-gutter))] max-w-none -mx-[var(--comic-gutter)] grid-cols-3 gap-6 lg:grid xl:gap-7 2xl:gap-8">
+        <div className="hidden w-[calc(100%+2*var(--comic-gutter)+4rem)] max-w-none -mx-[calc(var(--comic-gutter)+2rem)] grid-cols-3 gap-5 lg:grid xl:gap-6 2xl:gap-7">
           {studies.map((study, index) => (
             <TestimonialCard
               key={study.slug}
               study={study}
               index={index}
-              sizes="(min-width: 1024px) 32vw, 100vw"
+              sizes="(min-width: 1024px) 34vw, 100vw"
             />
           ))}
         </div>

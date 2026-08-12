@@ -51,6 +51,12 @@
   padding-inline: var(--comic-gutter);
 }
 
+/* Kunden reel — nearly full-bleed so the stage can feel editorial */
+.comic-koto > .comic-shell {
+  max-width: none;
+  padding-inline: clamp(1.25rem, 2.8vw, 2.75rem);
+}
+
 /* Arcade comic push — ink well under a yellow face that slams flush on press */
 .comic-cta {
   --comic-cta-depth-x: 9px;
@@ -358,14 +364,14 @@
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: clamp(0.75rem, 2vw, 1.5rem);
   align-items: center;
-  padding: 1.75rem var(--comic-gutter);
+  padding: 1.5rem var(--comic-gutter);
   background: var(--comic-white);
   border-block: 3px solid var(--comic-ink);
 }
 
 .comic-logo-strip img {
   width: auto;
-  height: 2.75rem;
+  height: 3.5rem;
   max-width: 100%;
   margin-inline: auto;
   object-fit: contain;
@@ -879,7 +885,7 @@
 
 .comic-film-expand__title {
   font-family: var(--font-card-display), Impact, sans-serif;
-  font-size: clamp(1.65rem, 3.2vw, 2.4rem);
+  font-size: clamp(1.85rem, 3.4vw, 2.75rem);
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.05;
@@ -887,11 +893,12 @@
 }
 
 .comic-film-expand__summary {
-  max-width: 38ch;
-  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  max-width: 42ch;
+  font-family: var(--font-card-sans), system-ui, sans-serif;
+  font-size: clamp(1.05rem, 1.55vw, 1.25rem);
   font-weight: 500;
   letter-spacing: -0.03em;
-  line-height: 1.35;
+  line-height: 1.4;
   text-wrap: pretty;
   color: var(--comic-muted);
 }
@@ -899,16 +906,17 @@
 .comic-film-expand__list {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 1rem;
 }
 
 .comic-film-expand__item {
   display: flex;
-  gap: 0.75rem;
-  font-size: clamp(0.95rem, 1.3vw, 1.05rem);
+  gap: 0.85rem;
+  font-family: var(--font-card-sans), system-ui, sans-serif;
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
   font-weight: 600;
   letter-spacing: -0.02em;
-  line-height: 1.3;
+  line-height: 1.35;
 }
 
 .comic-film-expand__bullet {
@@ -922,11 +930,15 @@
 }
 
 .comic-film-expand__close {
+  position: absolute;
+  top: 1.15rem;
+  right: 1.15rem;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
   flex-shrink: 0;
   border-style: solid;
   border-color: var(--comic-ink);
@@ -934,9 +946,24 @@
   border-radius: 999px;
   background: var(--comic-white);
   color: var(--comic-ink);
+  cursor: pointer;
   transition:
     transform 160ms var(--comic-ease),
     background-color 160ms var(--comic-ease);
+}
+
+@media (min-width: 640px) {
+  .comic-film-expand__close {
+    top: 1.5rem;
+    right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .comic-film-expand__close {
+    top: 1.75rem;
+    right: 1.75rem;
+  }
 }
 
 .comic-film-expand__close:hover {
@@ -951,20 +978,22 @@
   display: inline-flex;
   width: fit-content;
   align-items: center;
-  gap: 0.45rem;
+  justify-content: center;
   margin-top: auto;
-  padding: 0.75rem 1.35rem;
+  padding: 1.05rem 2.25rem;
   border-style: solid;
   border-color: var(--comic-ink);
   border-width: 3px 7px 8px 3px;
   border-radius: var(--comic-radius);
   background: var(--comic-yellow);
   color: var(--comic-ink);
-  font-size: 1rem;
+  font-family: var(--font-card-sans), system-ui, sans-serif;
+  font-size: clamp(1.125rem, 1.7vw, 1.5rem);
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.2;
   text-decoration: none;
+  cursor: pointer;
   box-shadow: 1px 2px 8px rgb(26 0 26 / 0.18);
   transition:
     transform 160ms var(--comic-ease),
@@ -1017,21 +1046,23 @@
 }
 
 .comic-chip {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
+  gap: 10px;
+  padding: 16px 24px;
   border-style: solid;
   border-color: var(--comic-ink);
   border-width: 2px 5px 5px 2px;
   border-radius: var(--comic-radius);
   background: var(--comic-white);
   color: var(--comic-ink);
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.25;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .comic-chip[data-active="true"] {
@@ -1039,13 +1070,35 @@
   color: var(--comic-white);
 }
 
-.comic-chip select {
+.comic-chip__label {
+  opacity: 0.6;
+  font-weight: 600;
+}
+
+.comic-chip__value {
+  font-weight: 700;
+}
+
+.comic-chip__chevron {
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-left: 2px;
+  opacity: 0.7;
+}
+
+.comic-chip__select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
   border: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
+  opacity: 0;
   cursor: pointer;
-  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
 }
 
 @media (max-width: 900px) {

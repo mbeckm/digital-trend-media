@@ -8,6 +8,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
+import { ArrowRight } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 
 import { films, type Film } from "@/components/portfolio/data";
@@ -152,35 +153,27 @@ export function ComicCaseStudies() {
           </div>
 
           <div className="pointer-events-none absolute inset-0">
-            <div className="sticky top-0 flex min-h-[100svh] items-center py-[clamp(2.5rem,5vw,4.5rem)]">
-              <div className="pointer-events-auto flex w-full items-stretch gap-6">
-                {/* Left — Paper flex basis 561, Fallstudie link at video bottom */}
-                <div className="flex min-h-0 min-w-0 flex-[561] flex-col justify-between">
-                  <div className="flex flex-col gap-3">
-                    <ReelSlot
-                      active={active}
-                      reduceMotion={!!reduceMotion}
-                      className="h-[4.8rem]"
-                    >
+            <div className="sticky top-0 flex min-h-[100svh] items-center py-[clamp(2rem,4vw,3.5rem)]">
+              <div className="pointer-events-auto flex w-full items-stretch gap-[clamp(3rem,5.5vw,6rem)]">
+                {/* Left copy — tighter flex share so the stage can read larger */}
+                <div className="flex min-h-0 min-w-0 flex-[0.3] flex-col justify-between gap-10">
+                  <div className="flex flex-col gap-4">
+                    <ReelSlot active={active} reduceMotion={!!reduceMotion}>
                       {featured.map((item) => (
                         <h2
                           key={item.film.id}
-                          className="w-max text-[clamp(2.5rem,4.2vw,4rem)] font-extrabold leading-[1.2] tracking-[-0.02em] text-[var(--comic-ink)]"
+                          className="w-max text-[clamp(3.25rem,5.4vw,5.25rem)] font-extrabold leading-[1.08] tracking-[-0.03em] text-[var(--comic-ink)]"
                         >
                           {item.company}
                         </h2>
                       ))}
                     </ReelSlot>
 
-                    <ReelSlot
-                      active={active}
-                      reduceMotion={!!reduceMotion}
-                      className="min-h-[9.75rem]"
-                    >
+                    <ReelSlot active={active} reduceMotion={!!reduceMotion}>
                       {featured.map((item) => (
                         <p
                           key={item.film.id}
-                          className="max-w-[34ch] text-[clamp(1.25rem,2.1vw,2rem)] font-medium leading-[1.2] tracking-[-0.05em] text-[var(--comic-ink)] text-pretty"
+                          className="max-w-[30ch] text-[clamp(1.45rem,2.45vw,2.45rem)] font-medium leading-[1.28] tracking-[-0.045em] text-[var(--comic-ink)] text-pretty"
                         >
                           {item.body}
                         </p>
@@ -188,11 +181,11 @@ export function ComicCaseStudies() {
                     </ReelSlot>
                   </div>
 
-                  <FilmStudyLink className="text-[clamp(1.25rem,2.1vw,2rem)]" />
+                  <FilmStudyLink className="text-[clamp(1.45rem,2.45vw,2.45rem)]" />
                 </div>
 
-                {/* Right — Paper 831×486 ratio */}
-                <div className="comic-koto-stage relative aspect-[831/486] min-w-0 flex-[831] overflow-hidden rounded-[12px] bg-[var(--comic-ink)]">
+                {/* Right — larger editorial stage, same 831×486 ratio */}
+                <div className="comic-koto-stage relative aspect-[831/486] min-w-0 flex-[0.7] overflow-hidden rounded-[12px] bg-[var(--comic-ink)]">
                   {featured.map((item, index) => {
                     const offset = index - active;
                     const isActive = index === active;
@@ -237,14 +230,14 @@ export function ComicCaseStudies() {
               ref={attachMobile(index)}
               className="flex flex-col gap-6"
             >
-              <div className="flex flex-col gap-3">
-                <h2 className="text-[clamp(2rem,8vw,3rem)] font-extrabold leading-[1.2] tracking-[-0.02em] text-[var(--comic-ink)]">
+              <div className="flex flex-col gap-4">
+                <h2 className="text-[clamp(2.35rem,9vw,3.5rem)] font-extrabold leading-[1.1] tracking-[-0.03em] text-[var(--comic-ink)]">
                   {item.company}
                 </h2>
-                <p className="text-[clamp(1.15rem,4.2vw,1.5rem)] font-medium leading-[1.25] tracking-[-0.05em] text-[var(--comic-ink)] text-pretty">
+                <p className="text-[clamp(1.25rem,4.5vw,1.65rem)] font-medium leading-[1.3] tracking-[-0.045em] text-[var(--comic-ink)] text-pretty">
                   {item.body}
                 </p>
-                <FilmStudyLink className="text-[clamp(1.15rem,4.2vw,1.5rem)]" />
+                <FilmStudyLink className="text-[clamp(1.25rem,4.5vw,1.65rem)]" />
               </div>
               <div className="comic-koto-stage relative aspect-[831/486] w-full overflow-hidden rounded-[12px] bg-[var(--comic-ink)]">
                 <KotoVideo
@@ -261,7 +254,11 @@ export function ComicCaseStudies() {
   );
 }
 
-/** Fixed-height slot: layers share one place; active reels up, next rises into view. */
+/**
+ * Reel slot: layers share one place; active reels up, next rises into view.
+ * An invisible stacked sizer keeps height fit to the tallest layer so larger
+ * editorial type never clips under overflow-hidden.
+ */
 function ReelSlot({
   active,
   reduceMotion,
@@ -277,6 +274,13 @@ function ReelSlot({
 
   return (
     <div className={`relative overflow-hidden ${className ?? ""}`}>
+      <div className="invisible grid" aria-hidden>
+        {layers.map((child, index) => (
+          <div key={index} className="col-start-1 row-start-1">
+            {child}
+          </div>
+        ))}
+      </div>
       {layers.map((child, index) => {
         const offset = index - active;
         const isActive = index === active;
@@ -314,22 +318,11 @@ function FilmStudyLink({ className = "" }: { className?: string }) {
       className={`group/link inline-flex items-center gap-2.5 font-bold leading-[1.2] tracking-[-0.04em] text-[var(--comic-purple)] transition-[opacity,transform] duration-200 ease-out hover:opacity-70 active:scale-[0.96] ${className}`}
     >
       Zur Fallstudie
-      <svg
-        viewBox="0 0 18 12"
-        width="18"
-        height="12"
+      <ArrowRight
         aria-hidden
-        className="shrink-0 transition-transform duration-200 ease-out group-hover/link:translate-x-0.5"
-      >
-        <path
-          d="M0 6H18M18 6L12 12M18 6L12 0"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+        strokeWidth={2.5}
+        className="size-[0.95em] shrink-0 transition-transform duration-200 ease-out group-hover/link:translate-x-0.5"
+      />
     </a>
   );
 }

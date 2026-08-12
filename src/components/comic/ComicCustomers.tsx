@@ -28,24 +28,24 @@ const logos = [
 export function ComicCustomers() {
   return (
     <section className="comic-customers">
-      <div className="comic-shell relative z-10 flex flex-col items-center gap-12 md:gap-16">
+      <div className="comic-shell relative z-10 flex flex-col items-center gap-16 md:gap-24">
         <ComicSectionIntro
           title="So viele zufriedene Kunden!"
           lead="Unsere Kunden nutzen unsere Erklärfilme in Marketing und Vertrieb, online und auf Messen."
         />
 
-        <div className="grid w-full grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4 md:grid-cols-5 md:gap-x-10 md:gap-y-10">
+        <div className="grid w-full grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4 md:grid-cols-5 md:gap-x-12 md:gap-y-14">
           {logos.map((logo) => (
             <div
               key={logo.src}
-              className="flex h-12 items-center justify-center md:h-14"
+              className="flex h-16 items-center justify-center md:h-20"
             >
               <Image
                 src={logo.src}
                 alt={logo.alt}
-                width={140}
-                height={40}
-                className="max-h-10 w-auto object-contain opacity-70 grayscale transition-[opacity,filter] hover:opacity-100 hover:grayscale-0 md:max-h-12"
+                width={180}
+                height={56}
+                className="max-h-14 w-auto object-contain opacity-70 grayscale transition-[opacity,filter] hover:opacity-100 hover:grayscale-0 md:max-h-16"
               />
             </div>
           ))}

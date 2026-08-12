@@ -52,8 +52,23 @@ export function ComicPortfolio() {
           <div className="comic-portfolio-filters" role="group" aria-label="Portfolio-Filter">
             {(Object.keys(filterGroups) as FilterGroup[]).map((group) => (
               <label key={group} className="comic-chip" data-active={!!active[group]}>
-                <span className="opacity-60">{group}</span>
+                <span className="comic-chip__label">{group}</span>
+                <span className="comic-chip__value">
+                  {active[group] ?? "Alle"}
+                </span>
+                <span className="comic-chip__chevron" aria-hidden>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path
+                      d="M3 5.25 7 9.25 11 5.25"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
                 <select
+                  className="comic-chip__select"
                   value={active[group] ?? ""}
                   onChange={(e) =>
                     onChange(group, e.target.value === "" ? null : e.target.value)
@@ -165,7 +180,7 @@ function ComicFilmTile({
       <motion.div
         layoutId={`film-media-${film.id}`}
         className="absolute inset-0"
-        transition={reduceMotion ? { duration: 0 } : { type: "spring", duration: 0.45, bounce: 0 }}
+        transition={reduceMotion ? { duration: 0 } : { type: "spring", duration: 0.28, bounce: 0 }}
       >
         <WallPoster
           film={film}

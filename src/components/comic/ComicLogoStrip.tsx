@@ -16,8 +16,8 @@ export function ComicLogoStrip() {
           key={logo.src}
           src={logo.src}
           alt={logo.alt}
-          width={160}
-          height={44}
+          width={200}
+          height={56}
         />
       ))}
     </div>
