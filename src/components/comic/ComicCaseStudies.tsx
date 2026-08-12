@@ -42,13 +42,12 @@ export function ComicCaseStudies() {
   const mobileRefs = useRef<(HTMLElement | null)[]>([]);
 
   // Desktop: map scroll progress through the pin track → reel index.
-  // The last segment is weighted heavier so reel 3 dwells before unpin.
+  // Equal units per reel, plus a short dwell on the last before unpin.
   useEffect(() => {
     const mql = window.matchMedia("(min-width: 1024px)");
     const count = featured.length;
-    // One unit per reel advance, plus extra dwell on the final reel.
-    const dwellUnits = 1.35;
-    const totalUnits = count - 1 + dwellUnits;
+    const dwellUnits = 0.45;
+    const totalUnits = count + dwellUnits;
 
     const updateFromScroll = () => {
       if (!mql.matches) return;
@@ -136,20 +135,19 @@ export function ComicCaseStudies() {
             the section top hits the viewport top.
           - Sticky panel is full viewport height so the row sits with balanced
             breathing room (no huge empty band under the video).
-          - Track height = advance steps + dwell so the last reel stays put
-            for a beat before the page unpins.
+          - One tall spacer per reel so each case gets real scroll time,
+            plus a short dwell spacer so the last reel holds before unpin.
         */}
         <div ref={trackRef} className="relative hidden lg:block">
           <div className="flex flex-col" aria-hidden>
-            {/* One viewport-ish step per reel advance */}
-            {featured.slice(0, -1).map((item) => (
+            {featured.map((item) => (
               <div
                 key={`step-${item.film.id}`}
-                className="h-[min(70svh,38rem)] w-full"
+                className="h-[min(150svh,90rem)] w-full"
               />
             ))}
-            {/* Final reel + dwell (longer than a single step) */}
-            <div className="h-[min(155svh,82rem)] w-full" />
+            {/* Extra hold on the final reel before unpin */}
+            <div className="h-[min(60svh,36rem)] w-full" />
           </div>
 
           <div className="pointer-events-none absolute inset-0">
