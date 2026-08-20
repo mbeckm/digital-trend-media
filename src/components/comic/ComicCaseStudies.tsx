@@ -1,437 +1,340 @@
 "use client";
 
 import {
-  Children,
+  useCallback,
   useEffect,
   useRef,
-  useState,
-  type CSSProperties,
-  type ReactNode,
+  type PointerEvent as ReactPointerEvent,
 } from "react";
 import { ArrowRight } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 
 import { films, type Film } from "@/components/portfolio/data";
-import {
-  type VimeoVideo,
-  vimeoPosterSrc,
-} from "@/components/VimeoEmbed";
+import { VideoShell } from "@/components/stories/VideoShell";
 
-/** Featured portfolio Erklärfilme — first three for the sticky reel. */
-const featured = films
-  .filter((f) => f.featured)
-  .slice(0, 3)
-  .map((film) => ({
-    film,
-    company: film.client,
-    body: `Für ${film.client} haben wir einen Erklärfilm gemacht, der das Angebot innerhalb weniger Sekunden an alle relevanten Stakeholder kommuniziert.`,
-  }));
+/** Same three featured Erklärfilme as the previous sticky reel. */
+const featured = films.filter((film) => film.featured).slice(0, 3);
 
-const reelEase = "cubic-bezier(0.75, 0, 0.85, 1)";
-const reelDuration = "420ms";
+const DRAG_THRESHOLD = 6;
+const VELOCITY_MIN = 0.05;
+const FRICTION_PER_MS = 0.0032;
 
-/**
- * Paper row, sticky + reel:
- * left copy (title / body / CTA) + right video stay in the Paper layout;
- * only the content reels on scroll.
- */
-export function ComicCaseStudies() {
-  const [active, setActive] = useState(0);
-  const reduceMotion = useReducedMotion();
-  const trackRef = useRef<HTMLDivElement>(null);
-  const mobileRefs = useRef<(HTMLElement | null)[]>([]);
-
-  // Desktop: map scroll progress through the pin track → reel index.
-  // Equal units per reel, plus a short dwell on the last before unpin.
-  useEffect(() => {
-    const mql = window.matchMedia("(min-width: 1024px)");
-    const count = featured.length;
-    const dwellUnits = 0.45;
-    const totalUnits = count + dwellUnits;
-
-    const updateFromScroll = () => {
-      if (!mql.matches) return;
-      const track = trackRef.current;
-      if (!track) return;
-
-      const rect = track.getBoundingClientRect();
-      const scrollable = Math.max(1, track.offsetHeight - window.innerHeight);
-      const progress = Math.min(1, Math.max(0, -rect.top / scrollable));
-      const next = Math.min(
-        count - 1,
-        Math.floor(progress * totalUnits),
-      );
-      setActive((prev) => (prev === next ? prev : next));
-    };
-
-    updateFromScroll();
-    window.addEventListener("scroll", updateFromScroll, { passive: true });
-    window.addEventListener("resize", updateFromScroll);
-    mql.addEventListener("change", updateFromScroll);
-    return () => {
-      window.removeEventListener("scroll", updateFromScroll);
-      window.removeEventListener("resize", updateFromScroll);
-      mql.removeEventListener("change", updateFromScroll);
-    };
-  }, []);
-
-  // Mobile: stacked rows still use IntersectionObserver.
-  useEffect(() => {
-    const mql = window.matchMedia("(min-width: 1024px)");
-    const ratios = new Map<Element, number>();
-    let io: IntersectionObserver | null = null;
-
-    const bind = () => {
-      io?.disconnect();
-      ratios.clear();
-      if (mql.matches) return;
-
-      const nodes = mobileRefs.current.filter(Boolean) as HTMLElement[];
-      if (nodes.length === 0) return;
-
-      io = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            ratios.set(entry.target, entry.intersectionRatio);
-          }
-          let bestIndex = 0;
-          let bestRatio = -1;
-          nodes.forEach((node, index) => {
-            const ratio = ratios.get(node) ?? 0;
-            if (ratio > bestRatio) {
-              bestRatio = ratio;
-              bestIndex = index;
-            }
-          });
-          setActive((prev) => (prev === bestIndex ? prev : bestIndex));
-        },
-        {
-          threshold: [0, 0.25, 0.5, 0.75, 1],
-          rootMargin: "-12% 0px -20% 0px",
-        },
-      );
-
-      nodes.forEach((node) => io!.observe(node));
-    };
-
-    bind();
-    mql.addEventListener("change", bind);
-    return () => {
-      mql.removeEventListener("change", bind);
-      io?.disconnect();
-    };
-  }, []);
-
-  const attachMobile = (index: number) => (node: HTMLElement | null) => {
-    mobileRefs.current[index] = node;
-  };
-
+function RefCard({ film }: { film: Film }) {
   return (
-    <section id="kunden" className="comic-koto">
-      <div className="comic-shell">
-        {/*
-          Desktop pin model:
-          - No section padding above the track → sticky engages as soon as
-            the section top hits the viewport top.
-          - Sticky panel is full viewport height so the row sits with balanced
-            breathing room (no huge empty band under the video).
-          - One tall spacer per reel so each case gets real scroll time,
-            plus a short dwell spacer so the last reel holds before unpin.
-        */}
-        <div ref={trackRef} className="relative hidden lg:block">
-          <div className="flex flex-col" aria-hidden>
-            {featured.map((item) => (
-              <div
-                key={`step-${item.film.id}`}
-                className="h-[min(150svh,90rem)] w-full"
-              />
-            ))}
-            {/* Extra hold on the final reel before unpin */}
-            <div className="h-[min(60svh,36rem)] w-full" />
-          </div>
+    <article
+      className="comic-panel comic-refs-card"
+      style={{ borderWidth: "5px 12px 15px 5px" }}
+    >
+      <div className="comic-refs-card__media">
+        <VideoShell
+          title={`${film.client} Erklärfilm`}
+          video={film.video}
+          sizes="(max-width: 768px) 90vw, 640px"
+          className="aspect-video rounded-none outline-none"
+          fade
+        />
+      </div>
 
-          <div className="pointer-events-none absolute inset-0">
-            <div className="sticky top-0 flex min-h-[100svh] items-center py-[clamp(2rem,4vw,3.5rem)]">
-              <div className="pointer-events-auto flex w-full items-stretch gap-[clamp(3rem,5.5vw,6rem)]">
-                {/* Left copy — tighter flex share so the stage can read larger */}
-                <div className="flex min-h-0 min-w-0 flex-[0.3] flex-col justify-between gap-10">
-                  <div className="flex flex-col gap-4">
-                    <ReelSlot active={active} reduceMotion={!!reduceMotion}>
-                      {featured.map((item) => (
-                        <h2
-                          key={item.film.id}
-                          className="w-max text-[clamp(3.25rem,5.4vw,5.25rem)] font-extrabold leading-[1.08] tracking-[-0.03em] text-[var(--comic-ink)]"
-                        >
-                          {item.company}
-                        </h2>
-                      ))}
-                    </ReelSlot>
-
-                    <ReelSlot active={active} reduceMotion={!!reduceMotion}>
-                      {featured.map((item) => (
-                        <p
-                          key={item.film.id}
-                          className="max-w-[30ch] text-[clamp(1.45rem,2.45vw,2.45rem)] font-medium leading-[1.28] tracking-[-0.045em] text-[var(--comic-ink)] text-pretty"
-                        >
-                          {item.body}
-                        </p>
-                      ))}
-                    </ReelSlot>
-                  </div>
-
-                  <FilmStudyLink className="text-[clamp(1.45rem,2.45vw,2.45rem)]" />
-                </div>
-
-                {/* Right — larger editorial stage, same 831×486 ratio */}
-                <div className="comic-koto-stage relative aspect-[831/486] min-w-0 flex-[0.7] overflow-hidden rounded-[12px] bg-[var(--comic-ink)]">
-                  {featured.map((item, index) => {
-                    const offset = index - active;
-                    const isActive = index === active;
-                    const style: CSSProperties = reduceMotion
-                      ? {
-                          opacity: isActive ? 1 : 0,
-                          pointerEvents: isActive ? "auto" : "none",
-                        }
-                      : {
-                          transform: `translateY(${offset * 18}%)`,
-                          opacity: isActive ? 1 : 0,
-                          pointerEvents: isActive ? "auto" : "none",
-                          transition: `transform ${reelDuration} ${reelEase}, opacity ${reelDuration} ${reelEase}`,
-                        };
-
-                    return (
-                      <div
-                        key={item.film.id}
-                        className="absolute inset-0"
-                        style={style}
-                        aria-hidden={!isActive}
-                      >
-                        <KotoVideo
-                          film={item.film}
-                          company={item.company}
-                          active={isActive}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="comic-refs-card__body">
+        <div className="flex flex-col gap-3 md:gap-4">
+          <h3 className="comic-display text-[clamp(2rem,3.4vw,2.85rem)] leading-[1.02] text-[var(--comic-ink)]">
+            {film.client}
+          </h3>
+          <p className="max-w-[32ch] text-pretty text-[clamp(1.05rem,1.7vw,1.35rem)] font-medium leading-[1.3] tracking-[-0.03em] text-[var(--comic-ink)]">
+            {film.title}
+          </p>
         </div>
 
-        {/* Mobile: stacked Paper rows */}
-        <div className="flex flex-col gap-16 py-[clamp(4rem,8vw,7.5rem)] lg:hidden">
-          {featured.map((item, index) => (
-            <div
-              key={item.film.id}
-              ref={attachMobile(index)}
-              className="flex flex-col gap-6"
-            >
-              <div className="flex flex-col gap-4">
-                <h2 className="text-[clamp(2.35rem,9vw,3.5rem)] font-extrabold leading-[1.1] tracking-[-0.03em] text-[var(--comic-ink)]">
-                  {item.company}
-                </h2>
-                <p className="text-[clamp(1.25rem,4.5vw,1.65rem)] font-medium leading-[1.3] tracking-[-0.045em] text-[var(--comic-ink)] text-pretty">
-                  {item.body}
-                </p>
-                <FilmStudyLink className="text-[clamp(1.25rem,4.5vw,1.65rem)]" />
-              </div>
-              <div className="comic-koto-stage relative aspect-[831/486] w-full overflow-hidden rounded-[12px] bg-[var(--comic-ink)]">
-                <KotoVideo
-                  film={item.film}
-                  company={item.company}
-                  active={index === active}
-                />
-              </div>
+        <a
+          href="#portfolio"
+          className="group/link mt-auto inline-flex items-center gap-2 pt-4 text-[clamp(1.05rem,1.6vw,1.25rem)] font-bold leading-snug tracking-[-0.03em] text-[var(--comic-purple)] transition-[opacity,transform] duration-200 ease-out hover:opacity-70 active:scale-[0.96]"
+        >
+          Zur Fallstudie
+          <ArrowRight
+            aria-hidden
+            strokeWidth={2.5}
+            className="size-[0.95em] shrink-0 transition-transform duration-200 ease-out group-hover/link:translate-x-0.5"
+          />
+        </a>
+      </div>
+    </article>
+  );
+}
+
+function ScrollButton({
+  direction,
+  onClick,
+}: {
+  direction: "prev" | "next";
+  onClick: () => void;
+}) {
+  const label =
+    direction === "prev" ? "Vorheriger Film" : "Nächster Film";
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className="comic-refs-nav"
+    >
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        aria-hidden
+        className={direction === "prev" ? "rotate-180" : undefined}
+      >
+        <path
+          d="M6 3.5L10.5 8L6 12.5"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </button>
+  );
+}
+
+function getSlideStep(scroller: HTMLElement) {
+  const slide = scroller.querySelector<HTMLElement>(".comic-refs-slide");
+  if (!slide) return Math.min(scroller.clientWidth * 0.85, 640);
+  const styles = getComputedStyle(scroller);
+  const gap = Number.parseFloat(styles.columnGap || styles.gap) || 0;
+  return slide.offsetWidth + gap;
+}
+
+function snapToNearestSlide(scroller: HTMLElement) {
+  const slides = scroller.querySelectorAll<HTMLElement>(".comic-refs-slide");
+  if (!slides.length) return;
+
+  const scrollPadding =
+    Number.parseFloat(getComputedStyle(scroller).scrollPaddingLeft) || 0;
+  const viewportCenter =
+    scroller.scrollLeft +
+    scrollPadding +
+    (scroller.clientWidth - scrollPadding * 2) / 2;
+
+  let best = slides[0];
+  let bestDist = Infinity;
+  for (const slide of slides) {
+    const center = slide.offsetLeft + slide.offsetWidth / 2;
+    const dist = Math.abs(center - viewportCenter);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = slide;
+    }
+  }
+
+  const target = best.offsetLeft - (scroller.clientWidth - best.offsetWidth) / 2;
+  const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+  scroller.scrollTo({
+    left: Math.max(0, Math.min(target, maxScroll)),
+    behavior: "smooth",
+  });
+}
+
+export function ComicCaseStudies() {
+  const reduceMotion = useReducedMotion();
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const momentumRef = useRef<number | null>(null);
+  const dragRef = useRef({
+    active: false,
+    moved: false,
+    startX: 0,
+    lastX: 0,
+    lastTime: 0,
+    velocity: 0,
+    scrollLeft: 0,
+    pointerId: -1,
+  });
+
+  const stopMomentum = useCallback(() => {
+    if (momentumRef.current != null) {
+      cancelAnimationFrame(momentumRef.current);
+      momentumRef.current = null;
+    }
+  }, []);
+
+  const startMomentum = useCallback(
+    (scroller: HTMLElement, velocityPxPerMs: number) => {
+      stopMomentum();
+      let velocity = velocityPxPerMs;
+      let lastTime = performance.now();
+
+      const step = (now: number) => {
+        const dt = Math.min(now - lastTime, 32);
+        lastTime = now;
+
+        if (Math.abs(velocity) < VELOCITY_MIN) {
+          scroller.classList.remove("is-dragging");
+          snapToNearestSlide(scroller);
+          momentumRef.current = null;
+          return;
+        }
+
+        scroller.scrollLeft -= velocity * dt;
+        velocity *= Math.exp(-FRICTION_PER_MS * dt);
+
+        const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+        if (scroller.scrollLeft <= 0 || scroller.scrollLeft >= maxScroll) {
+          scroller.scrollLeft = Math.max(
+            0,
+            Math.min(scroller.scrollLeft, maxScroll),
+          );
+          scroller.classList.remove("is-dragging");
+          snapToNearestSlide(scroller);
+          momentumRef.current = null;
+          return;
+        }
+
+        momentumRef.current = requestAnimationFrame(step);
+      };
+
+      momentumRef.current = requestAnimationFrame(step);
+    },
+    [stopMomentum],
+  );
+
+  const scrollBy = useCallback(
+    (dir: -1 | 1) => {
+      const el = scrollerRef.current;
+      if (!el) return;
+      stopMomentum();
+      el.classList.remove("is-dragging");
+      el.scrollBy({
+        left: dir * getSlideStep(el),
+        behavior: reduceMotion ? "auto" : "smooth",
+      });
+    },
+    [reduceMotion, stopMomentum],
+  );
+
+  const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "touch") return;
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    stopMomentum();
+    dragRef.current = {
+      active: true,
+      moved: false,
+      startX: event.clientX,
+      lastX: event.clientX,
+      lastTime: performance.now(),
+      velocity: 0,
+      scrollLeft: el.scrollLeft,
+      pointerId: event.pointerId,
+    };
+    el.setPointerCapture(event.pointerId);
+  };
+
+  const onPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag.active || event.pointerId !== drag.pointerId) return;
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    const now = performance.now();
+    const dx = event.clientX - drag.startX;
+    if (!drag.moved && Math.abs(dx) < DRAG_THRESHOLD) return;
+
+    if (!drag.moved) {
+      drag.moved = true;
+      el.classList.add("is-dragging");
+    }
+
+    const dt = Math.max(now - drag.lastTime, 1);
+    const sample = (event.clientX - drag.lastX) / dt;
+    drag.velocity = drag.velocity * 0.6 + sample * 0.4;
+    drag.lastX = event.clientX;
+    drag.lastTime = now;
+
+    event.preventDefault();
+    el.scrollLeft = drag.scrollLeft - dx;
+  };
+
+  const endDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag.active || event.pointerId !== drag.pointerId) return;
+    const el = scrollerRef.current;
+
+    drag.active = false;
+    drag.pointerId = -1;
+
+    if (el?.hasPointerCapture(event.pointerId)) {
+      el.releasePointerCapture(event.pointerId);
+    }
+
+    if (!el || !drag.moved) {
+      el?.classList.remove("is-dragging");
+      return;
+    }
+
+    const idle = performance.now() - drag.lastTime;
+    const velocity = idle > 80 ? 0 : drag.velocity;
+
+    if (Math.abs(velocity) >= VELOCITY_MIN) {
+      startMomentum(el, velocity);
+    } else {
+      el.classList.remove("is-dragging");
+      snapToNearestSlide(el);
+    }
+  };
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    const onClickCapture = (event: MouseEvent) => {
+      if (!dragRef.current.moved) return;
+      event.preventDefault();
+      event.stopPropagation();
+      dragRef.current.moved = false;
+    };
+
+    el.addEventListener("click", onClickCapture, true);
+    return () => {
+      el.removeEventListener("click", onClickCapture, true);
+      stopMomentum();
+    };
+  }, [stopMomentum]);
+
+  return (
+    <section
+      id="kunden"
+      className="overflow-x-clip bg-[var(--comic-white)] py-[clamp(3.5rem,7vw,6.5rem)]"
+    >
+      <div className="comic-shell mb-8 flex items-end justify-between gap-6 md:mb-10">
+        <h2 className="comic-display max-w-[16ch] text-[clamp(2.5rem,6vw,4.5rem)] leading-[1.05] text-balance text-[var(--comic-ink)]">
+          Fallstudien
+        </h2>
+        <div className="hidden shrink-0 gap-2 md:flex">
+          <ScrollButton direction="prev" onClick={() => scrollBy(-1)} />
+          <ScrollButton direction="next" onClick={() => scrollBy(1)} />
+        </div>
+      </div>
+
+      <div className="comic-refs-bleed">
+        <div
+          ref={scrollerRef}
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Referenzfilme"
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          className="comic-refs-track cursor-grab"
+        >
+          {featured.map((film) => (
+            <div key={film.id} className="comic-refs-slide">
+              <RefCard film={film} />
             </div>
           ))}
         </div>
       </div>
     </section>
-  );
-}
-
-/**
- * Reel slot: layers share one place; active reels up, next rises into view.
- * An invisible stacked sizer keeps height fit to the tallest layer so larger
- * editorial type never clips under overflow-hidden.
- */
-function ReelSlot({
-  active,
-  reduceMotion,
-  className,
-  children,
-}: {
-  active: number;
-  reduceMotion: boolean;
-  className?: string;
-  children: ReactNode;
-}) {
-  const layers = Children.toArray(children);
-
-  return (
-    <div className={`relative overflow-hidden ${className ?? ""}`}>
-      <div className="invisible grid" aria-hidden>
-        {layers.map((child, index) => (
-          <div key={index} className="col-start-1 row-start-1">
-            {child}
-          </div>
-        ))}
-      </div>
-      {layers.map((child, index) => {
-        const offset = index - active;
-        const isActive = index === active;
-        const style: CSSProperties = reduceMotion
-          ? {
-              opacity: isActive ? 1 : 0,
-              pointerEvents: isActive ? "auto" : "none",
-            }
-          : {
-              transform: `translateY(${offset * 100}%)`,
-              opacity: isActive ? 1 : 0,
-              pointerEvents: isActive ? "auto" : "none",
-              transition: `transform ${reelDuration} ${reelEase}, opacity ${reelDuration} ${reelEase}`,
-            };
-
-        return (
-          <div
-            key={index}
-            className="absolute inset-x-0 top-0"
-            style={style}
-            aria-hidden={!isActive}
-          >
-            {child}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function FilmStudyLink({ className = "" }: { className?: string }) {
-  return (
-    <a
-      href="#portfolio"
-      className={`group/link inline-flex items-center gap-2.5 font-bold leading-[1.2] tracking-[-0.04em] text-[var(--comic-purple)] transition-[opacity,transform] duration-200 ease-out hover:opacity-70 active:scale-[0.96] ${className}`}
-    >
-      Zur Fallstudie
-      <ArrowRight
-        aria-hidden
-        strokeWidth={2.5}
-        className="size-[0.95em] shrink-0 transition-transform duration-200 ease-out group-hover/link:translate-x-0.5"
-      />
-    </a>
-  );
-}
-
-function KotoVideo({
-  film,
-  company,
-  active,
-}: {
-  film: Film;
-  company: string;
-  active: boolean;
-}) {
-  return (
-    <div className="absolute inset-0 overflow-hidden bg-[var(--comic-ink)]">
-      <AutoplayVimeo
-        video={film.video}
-        title={`${company} Erklärfilm`}
-        active={active}
-      />
-    </div>
-  );
-}
-
-/** Muted looping Vimeo embed, mounted only near viewport. */
-function AutoplayVimeo({
-  video,
-  title,
-  active,
-}: {
-  video: VimeoVideo;
-  title: string;
-  active: boolean;
-}) {
-  const hostRef = useRef<HTMLDivElement>(null);
-  const [near, setNear] = useState(false);
-
-  useEffect(() => {
-    const host = hostRef.current;
-    if (!host) return;
-
-    let leaveTimer = 0;
-    const io = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        const visible =
-          Boolean(entry?.isIntersecting) &&
-          (entry?.intersectionRatio ?? 0) > 0 &&
-          host.getClientRects().length > 0;
-        if (visible) {
-          if (leaveTimer) {
-            window.clearTimeout(leaveTimer);
-            leaveTimer = 0;
-          }
-          setNear(true);
-        } else {
-          leaveTimer = window.setTimeout(() => {
-            setNear(false);
-            leaveTimer = 0;
-          }, 700);
-        }
-      },
-      { rootMargin: "160px 0px", threshold: [0, 0.05] },
-    );
-    io.observe(host);
-    return () => {
-      io.disconnect();
-      if (leaveTimer) window.clearTimeout(leaveTimer);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!active) return;
-    const host = hostRef.current;
-    if (host && host.getClientRects().length > 0) setNear(true);
-  }, [active]);
-
-  const params = new URLSearchParams({
-    background: "1",
-    autoplay: "1",
-    muted: "1",
-    loop: "1",
-    autopause: "0",
-    title: "0",
-    byline: "0",
-    portrait: "0",
-    dnt: "1",
-  });
-  if (video.hash) params.set("h", video.hash);
-
-  return (
-    <div ref={hostRef} className="absolute inset-0">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={vimeoPosterSrc(video)}
-        alt=""
-        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
-          near ? "opacity-0" : "opacity-100"
-        }`}
-      />
-      {near ? (
-        <iframe
-          src={`https://player.vimeo.com/video/${video.id}?${params.toString()}`}
-          title={title}
-          className={`absolute inset-0 h-full w-full border-0 transition-opacity duration-500 ${
-            active ? "opacity-100" : "opacity-90"
-          }`}
-          allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
-          referrerPolicy="strict-origin-when-cross-origin"
-        />
-      ) : null}
-    </div>
   );
 }
