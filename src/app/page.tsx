@@ -17,8 +17,8 @@ export default function Home() {
         <ComicHero />
         <ComicLogoStrip />
         <ComicCaseStudies />
-        <ComicHelp />
         <ComicCustomers />
+        <ComicHelp />
         <ComicPortfolio />
         <ComicTestimonials />
         <ComicCompare />
