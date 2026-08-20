@@ -10,10 +10,7 @@ export function ComicProcessSection({ children }: { children: ReactNode }) {
       <div className="comic-shell comic-process__inner">
         <ComicSectionIntro title={PROCESS_COPY.title} lead={PROCESS_COPY.lead} />
         {children}
-        <div className="comic-process__foot">
-          <p className="comic-process__foot-copy">Lasst uns starten.</p>
-          <ComicCta className="!mt-0" />
-        </div>
+        <ComicCta className="!mt-0" />
       </div>
     </section>
   );
