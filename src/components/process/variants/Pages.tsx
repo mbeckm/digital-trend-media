@@ -35,7 +35,7 @@ function PagePanel({ step }: { step: ProcessStep }) {
       style={
         {
           "--page-tilt": reduceMotion ? "0deg" : `${step.tilt}deg`,
-        } satisfies CSSProperties & { "--page-tilt": string }
+        } as CSSProperties
       }
     >
       <div className="comic-process-page__head">
