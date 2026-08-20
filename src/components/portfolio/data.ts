@@ -19,7 +19,7 @@ export const filterGroups = {
 } as const;
 
 export type FilterGroup = keyof typeof filterGroups;
-export type FilterState = Record<FilterGroup, string | null>;
+export type FilterState = { group: FilterGroup; value: string } | null;
 
 export type Film = {
   id: string;
@@ -342,17 +342,34 @@ export const films: Film[] = seeds.map((seed) => ({
   caseHref: "#kunden",
 }));
 
-export const emptyFilters: FilterState = {
-  Branche: null,
-  Stil: null,
-  Videoart: null,
-};
+export const emptyFilters: FilterState = null;
+
+const filmKey = {
+  Branche: "branche",
+  Stil: "stil",
+  Videoart: "videoart",
+} as const satisfies Record<FilterGroup, keyof Film>;
+
+export function filterValue(
+  active: FilterState,
+  group: FilterGroup,
+): string | null {
+  return active?.group === group ? active.value : null;
+}
+
+export function setFilter(
+  prev: FilterState,
+  group: FilterGroup,
+  value: string | null,
+): FilterState {
+  if (value === null) {
+    return prev?.group === group ? null : prev;
+  }
+  return { group, value };
+}
 
 export function filterFilms(active: FilterState): Film[] {
-  return films.filter((film) => {
-    if (active.Branche && film.branche !== active.Branche) return false;
-    if (active.Stil && film.stil !== active.Stil) return false;
-    if (active.Videoart && film.videoart !== active.Videoart) return false;
-    return true;
-  });
+  if (!active) return films;
+  const key = filmKey[active.group];
+  return films.filter((film) => film[key] === active.value);
 }

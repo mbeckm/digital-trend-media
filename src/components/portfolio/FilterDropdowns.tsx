@@ -8,6 +8,7 @@ import {
   type FilterGroup,
   type FilterState,
   filterGroups,
+  filterValue,
 } from "@/components/portfolio/data";
 
 const dockSpring = { type: "spring" as const, duration: 0.4, bounce: 0.1 };
@@ -168,7 +169,7 @@ export function FilterDockPill({
   visible: boolean;
 }) {
   const reduceMotion = useReducedMotion();
-  const hasActive = Object.values(active).some(Boolean);
+  const hasActive = active !== null;
 
   return (
     <AnimatePresence>
@@ -206,7 +207,7 @@ export function FilterDockPill({
                 <FilterDropdown
                   key={group}
                   group={group}
-                  value={active[group]}
+                  value={filterValue(active, group)}
                   dropUp
                   onChange={(value) => onChange(group, value)}
                 />
