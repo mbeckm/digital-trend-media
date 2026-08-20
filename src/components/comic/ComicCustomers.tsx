@@ -45,14 +45,6 @@ const characters = [
     src: "/images/comic/character-confused.png",
     alt: "Verwirrte Comic-Figur",
   },
-  {
-    src: "/images/comic/character-sad.png",
-    alt: "Traurige Comic-Figur",
-  },
-  {
-    src: "/images/comic/character-angry.png",
-    alt: "Verärgerte Comic-Figur",
-  },
 ] as const;
 
 const characterTrailItems = characters.map((character) => (
