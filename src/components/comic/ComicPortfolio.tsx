@@ -11,6 +11,8 @@ import {
   emptyFilters,
   filterFilms,
   filterGroups,
+  filterValue,
+  setFilter,
   type Film,
 } from "@/components/portfolio/data";
 
@@ -31,7 +33,7 @@ export function ComicPortfolio() {
     null;
 
   const onChange = (group: FilterGroup, value: string | null) => {
-    setActive((prev) => ({ ...prev, [group]: value }));
+    setActive((prev) => setFilter(prev, group, value));
     setVisibleCount(PAGE_SIZE);
   };
 
@@ -50,41 +52,44 @@ export function ComicPortfolio() {
           />
 
           <div className="comic-portfolio-filters" role="group" aria-label="Portfolio-Filter">
-            {(Object.keys(filterGroups) as FilterGroup[]).map((group) => (
-              <label key={group} className="comic-chip" data-active={!!active[group]}>
-                <span className="comic-chip__label">{group}</span>
-                <span className="comic-chip__value">
-                  {active[group] ?? "Alle"}
-                </span>
-                <span className="comic-chip__chevron" aria-hidden>
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path
-                      d="M3 5.25 7 9.25 11 5.25"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </span>
-                <select
-                  className="comic-chip__select"
-                  value={active[group] ?? ""}
-                  onChange={(e) =>
-                    onChange(group, e.target.value === "" ? null : e.target.value)
-                  }
-                  aria-label={group}
-                >
-                  <option value="">Alle</option>
-                  {filterGroups[group].map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            ))}
-            {Object.values(active).some(Boolean) ? (
+            {(Object.keys(filterGroups) as FilterGroup[]).map((group) => {
+              const value = filterValue(active, group);
+              return (
+                <label key={group} className="comic-chip" data-active={!!value}>
+                  <span className="comic-chip__label">{group}</span>
+                  <span className="comic-chip__value">
+                    {value ?? "Alle"}
+                  </span>
+                  <span className="comic-chip__chevron" aria-hidden>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <path
+                        d="M3 5.25 7 9.25 11 5.25"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  <select
+                    className="comic-chip__select"
+                    value={value ?? ""}
+                    onChange={(e) =>
+                      onChange(group, e.target.value === "" ? null : e.target.value)
+                    }
+                    aria-label={group}
+                  >
+                    <option value="">Alle</option>
+                    {filterGroups[group].map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              );
+            })}
+            {active ? (
               <button
                 type="button"
                 className="comic-chip"
@@ -98,7 +103,7 @@ export function ComicPortfolio() {
           {results.length === 0 ? (
             <div className="flex flex-col items-center gap-3 py-16 text-center">
               <p className="text-xl font-bold tracking-[-0.02em]">
-                Keine Filme für diese Kombination
+                Keine Filme für diesen Filter
               </p>
               <button
                 type="button"

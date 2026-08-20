@@ -1229,7 +1229,22 @@
   }
 }
 
-/* Testimonials marquee — full-bleed, scrollable, auto-drifts via JS */
+/* Testimonials — one big landscape card, horizontally scrollable */
+.comic-testimonial-carousel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.comic-testimonial-bleed {
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  max-width: 100vw;
+  translate: -50% 0;
+}
+
 .comic-testimonial-bleed::before,
 .comic-testimonial-bleed::after {
   content: "";
@@ -1255,16 +1270,16 @@
   display: flex;
   gap: 1.25rem;
   padding-inline: var(--comic-gutter);
+  padding-block: 0.35rem 1rem;
   scroll-padding-inline: var(--comic-gutter);
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
-  /* No scroll-snap — it fights the infinite auto-drift */
+  scroll-snap-type: x mandatory;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   user-select: none;
   -webkit-user-select: none;
-  padding-block: 0.25rem 0.75rem;
 }
 
 .comic-testimonial-track::-webkit-scrollbar {
@@ -1272,20 +1287,154 @@
 }
 
 .comic-testimonial-track.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
   scroll-behavior: auto;
 }
 
 .comic-testimonial-track.is-dragging * {
+  cursor: grabbing;
   pointer-events: none;
 }
 
 .comic-testimonial-slide {
-  width: min(84vw, 26rem);
+  flex: 0 0 min(86vw, 32rem);
+  scroll-snap-align: start;
 }
 
-@media (min-width: 640px) {
+.comic-testimonial-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+  background: var(--comic-white);
+}
+
+.comic-testimonial-card__media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  flex-shrink: 0;
+  border-bottom: 5px solid var(--comic-ink);
+  background: var(--comic-ink);
+}
+
+.comic-testimonial-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1.35rem;
+  padding: 1.35rem 1.35rem 1.6rem;
+}
+
+.comic-testimonial-navs {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.comic-testimonial-nav {
+  display: flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-style: solid;
+  border-color: var(--comic-ink);
+  border-width: 2px 4px 4px 2px;
+  border-radius: 999px;
+  background: var(--comic-white);
+  color: var(--comic-ink);
+  cursor: pointer;
+  transition:
+    transform 160ms var(--comic-ease),
+    background-color 160ms var(--comic-ease);
+}
+
+.comic-testimonial-nav:hover {
+  background: var(--comic-yellow);
+}
+
+.comic-testimonial-nav:active {
+  transform: scale(0.96);
+}
+
+@media (min-width: 768px) {
+  .comic-testimonial-carousel {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
+    align-items: center;
+    gap: 1rem;
+    max-width: var(--comic-container);
+    margin-inline: auto;
+    padding-inline: var(--comic-gutter);
+  }
+
+  .comic-testimonial-bleed {
+    left: auto;
+    width: auto;
+    max-width: none;
+    translate: none;
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .comic-testimonial-bleed::before,
+  .comic-testimonial-bleed::after {
+    display: none;
+  }
+
+  .comic-testimonial-track {
+    padding-inline: 0;
+    scroll-padding-inline: 0;
+    gap: 1.5rem;
+  }
+
   .comic-testimonial-slide {
-    width: min(58vw, 30rem);
+    flex-basis: 100%;
+  }
+
+  .comic-testimonial-card {
+    flex-direction: row;
+    min-height: 26.5rem;
+  }
+
+  .comic-testimonial-card__media {
+    width: min(42%, 28rem);
+    aspect-ratio: auto;
+    align-self: stretch;
+    border-bottom: 0;
+    border-right: 5px solid var(--comic-ink);
+  }
+
+  .comic-testimonial-card__body {
+    gap: 1.6rem;
+    padding: 1.75rem 1.85rem 1.9rem 2rem;
+  }
+
+  .comic-testimonial-navs {
+    display: contents;
+  }
+
+  .comic-testimonial-nav--prev {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .comic-testimonial-nav--next {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .comic-testimonial-card {
+    min-height: 28.5rem;
+  }
+
+  .comic-testimonial-card__body {
+    gap: 1.85rem;
+    padding: 2rem 2.25rem 2.1rem 2.4rem;
   }
 }
 
@@ -1300,11 +1449,7 @@
     animation: none;
   }
 
-  .comic-testimonial-track {
-    scroll-snap-type: x mandatory;
-  }
-
-  .comic-testimonial-slide {
-    scroll-snap-align: center;
+  .comic-testimonial-nav {
+    transition: none;
   }
 }

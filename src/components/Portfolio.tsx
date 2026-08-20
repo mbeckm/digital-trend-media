@@ -26,6 +26,7 @@ import {
   type FilterState,
   emptyFilters,
   filterFilms,
+  setFilter,
   type Film,
 } from "@/components/portfolio/data";
 import { RevealGroup, RevealItem } from "@/components/motion/reveal";
@@ -70,7 +71,7 @@ export function Portfolio() {
   const showFilterDock = sectionInView && !selected;
 
   const onChange = (group: FilterGroup, value: string | null) => {
-    setActive((prev) => ({ ...prev, [group]: value }));
+    setActive((prev) => setFilter(prev, group, value));
   };
 
   const onReset = () => setActive(emptyFilters);
@@ -303,7 +304,7 @@ export function Portfolio() {
           {results.length === 0 ? (
             <div className="relative z-10 flex flex-col items-center gap-3 px-6 py-24 text-center">
               <p className="font-[family-name:var(--font-inter-tight)] text-xl font-semibold text-black">
-                Keine Filme für diese Kombination
+                Keine Filme für diesen Filter
               </p>
               <button
                 type="button"
