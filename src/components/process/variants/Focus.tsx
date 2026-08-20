@@ -127,11 +127,10 @@ function FocusBody({ step }: { step: (typeof PROCESS_STEPS)[number] }) {
     <>
       <ComicScene kind={step.kind} />
       <div className="comic-process-focus__copy">
-        <div className="comic-process-focus__copy-top">
+        <div className="comic-process-focus__heading">
           <span className="comic-process-n">{step.n}</span>
-          <span className="comic-process-chip">{step.meta}</span>
+          <h3 className="comic-process-focus__title">{step.title}</h3>
         </div>
-        <h3 className="comic-process-focus__title">{step.title}</h3>
         <p className="comic-process-focus__body">{step.body}</p>
       </div>
     </>

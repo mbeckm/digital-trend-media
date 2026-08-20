@@ -568,14 +568,13 @@
 .comic-process-focus__copy {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0.75rem;
 }
 
-.comic-process-focus__copy-top {
+.comic-process-focus__heading {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .comic-process-focus__copy .comic-process-n {
