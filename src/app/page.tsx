@@ -8,6 +8,7 @@ import { ComicHelp } from "@/components/comic/ComicHelp";
 import { ComicLogoStrip } from "@/components/comic/ComicLogoStrip";
 import { ComicPortfolio } from "@/components/comic/ComicPortfolio";
 import { ComicTestimonials } from "@/components/comic/ComicTestimonials";
+import { FocusProcess } from "@/components/process/variants/Focus";
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
         <ComicHelp />
         <ComicPortfolio />
         <ComicTestimonials />
+        <FocusProcess />
         <ComicCompare />
         <ComicFaq />
       </main>

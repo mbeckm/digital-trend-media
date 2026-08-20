@@ -32,7 +32,7 @@ const benefits: {
 
 export function ComicHelp() {
   return (
-    <section className="comic-help" id="prozess">
+    <section className="comic-help">
       <div className="comic-shell comic-help__intro">
         <ComicSectionIntro
           light
