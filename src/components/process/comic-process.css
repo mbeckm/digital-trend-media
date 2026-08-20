@@ -19,22 +19,6 @@
   }
 }
 
-.comic-process__foot {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
-}
-
-.comic-process__foot-copy {
-  margin: 0;
-  font-size: clamp(1.15rem, 2vw, 1.65rem);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 1.25;
-  text-align: center;
-}
-
 .comic-process-chip {
   display: inline-flex;
   align-items: center;
