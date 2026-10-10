@@ -30,7 +30,6 @@ export function ComicCustomers() {
     <section className="comic-customers">
       <div className="comic-shell flex flex-col items-center gap-16 md:gap-24">
         <ComicSectionIntro
-          eyebrow="Referenzen"
           title="Kunden, die uns vertrauen"
           lead="Unsere Kunden nutzen unsere Erklärfilme in Marketing und Vertrieb, online und auf Messen."
         />

@@ -9,7 +9,6 @@ export function ComicProcessSection({ children }: { children: ReactNode }) {
     <section className="comic-process" id="prozess">
       <div className="comic-shell comic-process__inner">
         <ComicSectionIntro
-          eyebrow="Produktion"
           title={PROCESS_COPY.title}
           lead={PROCESS_COPY.lead}
         />

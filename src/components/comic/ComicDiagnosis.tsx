@@ -1,47 +1,46 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, type ReactNode } from "react";
-import { motion, useReducedMotion, useScroll } from "motion/react";
+import { useEffect, useRef, type ReactNode } from "react";
+import {
+  animate,
+  motion,
+  useInView,
+  useMotionValue,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+  type MotionValue,
+} from "motion/react";
 
 import { ComicCta, ComicSectionIntro } from "@/components/comic/ComicUi";
 
-const symptoms = [
-  {
-    image: "/images/card-flip/card-3-front.png",
-    title: "Geringe Aufmerksamkeitsspanne",
-    note: "Im Schnitt bleiben Besucher nur 7 Sekunden",
-  },
-  {
-    image: "/images/card-flip/card-1-front.png",
-    title: "Zu viel Text",
-    note: "Überfordert, statt zu überzeugen",
-  },
-  {
-    image: "/images/card-flip/card-2-front.png",
-    title: "Offene Rückfragen",
-    note: "Wer zweifelt, klickt weg",
-  },
+const symptomFrames = [
+  "/images/card-flip/card-1-front.png",
+  "/images/card-flip/card-2-front.png",
+  "/images/card-flip/card-3-front.png",
 ] as const;
 
 const outcomes = [
-  {
-    image: "/images/card-flip/card-1-back.png",
-    title: "In 90 Sekunden verstanden",
-  },
-  {
-    image: "/images/card-flip/card-2-back.png",
-    title: "Persönlich statt anonym",
-  },
-  {
-    image: "/images/card-flip/card-3-back.png",
-    title: "Einwände vorab beantwortet",
-  },
+  { image: "/images/card-flip/card-1-back.png", title: "Verstanden" },
+  { image: "/images/card-flip/card-2-back.png", title: "Persönlich" },
+  { image: "/images/card-flip/card-3-back.png", title: "Überzeugt" },
 ] as const;
 
+/** One visitor session: 7 s on the page, then a beat of "gone", then replay. */
+const SESSION = 7;
+const LOOP = 9.5;
+
+function formatTime(seconds: number) {
+  const s = Math.max(0, Math.floor(seconds));
+  const mm = String(Math.floor(s / 60)).padStart(2, "0");
+  const ss = String(s % 60).padStart(2, "0");
+  return `${mm}:${ss}`;
+}
+
 /**
- * Symptom → Diagnose → Lösung, staged like three scenes on an edit
- * timeline. The pink playhead on the rail follows scroll progress.
+ * Symptom → Diagnose → Lösung. Few words; each scene is explained by a
+ * small piece of motion on an edit-timeline language.
  */
 export function ComicDiagnosis() {
   const scenesRef = useRef<HTMLOListElement>(null);
@@ -54,12 +53,7 @@ export function ComicDiagnosis() {
   return (
     <section id="diagnose" className="comic-diagnosis">
       <div className="comic-shell flex flex-col items-center gap-14 md:gap-20">
-        <ComicSectionIntro
-          light
-          eyebrow="Kennst du das?"
-          title="Starkes Angebot. Trotzdem zu wenige Anfragen."
-          lead="Woran das liegt – und wie ein Erklärfilm genau dort ansetzt."
-        />
+        <ComicSectionIntro light title="Gutes Angebot. Zu wenig Anfragen." />
 
         <ol ref={scenesRef} className="comic-diagnosis__scenes">
           <span className="comic-diagnosis__rail" aria-hidden>
@@ -69,84 +63,24 @@ export function ComicDiagnosis() {
             />
           </span>
 
-          <Scene
-            n="01"
-            timecode="00:00:00"
-            label="Symptom"
-            title="Besucher kommen und gehen wieder."
-            body="Dein Angebot ist fantastisch. Trotzdem melden sich zu wenige Interessenten. Die typischen Anzeichen:"
-          >
-            <ul className="comic-diagnosis__symptoms">
-              {symptoms.map((item) => (
-                <li key={item.title} className="comic-diagnosis__symptom">
-                  <Image
-                    src={item.image}
-                    alt=""
-                    width={224}
-                    height={140}
-                    className="comic-diagnosis__thumb"
-                  />
-                  <div>
-                    <p className="comic-diagnosis__symptom-title">
-                      {item.title}
-                    </p>
-                    <p className="comic-diagnosis__symptom-note">{item.note}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+          <Scene label="Symptom" title="7 Sekunden." line="Dann sind Besucher wieder weg.">
+            <SessionVisual reduceMotion={!!reduceMotion} />
           </Scene>
 
           <Scene
-            n="02"
-            timecode="00:00:30"
             label="Diagnose"
-            title="Im Gespräch überzeugst du. Online fehlt die Zeit."
-            body="Sprichst du mit Interessenten, werden sie fast immer zu Kunden – weil du Zeit hast, den Mehrwert deines Angebots zu erklären. Deine Website bekommt diese Zeit nicht."
+            title="Im Gespräch überzeugst du."
+            line="Online fehlt dir die Zeit dafür."
           >
-            <div className="comic-diagnosis__edit" aria-label="Vergleich: Gespräch 30 Minuten, Website 7 Sekunden">
-              <div className="comic-diagnosis__ruler" aria-hidden>
-                <span>00:00</span>
-                <span>10:00</span>
-                <span>20:00</span>
-                <span>30:00</span>
-              </div>
-              <Track label="Persönliches Gespräch">
-                <span className="comic-diagnosis__clip comic-diagnosis__clip--talk">
-                  30:00 · Mehrwert erklärt
-                </span>
-              </Track>
-              <Track label="Deine Website">
-                <span className="comic-diagnosis__clip comic-diagnosis__clip--web" />
-                <span className="comic-diagnosis__clip-note">00:07 · weggeklickt</span>
-              </Track>
-            </div>
+            <TalkVsWebVisual reduceMotion={!!reduceMotion} />
           </Scene>
 
           <Scene
-            n="03"
-            timecode="00:01:00"
             label="Lösung"
-            title="Ein animierter Erklärfilm von Digital Trend Media."
-            body="Er erklärt dein Angebot in 90 Sekunden so, wie du es im Gespräch tun würdest – für jeden Besucher, rund um die Uhr."
+            title="Der Erklärfilm erklärt für dich."
+            line="In 90 Sekunden. Für jeden Besucher."
           >
-            <ul className="comic-diagnosis__outcomes">
-              {outcomes.map((item, index) => (
-                <li key={item.title} className="comic-diagnosis__outcome">
-                  <Image
-                    src={item.image}
-                    alt=""
-                    width={320}
-                    height={200}
-                    className="comic-diagnosis__outcome-media"
-                  />
-                  <span className="comic-diagnosis__clip-id">
-                    Clip {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <p className="comic-diagnosis__outcome-title">{item.title}</p>
-                </li>
-              ))}
-            </ul>
+            <FilmVisual reduceMotion={!!reduceMotion} />
           </Scene>
         </ol>
 
@@ -157,43 +91,209 @@ export function ComicDiagnosis() {
 }
 
 function Scene({
-  n,
-  timecode,
   label,
   title,
-  body,
+  line,
   children,
 }: {
-  n: string;
-  timecode: string;
   label: string;
   title: string;
-  body: string;
+  line: string;
   children: ReactNode;
 }) {
   return (
     <li className="comic-diagnosis__scene">
       <span className="comic-diagnosis__keyframe" aria-hidden />
       <div className="comic-diagnosis__copy">
-        <p className="comic-diagnosis__meta">
-          <span>Szene {n}</span>
-          <span aria-hidden>·</span>
-          <span>{timecode}</span>
-        </p>
         <p className="comic-diagnosis__label">{label}</p>
         <h3 className="comic-diagnosis__title">{title}</h3>
-        <p className="comic-diagnosis__body">{body}</p>
+        <p className="comic-diagnosis__body">{line}</p>
       </div>
       <div className="comic-diagnosis__visual">{children}</div>
     </li>
   );
 }
 
-function Track({ label, children }: { label: string; children: ReactNode }) {
+/* --- Scene 1: a visitor session that ends after 7 seconds -------------- */
+
+function SessionVisual({ reduceMotion }: { reduceMotion: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { amount: 0.5 });
+  const t = useMotionValue(reduceMotion ? SESSION - 0.5 : 0);
+
+  useEffect(() => {
+    if (reduceMotion || !inView) return;
+    t.set(0);
+    const controls = animate(t, LOOP, {
+      duration: LOOP,
+      ease: "linear",
+      repeat: Infinity,
+    });
+    return () => controls.stop();
+  }, [inView, reduceMotion, t]);
+
+  const clock = useTransform(t, (v) => formatTime(Math.min(v, SESSION)));
+  const progress = useTransform(t, [0, SESSION], [0, 1], { clamp: true });
+  const gone = useTransform(t, [SESSION, SESSION + 0.35], [0, 1], { clamp: true });
+  const pageOpacity = useTransform(gone, [0, 1], [1, 0.25]);
+
   return (
-    <div className="comic-diagnosis__track">
-      <span className="comic-diagnosis__track-label">{label}</span>
-      <div className="comic-diagnosis__lane">{children}</div>
+    <div ref={ref} className="comic-session" aria-label="Ein Besuch dauert 7 Sekunden">
+      <div className="comic-session__bar">
+        <span className="comic-session__dots" aria-hidden>
+          <i />
+          <i />
+          <i />
+        </span>
+        <span className="comic-session__url">deine-website.de</span>
+        <motion.span className="comic-session__clock">{clock}</motion.span>
+      </div>
+      <motion.span
+        className="comic-session__progress"
+        style={{ scaleX: progress }}
+        aria-hidden
+      />
+      <motion.div className="comic-session__page" style={{ opacity: pageOpacity }}>
+        {symptomFrames.map((src, index) => (
+          <SessionFrame key={src} src={src} index={index} t={t} />
+        ))}
+      </motion.div>
+      <motion.p className="comic-session__gone" style={{ opacity: gone }} aria-hidden>
+        Tab geschlossen
+      </motion.p>
+    </div>
+  );
+}
+
+function SessionFrame({
+  src,
+  index,
+  t,
+}: {
+  src: string;
+  index: number;
+  t: MotionValue<number>;
+}) {
+  // Text overload → open questions → the clock runs out.
+  const slot = SESSION / symptomFrames.length;
+  const start = index * slot;
+  const opacity = useTransform(
+    t,
+    index === 0
+      ? [0, slot - 0.25, slot]
+      : [start - 0.25, start, start + slot - 0.25, start + slot],
+    index === 0 ? [1, 1, 0] : [0, 1, 1, index === symptomFrames.length - 1 ? 1 : 0],
+  );
+
+  return (
+    <motion.div className="comic-session__frame" style={{ opacity }}>
+      <Image src={src} alt="" fill sizes="(max-width: 1024px) 90vw, 640px" />
+    </motion.div>
+  );
+}
+
+/* --- Scene 2: 30 minutes of conversation vs. 7 seconds online ---------- */
+
+function TalkVsWebVisual({ reduceMotion }: { reduceMotion: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.6 });
+  const p = useMotionValue(reduceMotion ? 1 : 0);
+
+  useEffect(() => {
+    if (reduceMotion || !inView) return;
+    const controls = animate(p, 1, { duration: 2.4, ease: [0.22, 1, 0.36, 1] });
+    return () => controls.stop();
+  }, [inView, reduceMotion, p]);
+
+  const talkWidth = useTransform(p, (v) => `${v * 100}%`);
+  const talkClock = useTransform(p, (v) => formatTime(v * 1800));
+  const webClock = useTransform(p, (v) => formatTime(Math.min(v * 4, 1) * 7));
+  const done = useTransform(p, [0.85, 1], [0, 1]);
+
+  return (
+    <div ref={ref} className="comic-edit" aria-label="Gespräch: 30 Minuten. Website: 7 Sekunden.">
+      <div className="comic-edit__track">
+        <span className="comic-edit__name">Gespräch</span>
+        <div className="comic-edit__lane">
+          <motion.span
+            className="comic-edit__clip comic-edit__clip--talk"
+            style={{ width: talkWidth }}
+          />
+        </div>
+        <motion.span className="comic-edit__time">{talkClock}</motion.span>
+        <motion.span className="comic-edit__mark is-yes" style={{ opacity: done }}>
+          ✓
+        </motion.span>
+      </div>
+      <div className="comic-edit__track">
+        <span className="comic-edit__name">Website</span>
+        <div className="comic-edit__lane">
+          <span className="comic-edit__clip comic-edit__clip--web" />
+        </div>
+        <motion.span className="comic-edit__time">{webClock}</motion.span>
+        <motion.span className="comic-edit__mark is-no" style={{ opacity: done }}>
+          ✕
+        </motion.span>
+      </div>
+    </div>
+  );
+}
+
+/* --- Scene 3: the explainer film fills the gap ------------------------- */
+
+function FilmVisual({ reduceMotion }: { reduceMotion: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.5 });
+  const play = reduceMotion || inView;
+
+  return (
+    <div ref={ref} className="comic-film">
+      <div className="comic-edit">
+        <div className="comic-edit__track">
+          <span className="comic-edit__name">Website</span>
+          <div className="comic-edit__lane">
+            <span className="comic-edit__clip comic-edit__clip--web" />
+            <motion.span
+              className="comic-edit__clip comic-edit__clip--film"
+              initial={reduceMotion ? false : { scaleX: 0, opacity: 0 }}
+              animate={play ? { scaleX: 1, opacity: 1 } : undefined}
+              transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            >
+              ▶<span className="comic-edit__film-label">Erklärfilm · 01:30</span>
+            </motion.span>
+          </div>
+          <span className="comic-edit__time">01:37</span>
+          <motion.span
+            className="comic-edit__mark is-yes"
+            initial={reduceMotion ? false : { opacity: 0 }}
+            animate={play ? { opacity: 1 } : undefined}
+            transition={{ delay: 1.1 }}
+          >
+            ✓
+          </motion.span>
+        </div>
+      </div>
+
+      <ul className="comic-film__outcomes">
+        {outcomes.map((item, index) => (
+          <motion.li
+            key={item.title}
+            className="comic-film__outcome"
+            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+            animate={play ? { opacity: 1, y: 0 } : undefined}
+            transition={{ duration: 0.5, delay: 1.2 + index * 0.15, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Image
+              src={item.image}
+              alt=""
+              width={320}
+              height={200}
+              className="comic-film__media"
+            />
+            <span>{item.title}</span>
+          </motion.li>
+        ))}
+      </ul>
     </div>
   );
 }

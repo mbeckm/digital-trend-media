@@ -27,7 +27,6 @@ export function ComicTestimonials() {
     <section className="overflow-x-clip bg-[var(--comic-white)] py-[clamp(4rem,8vw,7.5rem)]">
       <div className="comic-shell flex flex-col items-center gap-12 md:gap-16">
         <ComicSectionIntro
-          eyebrow="Kundenstimmen"
           title="Das sagen unsere Kunden"
           lead="Unsere Kunden erzählen von ihren Erfahrungen mit den Erklärfilmen von Digital Trend Media."
         />

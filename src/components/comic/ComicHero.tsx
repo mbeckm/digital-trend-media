@@ -1,14 +1,4 @@
-"use client";
-
 import Image from "next/image";
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-  type MotionValue,
-} from "motion/react";
-import { useRef } from "react";
 import { Lightbulb, Phone, Timer, type LucideIcon } from "lucide-react";
 
 import { ComicCta } from "@/components/comic/ComicUi";
@@ -47,122 +37,12 @@ export function ComicNav() {
   );
 }
 
-// Placeholder headshots — swap for real customer portraits.
-const proofAvatars = [
-  "/images/comic/avatar-2.png",
-  "/images/comic/avatar-1.png",
-  "/images/comic/avatar-4.png",
-  "/images/testimonials/portrait-2.jpg",
-  "/images/comic/avatar-3.png",
-] as const;
-
-const heroBenefits: { label: string; Icon: LucideIcon }[] = [
-  { label: "Mehr Anfragen", Icon: Phone },
-  { label: "Komplexes einfach erklärt", Icon: Lightbulb },
-  { label: "Kürzere Vertriebszyklen", Icon: Timer },
-];
-
-function ComicHeroProof() {
-  return (
-    <div className="comic-hero__proof">
-      <div className="comic-hero__avatars" aria-hidden>
-        {proofAvatars.map((src) => (
-          <Image
-            key={src}
-            src={src}
-            alt=""
-            width={112}
-            height={112}
-            className="comic-hero__avatar"
-          />
-        ))}
-      </div>
-      <p className="comic-hero__proof-text">
-        Über <strong>200 Unternehmen</strong> vertrauen bereits Digital Trend
-        Media
-      </p>
-    </div>
-  );
-}
-
-function ComicHeroBenefits() {
-  return (
-    <ul className="comic-hero__benefits">
-      {heroBenefits.map(({ label, Icon }) => (
-        <li key={label} className="comic-hero__benefit">
-          <Icon aria-hidden size={28} strokeWidth={1.75} />
-          <span>{label}</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function ComicHeroClouds({
-  scrollYProgress,
-  reduceMotion,
-}: {
-  scrollYProgress: MotionValue<number>;
-  reduceMotion: boolean | null;
-}) {
-  // Stronger scroll travel so the parallax is obvious while leaving the hero.
-  const yBack = useTransform(scrollYProgress, [0, 1], [0, -160]);
-  const yMid = useTransform(scrollYProgress, [0, 1], [0, -95]);
-  const yFront = useTransform(scrollYProgress, [0, 1], [0, -40]);
-
-  if (reduceMotion) {
-    return (
-      <div className="comic-hero__clouds" aria-hidden>
-        <div className="comic-hero__cloud-layer comic-hero__cloud-layer--mid" />
-      </div>
-    );
-  }
-
-  return (
-    <div className="comic-hero__clouds" aria-hidden>
-      <motion.div
-        className="comic-hero__cloud-layer comic-hero__cloud-layer--back"
-        style={{ y: yBack }}
-        animate={{ x: [-36, 36, -36] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="comic-hero__cloud-layer comic-hero__cloud-layer--mid"
-        style={{ y: yMid }}
-        animate={{ x: [28, -40, 28] }}
-        transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="comic-hero__cloud-layer comic-hero__cloud-layer--front"
-        style={{ y: yFront }}
-        animate={{ x: [-20, 32, -20] }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-      />
-    </div>
-  );
-}
-
+/** Focused hero: one message, one action, the showreel. */
 export function ComicHero() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const reduceMotion = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-
   return (
-    <section id="top" ref={sectionRef} className="comic-hero">
-      <ComicHeroClouds
-        scrollYProgress={scrollYProgress}
-        reduceMotion={reduceMotion}
-      />
-
-      {/* Above the fold: tagline + CTA beside the showreel (stacked on phones) */}
+    <section id="top" className="comic-hero">
       <div className="comic-hero__layout">
         <div className="comic-hero__copy">
-          <p className="comic-eyebrow comic-eyebrow--light">
-            Erklärfilm-Studio
-          </p>
           <h1 className="comic-hero__title">
             Erklärvideos, die verständlich machen, was du verkaufst
           </h1>
@@ -172,39 +52,66 @@ export function ComicHero() {
           <ComicCta className="comic-hero__cta" />
         </div>
 
-        <div className="comic-hero__stage">
-          <div className="comic-hero__cast" aria-hidden>
-            <Image
-              src="/images/comic/scribble.png"
-              alt=""
-              width={1049}
-              height={456}
-              className="comic-hero__figurines"
-              priority
-            />
-          </div>
+        <div className="comic-hero__player">
+          <VimeoFacade
+            video={PRIMARY_VIDEO}
+            title="Digital Trend Media Showreel"
+            sizes="(max-width: 1024px) 100vw, 760px"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
 
-          <div className="comic-viewfinder">
-            <div className="comic-hero__player">
-              <VimeoFacade
-                video={PRIMARY_VIDEO}
-                title="Digital Trend Media Showreel"
-                sizes="(max-width: 1024px) 100vw, 760px"
+// Placeholder headshots — swap for real customer portraits.
+const proofAvatars = [
+  "/images/comic/avatar-2.png",
+  "/images/comic/avatar-1.png",
+  "/images/comic/avatar-4.png",
+  "/images/testimonials/portrait-2.jpg",
+  "/images/comic/avatar-3.png",
+] as const;
+
+const benefits: { label: string; Icon: LucideIcon }[] = [
+  { label: "Mehr Anfragen", Icon: Phone },
+  { label: "Komplexes einfach erklärt", Icon: Lightbulb },
+  { label: "Kürzere Vertriebszyklen", Icon: Timer },
+];
+
+/** One quiet row under the hero: social proof + the three outcomes. */
+export function ComicProofBar() {
+  return (
+    <div className="comic-proofbar">
+      <div className="comic-shell comic-proofbar__inner">
+        <div className="comic-proofbar__proof">
+          <div className="comic-proofbar__avatars" aria-hidden>
+            {proofAvatars.map((src) => (
+              <Image
+                key={src}
+                src={src}
+                alt=""
+                width={80}
+                height={80}
+                className="comic-proofbar__avatar"
               />
-            </div>
+            ))}
           </div>
-
-          <div className="comic-hero__slate" aria-hidden>
-            <span className="comic-rec">REC</span>
-            <span>Showreel 2026</span>
-            <span className="comic-hero__timecode">00:01:32:12</span>
-          </div>
+          <p className="comic-proofbar__text">
+            Über <strong>200 Unternehmen</strong> vertrauen bereits Digital
+            Trend Media
+          </p>
         </div>
 
-        <ComicHeroProof />
+        <ul className="comic-proofbar__benefits">
+          {benefits.map(({ label, Icon }) => (
+            <li key={label}>
+              <Icon aria-hidden size={18} strokeWidth={2} />
+              <span>{label}</span>
+            </li>
+          ))}
+        </ul>
       </div>
-
-      <ComicHeroBenefits />
-    </section>
+    </div>
   );
 }
