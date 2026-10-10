@@ -1,33 +1,12 @@
 import { Handshake, MessageCircle, Zap, type LucideIcon } from "lucide-react";
 
 import { ScrollFlipCard } from "@/components/card-flip/ScrollFlipCard";
-import { ComicBenefit } from "@/components/comic/ComicBenefit";
 import { ComicCta, ComicSectionIntro } from "@/components/comic/ComicUi";
 
-const benefits: {
-  title: string;
-  tilt: number;
-  wiggleDelay: string;
-  Icon: LucideIcon;
-}[] = [
-  {
-    title: "Mehr Anfragen",
-    tilt: -1.4,
-    wiggleDelay: "0s",
-    Icon: MessageCircle,
-  },
-  {
-    title: "Bessere Abstimmung",
-    tilt: 0.5,
-    wiggleDelay: "0.45s",
-    Icon: Handshake,
-  },
-  {
-    title: "Schnellerer Vertrieb",
-    tilt: 2.4,
-    wiggleDelay: "0.9s",
-    Icon: Zap,
-  },
+const benefits: { title: string; Icon: LucideIcon }[] = [
+  { title: "Mehr Anfragen", Icon: MessageCircle },
+  { title: "Bessere Abstimmung", Icon: Handshake },
+  { title: "Schnellerer Vertrieb", Icon: Zap },
 ];
 
 export function ComicHelp() {
@@ -48,24 +27,16 @@ export function ComicHelp() {
           Erklärfilme verbessern dein Geschäft
         </h3>
 
-        <div className="comic-help__benefits">
-          {benefits.map(({ title, tilt, wiggleDelay, Icon }) => (
-            <ComicBenefit
-              key={title}
-              title={title}
-              icon={
-                <Icon
-                  size={36}
-                  strokeWidth={2.25}
-                  absoluteStrokeWidth
-                  aria-hidden
-                />
-              }
-              tilt={tilt}
-              wiggleDelay={wiggleDelay}
-            />
+        <ul className="comic-help__benefits">
+          {benefits.map(({ title, Icon }) => (
+            <li key={title} className="comic-benefit">
+              <span className="comic-benefit__icon">
+                <Icon size={20} strokeWidth={2} aria-hidden />
+              </span>
+              <p className="comic-benefit__label">{title}</p>
+            </li>
           ))}
-        </div>
+        </ul>
 
         <ComicCta className="!mt-0" />
       </div>

@@ -1,7 +1,7 @@
 export function ComicFooter() {
   return (
     <footer className="comic-footer">
-      <p className="max-w-[10ch] text-[clamp(2.5rem,6vw,5rem)] font-black tracking-[-0.05em] leading-[1.15] text-[var(--comic-white)]">
+      <p className="comic-display max-w-[10ch] text-[clamp(2.25rem,5vw,4rem)] leading-[1.05] text-[var(--comic-white)]">
         Digital Trend Media
       </p>
 

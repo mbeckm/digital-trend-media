@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Anton_SC, Heebo, Inter, Inter_Tight } from "next/font/google";
+import { Bricolage_Grotesque, Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import "./card-flip-lab/card-flip-lab.css";
 import "./comic/comic.css";
@@ -14,13 +14,15 @@ const interTight = Inter_Tight({
   subsets: ["latin"],
 });
 
-const anton = Anton_SC({
-  weight: "400",
+// Headlines: a grotesk with a little character, set in sentence case.
+const display = Bricolage_Grotesque({
   variable: "--font-card-display",
   subsets: ["latin"],
+  axes: ["opsz"],
 });
 
-const heebo = Heebo({
+// Body copy shares Inter with the rest of the site.
+const sans = Inter({
   variable: "--font-card-sans",
   subsets: ["latin"],
 });
@@ -39,7 +41,7 @@ export default function RootLayout({
   return (
     <html lang="de">
       <body
-        className={`${inter.variable} ${interTight.variable} ${anton.variable} ${heebo.variable} antialiased`}
+        className={`${inter.variable} ${interTight.variable} ${display.variable} ${sans.variable} antialiased`}
       >
         {children}
       </body>

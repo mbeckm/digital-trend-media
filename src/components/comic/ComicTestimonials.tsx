@@ -14,8 +14,7 @@ import { CaseStudyLink } from "@/components/stories/CaseStudyLink";
 import { CASE_STUDIES, type CaseStudy } from "@/components/stories/data";
 import { vimeoPosterSrc } from "@/components/VimeoEmbed";
 
-const accents = ["#604BB8", "#FF52E3", "#0099FF"] as const;
-const tilts = [2.39, -2.58, 2.39] as const;
+const accents = ["#604BB8", "#C2189F", "#0077CC"] as const;
 const portraits = [
   "/images/testimonials/office-1.jpg",
   "/images/testimonials/office-2.jpg",
@@ -74,51 +73,44 @@ function TestimonialCard({
   return (
     <article
       className={`comic-panel flex flex-col overflow-hidden pb-8 ${className}`.trim()}
-      style={{ borderWidth: "5px 12px 15px 5px" }}
     >
-      <div className="relative h-[220px] border-b-[5px] border-[var(--comic-ink)] md:h-[260px]">
+      <div className="relative h-[220px] md:h-[260px]">
         <Image
           src={poster}
           alt=""
           fill
-          className="object-cover contrast-[1.15]"
+          className="object-cover"
           sizes={sizes}
         />
       </div>
 
       <div className="flex flex-1 flex-col gap-6 px-6 pt-6 md:px-8 md:pt-8">
         <div
-          className="mb-2 inline-flex w-fit flex-col gap-2.5 rounded-lg bg-white px-6 py-4 md:px-7 md:py-5"
-          style={{
-            borderStyle: "solid",
-            borderColor: accent,
-            borderWidth: "2px 4px 8px 2px",
-            rotate: `${tilts[index % tilts.length]}deg`,
-          }}
+          className="flex items-baseline gap-3 border-b border-[var(--comic-line)] pb-5"
         >
           <p
-            className="comic-display text-[clamp(1.75rem,2.5vw,2.25rem)] leading-none"
+            className="comic-display text-[clamp(2rem,3vw,2.75rem)] leading-none"
             style={{ color: accent }}
           >
             {study.metric}
           </p>
-          <p className="text-lg font-bold leading-snug text-[var(--comic-ink)]">
+          <p className="text-base font-medium leading-snug text-[var(--comic-muted)]">
             {study.metricLabel}
           </p>
         </div>
 
-        <blockquote className="text-[clamp(1.15rem,1.8vw,1.75rem)] font-bold tracking-[-0.03em] leading-[1.25] text-[var(--comic-ink)] text-pretty">
+        <blockquote className="text-[clamp(1.125rem,1.5vw,1.375rem)] font-medium tracking-[-0.02em] leading-[1.4] text-[var(--comic-ink)] text-pretty">
           „{study.quote}“
         </blockquote>
 
         <div className="mt-auto flex items-end justify-between gap-4 pt-4">
           <div className="min-w-0">
-            <p className="text-lg font-medium leading-snug">{study.name}</p>
-            <p className="text-lg leading-snug">{study.company}</p>
+            <p className="text-base font-semibold leading-snug">{study.name}</p>
+            <p className="text-base leading-snug text-[var(--comic-muted)]">{study.company}</p>
           </div>
           <CaseStudyLink
             slug={study.slug}
-            className="shrink-0 !text-lg !font-bold !leading-snug !text-[var(--comic-purple)]"
+            className="shrink-0 !text-base !font-semibold !leading-snug !text-[var(--comic-purple)]"
           >
             Zur Case Study
           </CaseStudyLink>

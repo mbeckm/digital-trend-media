@@ -22,12 +22,13 @@
 .comic-process-chip {
   display: inline-flex;
   align-items: center;
-  padding: 0.22rem 0.55rem;
-  border: 2.5px solid var(--comic-ink);
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--comic-line-strong);
   border-radius: 999px;
   background: var(--comic-white);
+  color: var(--comic-muted);
   font-size: 0.75rem;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -35,8 +36,8 @@
 }
 
 .comic-process-n {
-  font-family: var(--font-card-display), Impact, sans-serif;
-  font-weight: 400;
+  font-family: var(--font-card-display), system-ui, sans-serif;
+  font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -52,8 +53,7 @@
   overflow: hidden;
   width: 100%;
   aspect-ratio: 16 / 11;
-  border: 3px solid var(--comic-ink);
-  border-radius: calc(var(--comic-radius) - 2px);
+  border-radius: calc(var(--comic-radius) - 4px);
   background: var(--scene-wash);
 }
 
@@ -103,7 +103,7 @@
   position: relative;
   overflow: hidden;
   aspect-ratio: 1;
-  border: 3px solid var(--comic-ink);
+  border: 1.5px solid var(--comic-ink);
   border-radius: 8px;
   background: var(--comic-white);
 }
@@ -143,11 +143,10 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  border: 3px solid var(--comic-ink);
+  border: 1.5px solid var(--comic-ink);
   border-radius: 8px;
   background: var(--comic-white);
-  box-shadow: 5px 6px 0 var(--comic-ink);
-  transform: rotate(-2.2deg);
+  box-shadow: 0 12px 24px -12px rgb(26 0 26 / 0.3);
 }
 
 .scene-script__margin {
@@ -197,8 +196,8 @@
   width: 1.1rem;
   height: 1.1rem;
   background: var(--comic-page);
-  border-left: 3px solid var(--comic-ink);
-  border-bottom: 3px solid var(--comic-ink);
+  border-left: 1.5px solid var(--comic-ink);
+  border-bottom: 1.5px solid var(--comic-ink);
   clip-path: polygon(0 0, 100% 100%, 0 100%);
 }
 
@@ -226,7 +225,7 @@
   position: relative;
   overflow: hidden;
   aspect-ratio: 3 / 4;
-  border: 3px solid var(--comic-ink);
+  border: 1.5px solid var(--comic-ink);
   border-radius: 7px;
   background: var(--comic-white);
   animation: scene-board-pop 2.6s var(--scene-ease) infinite;
@@ -287,10 +286,10 @@
   width: min(82%, 12.5rem);
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  border: 3px solid var(--comic-ink);
+  border: 1.5px solid var(--comic-ink);
   border-radius: 8px;
   background: var(--comic-ink);
-  box-shadow: 5px 6px 0 color-mix(in oklab, var(--comic-ink) 55%, transparent);
+  box-shadow: 0 12px 24px -12px rgb(26 0 26 / 0.35);
 }
 
 .scene-reel__sprocket {
@@ -316,7 +315,7 @@
 .scene-reel__play {
   width: 2.55rem;
   height: 2.55rem;
-  border: 3px solid var(--comic-ink);
+  border: 1.5px solid var(--comic-ink);
   border-radius: 999px;
   background: var(--comic-white);
   display: grid;
@@ -373,7 +372,7 @@
   gap: 0.85rem;
   min-width: 0;
   padding: 0.95rem 0.95rem 1.15rem;
-  border: 3px solid var(--comic-ink);
+  border: 1.5px solid var(--comic-ink);
   border-radius: 10px;
   background: var(--comic-page);
   transform: rotate(var(--page-tilt, 0deg));
@@ -462,34 +461,29 @@
   gap: 0.35rem;
   min-width: 11.5rem;
   padding: 0.85rem 1rem;
-  border-style: solid;
-  border-color: var(--comic-ink);
-  border-width: 3px 5px 6px 3px;
-  border-radius: 10px;
+  border: 1px solid var(--comic-line);
+  border-radius: 12px;
   background: var(--comic-white);
   color: var(--comic-ink);
   text-align: left;
   cursor: pointer;
   font-family: inherit;
-  transition-property: transform, background-color;
+  transition-property: border-color, background-color, box-shadow;
   transition-duration: 160ms;
   transition-timing-function: var(--comic-ease);
 }
 
 .comic-process-focus__tab:hover {
-  background: color-mix(in oklab, var(--comic-pink) 22%, var(--comic-white));
-}
-
-.comic-process-focus__tab:active {
-  transform: scale(0.96);
+  border-color: var(--comic-line-strong);
 }
 
 .comic-process-focus__tab.is-active {
-  background: var(--comic-pink);
+  border-color: var(--comic-purple);
+  box-shadow: inset 3px 0 0 var(--comic-purple), var(--comic-shadow);
 }
 
-.comic-process-focus__tab.is-active .comic-process-chip {
-  background: var(--comic-white);
+.comic-process-focus__tab.is-active .comic-process-n {
+  color: var(--comic-purple);
 }
 
 .comic-process-focus__tab-top {
@@ -505,20 +499,19 @@
 }
 
 .comic-process-focus__tab-title {
-  font-size: clamp(1.15rem, 1.8vw, 1.45rem);
-  font-weight: 800;
-  letter-spacing: -0.04em;
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
   line-height: 1.15;
 }
 
 .comic-process-focus__stage {
   position: relative;
   min-width: 0;
-  border-style: solid;
-  border-color: var(--comic-ink);
-  border-width: var(--comic-border-thick);
+  border: 1px solid var(--comic-line);
   border-radius: var(--comic-radius);
   background: var(--comic-white);
+  box-shadow: var(--comic-shadow);
   overflow: hidden;
 }
 
@@ -561,7 +554,7 @@
 
 .comic-process-focus__tab:focus-visible,
 .comic-process-lab__tab:focus-visible {
-  outline: 3px solid var(--comic-blue);
+  outline: 2px solid var(--comic-purple);
   outline-offset: 3px;
 }
 
@@ -574,17 +567,19 @@
 .comic-process-focus__heading {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.75rem;
 }
 
 .comic-process-focus__copy .comic-process-n {
-  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-size: 0.95rem;
+  color: var(--comic-purple);
 }
 
 .comic-process-focus__title {
   margin: 0;
-  font-size: clamp(1.65rem, 3vw, 2.5rem);
-  font-weight: 800;
+  font-family: var(--font-card-display), system-ui, sans-serif;
+  font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+  font-weight: 600;
   letter-spacing: -0.04em;
   line-height: 1.1;
 }
@@ -592,10 +587,10 @@
 .comic-process-focus__body {
   margin: 0;
   max-width: 46ch;
-  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
-  font-weight: 500;
-  letter-spacing: -0.03em;
-  line-height: 1.4;
+  font-size: clamp(1rem, 1.3vw, 1.125rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.55;
   text-wrap: pretty;
   color: var(--comic-muted);
 }
@@ -675,7 +670,7 @@
   place-items: center;
   width: 2.5rem;
   height: 2.5rem;
-  border: 3px solid var(--comic-ink);
+  border: 1.5px solid var(--comic-ink);
   border-radius: 999px;
   background: var(--comic-pink);
   font-size: 0.8rem;
@@ -853,7 +848,7 @@
   width: fit-content;
   max-width: 100%;
   padding: 0.4rem;
-  border: 3px solid var(--comic-ink);
+  border: 1.5px solid var(--comic-ink);
   border-radius: 12px;
   background: color-mix(in oklab, var(--comic-white) 88%, transparent);
   backdrop-filter: blur(10px);

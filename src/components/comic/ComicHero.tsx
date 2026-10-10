@@ -22,11 +22,11 @@ export function ComicNav() {
   ];
 
   return (
-    <header className="border-b-[3px] border-[var(--comic-ink)] bg-[var(--comic-white)]">
+    <header className="border-b border-[var(--comic-line)] bg-[var(--comic-white)]">
       <div className="comic-shell flex items-center justify-between gap-4 py-3.5 md:py-4">
         <a
           href="#top"
-          className="shrink-0 text-[clamp(1rem,1.5vw,1.35rem)] font-extrabold tracking-[-0.03em] text-[var(--comic-ink)]"
+          className="shrink-0 text-[clamp(1rem,1.5vw,1.35rem)] comic-display tracking-[-0.03em] text-[var(--comic-ink)]"
         >
           Digital Trend Media
         </a>
@@ -35,7 +35,7 @@ export function ComicNav() {
             <a
               key={link.href}
               href={link.href}
-              className="text-[0.95rem] font-semibold tracking-[-0.03em] text-[var(--comic-ink)] transition-opacity hover:opacity-70"
+              className="text-[0.95rem] font-medium tracking-[-0.01em] text-[var(--comic-ink)] transition-opacity hover:opacity-70"
             >
               {link.label}
             </a>

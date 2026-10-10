@@ -23,7 +23,6 @@ function RefCard({ film }: { film: Film }) {
   return (
     <article
       className="comic-panel comic-refs-card"
-      style={{ borderWidth: "5px 12px 15px 5px" }}
     >
       <div className="comic-refs-card__media">
         <VideoShell
@@ -40,14 +39,14 @@ function RefCard({ film }: { film: Film }) {
           <h3 className="comic-display text-[clamp(2rem,3.4vw,2.85rem)] leading-[1.02] text-[var(--comic-ink)]">
             {film.client}
           </h3>
-          <p className="max-w-[32ch] text-pretty text-[clamp(1.05rem,1.7vw,1.35rem)] font-medium leading-[1.3] tracking-[-0.03em] text-[var(--comic-ink)]">
+          <p className="max-w-[32ch] text-pretty text-[clamp(1.05rem,1.5vw,1.25rem)] leading-[1.45] tracking-[-0.01em] text-[var(--comic-muted)]">
             {film.title}
           </p>
         </div>
 
         <a
           href="#portfolio"
-          className="group/link mt-auto inline-flex items-center gap-2 pt-4 text-[clamp(1.05rem,1.6vw,1.25rem)] font-bold leading-snug tracking-[-0.03em] text-[var(--comic-purple)] transition-[opacity,transform] duration-200 ease-out hover:opacity-70 active:scale-[0.96]"
+          className="group/link mt-auto inline-flex items-center gap-2 pt-4 text-[clamp(1rem,1.3vw,1.125rem)] font-semibold leading-snug tracking-[-0.01em] text-[var(--comic-purple)] transition-[opacity,transform] duration-200 ease-out hover:opacity-70 active:scale-[0.96]"
         >
           Zur Fallstudie
           <ArrowRight
