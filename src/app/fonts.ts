@@ -3,6 +3,7 @@ import {
   Bricolage_Grotesque,
   Inter,
   Inter_Tight,
+  JetBrains_Mono,
   Quicksand,
 } from "next/font/google";
 import localFont from "next/font/local";
@@ -27,6 +28,12 @@ export const bricolage = Bricolage_Grotesque({
   variable: "--ff-bricolage",
   subsets: ["latin"],
   axes: ["opsz"],
+});
+
+// Timecodes, slates and scene labels — the studio's "UI" voice.
+export const mono = JetBrains_Mono({
+  variable: "--ff-mono",
+  subsets: ["latin"],
 });
 
 // Fontshare typefaces, self-hosted (ITF Free Font License).
@@ -69,6 +76,7 @@ export const fontVariables = [
   inter,
   interTight,
   bricolage,
+  mono,
   switzer,
   generalSans,
   clashDisplay,

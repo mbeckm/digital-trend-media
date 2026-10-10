@@ -8,7 +8,11 @@ export function ComicProcessSection({ children }: { children: ReactNode }) {
   return (
     <section className="comic-process" id="prozess">
       <div className="comic-shell comic-process__inner">
-        <ComicSectionIntro title={PROCESS_COPY.title} lead={PROCESS_COPY.lead} />
+        <ComicSectionIntro
+          eyebrow="Produktion"
+          title={PROCESS_COPY.title}
+          lead={PROCESS_COPY.lead}
+        />
         {children}
         <ComicCta className="!mt-0" />
       </div>

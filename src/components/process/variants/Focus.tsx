@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 
 import { ComicProcessSection } from "@/components/process/ComicProcessSection";
@@ -11,19 +11,13 @@ export function FocusProcess() {
   const [active, setActive] = useState(0);
   const reduceMotion = useReducedMotion();
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const skipFocus = useRef(true);
 
-  useEffect(() => {
-    if (skipFocus.current) {
-      skipFocus.current = false;
-      return;
-    }
-    tabRefs.current[active]?.focus();
-  }, [active]);
-
+  // Arrow-key navigation moves focus with the selection (never on load).
   const moveTo = (index: number) => {
     const count = PROCESS_STEPS.length;
-    setActive(((index % count) + count) % count);
+    const next = ((index % count) + count) % count;
+    setActive(next);
+    tabRefs.current[next]?.focus();
   };
 
   return (

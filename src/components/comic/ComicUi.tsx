@@ -24,14 +24,22 @@ export function ComicCta({
 export function ComicSectionIntro({
   title,
   lead,
+  eyebrow,
   light = false,
 }: {
   title: string;
   lead: string;
+  /** Scene-style mono label above the title */
+  eyebrow?: string;
   light?: boolean;
 }) {
   return (
-    <div className="mx-auto flex w-full max-w-[68rem] flex-col items-center gap-6 px-2 text-center md:gap-9">
+    <div className="mx-auto flex w-full max-w-[68rem] flex-col items-center gap-6 px-2 text-center md:gap-8">
+      {eyebrow ? (
+        <p className={`comic-eyebrow ${light ? "comic-eyebrow--light" : ""}`}>
+          {eyebrow}
+        </p>
+      ) : null}
       <h2
         className={`comic-section-title ${light ? "text-[var(--comic-white)]" : "text-[var(--comic-ink)]"}`}
       >

@@ -38,6 +38,7 @@ export function ComicFaq() {
     <section id="faq" className="bg-[var(--comic-white)] py-[clamp(4rem,8vw,7.5rem)]">
       <div className="comic-shell flex flex-col items-center gap-12 md:gap-16">
         <ComicSectionIntro
+          eyebrow="FAQ"
           title="Häufige Fragen"
           lead="Die wichtigsten, wiederkehrenden Fragen auf einen Blick beantwortet"
         />

@@ -306,9 +306,12 @@ export function ComicCaseStudies() {
       className="overflow-x-clip bg-[var(--comic-white)] py-[clamp(3.5rem,7vw,6.5rem)]"
     >
       <div className="comic-shell mb-8 flex items-end justify-between gap-6 md:mb-10">
-        <h2 className="comic-display max-w-[16ch] text-[clamp(2.5rem,6vw,4.5rem)] leading-[1.05] text-balance text-[var(--comic-ink)]">
-          Fallstudien
-        </h2>
+        <div className="flex flex-col items-start gap-4">
+          <p className="comic-eyebrow">Ausgewählte Projekte</p>
+          <h2 className="comic-display max-w-[16ch] text-[clamp(2.5rem,6vw,4.5rem)] leading-[1.05] text-balance text-[var(--comic-ink)]">
+            Fallstudien
+          </h2>
+        </div>
         <div className="hidden shrink-0 gap-2 md:flex">
           <ScrollButton direction="prev" onClick={() => scrollBy(-1)} />
           <ScrollButton direction="next" onClick={() => scrollBy(1)} />

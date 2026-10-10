@@ -1,10 +1,10 @@
 import { ComicCaseStudies } from "@/components/comic/ComicCaseStudies";
 import { ComicCompare } from "@/components/comic/ComicCompare";
 import { ComicCustomers } from "@/components/comic/ComicCustomers";
+import { ComicDiagnosis } from "@/components/comic/ComicDiagnosis";
 import { ComicFaq } from "@/components/comic/ComicFaq";
 import { ComicFooter } from "@/components/comic/ComicFooter";
 import { ComicHero, ComicNav } from "@/components/comic/ComicHero";
-import { ComicHelp } from "@/components/comic/ComicHelp";
 import { ComicLogoStrip } from "@/components/comic/ComicLogoStrip";
 import { ComicTestimonials } from "@/components/comic/ComicTestimonials";
 import { FontSwitcher } from "@/components/comic/FontSwitcher";
@@ -18,9 +18,9 @@ export default function Home() {
       <main>
         <ComicHero />
         <ComicLogoStrip />
+        <ComicDiagnosis />
         <ComicCaseStudies />
         <ComicCustomers />
-        <ComicHelp />
         <Portfolio variant="comic" />
         <ComicTestimonials />
         <FocusProcess />

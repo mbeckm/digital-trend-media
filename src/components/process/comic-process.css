@@ -27,9 +27,10 @@
   border-radius: 999px;
   background: var(--comic-white);
   color: var(--comic-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-family: var(--comic-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -57,16 +58,17 @@
   background: var(--scene-wash);
 }
 
+/* Scene washes stay in the brand purple family; pink only marks details */
 .comic-scene[data-kind="kickoff"] {
-  --scene-wash: color-mix(in oklab, var(--comic-pink) 22%, var(--comic-white));
+  --scene-wash: color-mix(in oklab, var(--comic-purple) 10%, var(--comic-white));
 }
 
 .comic-scene[data-kind="script"] {
-  --scene-wash: var(--comic-pink);
+  --scene-wash: color-mix(in oklab, var(--comic-purple) 18%, var(--comic-white));
 }
 
 .comic-scene[data-kind="storyboard"] {
-  --scene-wash: var(--comic-blue);
+  --scene-wash: color-mix(in oklab, var(--comic-purple) 28%, var(--comic-white));
 }
 
 .comic-scene[data-kind="reel"] {
@@ -109,7 +111,7 @@
 }
 
 .scene-kick__tile.is-accent {
-  background: color-mix(in oklab, var(--comic-white) 35%, var(--comic-pink));
+  background: color-mix(in oklab, var(--comic-white) 70%, var(--comic-purple));
   animation: scene-kick-pulse 2.4s var(--scene-ease) infinite;
 }
 

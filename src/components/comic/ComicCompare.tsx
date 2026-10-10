@@ -52,6 +52,7 @@ export function ComicCompare() {
     <section className="comic-compare">
       <div className="comic-shell relative z-10 flex flex-col items-center gap-12 md:gap-16">
         <ComicSectionIntro
+          eyebrow="Vergleich"
           title="Wir vs. Die Anderen"
           lead="Mehr Freiraum in der Produktion. Mehr Wirkung im Vertrieb — statt Dateien ohne Ergebnis."
         />

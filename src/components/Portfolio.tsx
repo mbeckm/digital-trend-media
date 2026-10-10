@@ -236,6 +236,7 @@ export function Portfolio({
         {isComic ? (
           <div className="comic-shell pb-12 pt-[clamp(4rem,8vw,7.5rem)] md:pb-16">
             <ComicSectionIntro
+              eyebrow="Showreel"
               title="Entdecke unsere Filme"
               lead="Über 200 Unternehmen setzen unsere Filme ein. Von Finanzindustrie bis Solarwirtschaft."
             />

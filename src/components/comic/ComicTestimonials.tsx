@@ -14,7 +14,6 @@ import { CaseStudyLink } from "@/components/stories/CaseStudyLink";
 import { CASE_STUDIES, type CaseStudy } from "@/components/stories/data";
 import { vimeoPosterSrc } from "@/components/VimeoEmbed";
 
-const accents = ["#604BB8", "#C2189F", "#0077CC"] as const;
 const portraits = [
   "/images/testimonials/office-1.jpg",
   "/images/testimonials/office-2.jpg",
@@ -28,6 +27,7 @@ export function ComicTestimonials() {
     <section className="overflow-x-clip bg-[var(--comic-white)] py-[clamp(4rem,8vw,7.5rem)]">
       <div className="comic-shell flex flex-col items-center gap-12 md:gap-16">
         <ComicSectionIntro
+          eyebrow="Kundenstimmen"
           title="Das sagen unsere Kunden"
           lead="Unsere Kunden erzählen von ihren Erfahrungen mit den Erklärfilmen von Digital Trend Media."
         />
@@ -66,7 +66,6 @@ function TestimonialCard({
   sizes: string;
   className?: string;
 }) {
-  const accent = accents[index % accents.length]!;
   const poster =
     portraits[index % portraits.length] ?? vimeoPosterSrc(study.video);
 
@@ -89,8 +88,7 @@ function TestimonialCard({
           className="flex items-baseline gap-3 border-b border-[var(--comic-line)] pb-5"
         >
           <p
-            className="comic-display text-[clamp(2rem,3vw,2.75rem)] leading-none"
-            style={{ color: accent }}
+            className="comic-display text-[clamp(2rem,3vw,2.75rem)] leading-none text-[var(--comic-purple)]"
           >
             {study.metric}
           </p>

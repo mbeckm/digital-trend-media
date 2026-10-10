@@ -157,44 +157,51 @@ export function ComicHero() {
         reduceMotion={reduceMotion}
       />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[70rem] flex-col items-center gap-0">
-        <div className="flex w-full flex-col items-center">
-          <h1 className="comic-hero__title">Erklärvideos</h1>
-          <p className="comic-hero__subtitle">
-            Die verständlich machen, was du verkaufst
+      {/* Above the fold: tagline + CTA beside the showreel (stacked on phones) */}
+      <div className="comic-hero__layout">
+        <div className="comic-hero__copy">
+          <p className="comic-eyebrow comic-eyebrow--light">
+            Erklärfilm-Studio
           </p>
-
-          <div className="comic-hero__tag">
-            ...denn Menschen kaufen nur, was sie auch verstehen
-          </div>
+          <h1 className="comic-hero__title">
+            Erklärvideos, die verständlich machen, was du verkaufst
+          </h1>
+          <p className="comic-hero__subtitle">
+            …denn Menschen kaufen nur, was sie auch verstehen.
+          </p>
+          <ComicCta className="comic-hero__cta" />
         </div>
 
         <div className="comic-hero__stage">
-          <div className="comic-hero__player-wrap">
-            <div className="comic-hero__cast" aria-hidden>
-              <Image
-                src="/images/comic/scribble.png"
-                alt=""
-                width={1049}
-                height={456}
-                className="comic-hero__figurines"
-                priority
-              />
-            </div>
+          <div className="comic-hero__cast" aria-hidden>
+            <Image
+              src="/images/comic/scribble.png"
+              alt=""
+              width={1049}
+              height={456}
+              className="comic-hero__figurines"
+              priority
+            />
+          </div>
 
+          <div className="comic-viewfinder">
             <div className="comic-hero__player">
               <VimeoFacade
                 video={PRIMARY_VIDEO}
                 title="Digital Trend Media Showreel"
-                sizes="(max-width: 1100px) 100vw, 1112px"
+                sizes="(max-width: 1024px) 100vw, 760px"
               />
             </div>
+          </div>
+
+          <div className="comic-hero__slate" aria-hidden>
+            <span className="comic-rec">REC</span>
+            <span>Showreel 2026</span>
+            <span className="comic-hero__timecode">00:01:32:12</span>
           </div>
         </div>
 
         <ComicHeroProof />
-
-        <ComicCta className="!mt-10" />
       </div>
 
       <ComicHeroBenefits />
