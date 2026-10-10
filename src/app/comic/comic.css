@@ -1,5 +1,44 @@
 /* Main site comic landing — styles scoped under .comic */
 
+/*
+ * Font pairings. The switcher sets body[data-font]; each pairing picks a
+ * headline + body face and tunes headline weight and tracking
+ * (--font-display-track scales every headline's negative letter-spacing).
+ */
+body {
+  --font-card-display: var(--ff-bricolage);
+  --font-card-sans: var(--font-inter);
+  --font-display-weight: 600;
+  --font-display-weight-light: 500;
+  --font-display-track: 1;
+  --font-body-weight: 400;
+}
+
+body[data-font="switzer"] {
+  --font-card-display: var(--ff-switzer);
+  --font-card-sans: var(--ff-switzer);
+  --font-display-weight: 700;
+  --font-display-weight-light: 600;
+  --font-display-track: 0.8;
+}
+
+body[data-font="general"] {
+  --font-card-display: var(--ff-general-sans);
+  --font-card-sans: var(--ff-quicksand);
+  --font-display-weight: 500;
+  --font-display-weight-light: 500;
+  --font-display-track: 0.6;
+  --font-body-weight: 500;
+}
+
+body[data-font="clash"] {
+  --font-card-display: var(--ff-clash-display);
+  --font-card-sans: var(--ff-archivo);
+  --font-display-weight: 600;
+  --font-display-weight-light: 600;
+  --font-display-track: 0;
+}
+
 .comic {
   --comic-ink: #1a001a;
   --comic-white: #fffaff;
@@ -34,6 +73,7 @@
   background: var(--comic-page);
   color: var(--comic-ink);
   font-family: var(--font-card-sans), system-ui, sans-serif;
+  font-weight: var(--font-body-weight);
   -webkit-font-smoothing: antialiased;
   font-synthesis: none;
 }
@@ -45,8 +85,8 @@
 
 .comic-display {
   font-family: var(--font-card-display), system-ui, sans-serif;
-  font-weight: 600;
-  letter-spacing: -0.035em;
+  font-weight: var(--font-display-weight);
+  letter-spacing: calc(-0.035em * var(--font-display-track));
   line-height: 1.05;
 }
 
@@ -126,8 +166,8 @@
 .comic-section-title {
   font-family: var(--font-card-display), system-ui, sans-serif;
   font-size: clamp(2.25rem, 5.2vw, 4.5rem);
-  font-weight: 600;
-  letter-spacing: -0.035em;
+  font-weight: var(--font-display-weight);
+  letter-spacing: calc(-0.035em * var(--font-display-track));
   line-height: 1.04;
   text-wrap: balance;
   text-align: center;
@@ -137,7 +177,7 @@
   max-width: 46ch;
   margin-inline: auto;
   font-size: clamp(1.0625rem, 1.6vw, 1.375rem);
-  font-weight: 400;
+  font-weight: var(--font-body-weight);
   letter-spacing: -0.012em;
   line-height: 1.5;
   opacity: 0.78;
@@ -242,8 +282,8 @@
   color: transparent;
   font-family: var(--font-card-display), system-ui, sans-serif;
   font-size: clamp(3.25rem, 10vw, 8rem);
-  font-weight: 600;
-  letter-spacing: -0.04em;
+  font-weight: var(--font-display-weight);
+  letter-spacing: calc(-0.04em * var(--font-display-track));
   line-height: 1.02;
   text-align: center;
   text-wrap: balance;
@@ -261,8 +301,8 @@
   color: transparent;
   font-family: var(--font-card-display), system-ui, sans-serif;
   font-size: clamp(1.5rem, 3.6vw, 3rem);
-  font-weight: 500;
-  letter-spacing: -0.035em;
+  font-weight: var(--font-display-weight-light);
+  letter-spacing: calc(-0.035em * var(--font-display-track));
   line-height: 1.15;
   text-align: center;
   text-wrap: balance;
@@ -364,6 +404,96 @@
   }
 }
 
+/* Social proof under the showreel */
+.comic-hero__proof {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: clamp(2.5rem, 4vw, 3.5rem);
+  text-align: center;
+}
+
+.comic-hero__avatars {
+  display: flex;
+}
+
+.comic-hero__avatar {
+  width: clamp(3.5rem, 6vw, 4.5rem);
+  height: clamp(3.5rem, 6vw, 4.5rem);
+  margin-left: -0.9rem;
+  border: 3px solid rgb(255 255 255 / 0.9);
+  border-radius: 999px;
+  object-fit: cover;
+  object-position: center 20%;
+  box-shadow: 0 6px 16px -6px rgb(26 0 26 / 0.35);
+}
+
+.comic-hero__avatar:first-child {
+  margin-left: 0;
+}
+
+.comic-hero__proof-text {
+  max-width: 48ch;
+  margin: 0;
+  color: rgb(255 255 255 / 0.9);
+  font-size: clamp(0.875rem, 1.2vw, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.comic-hero__proof-text strong {
+  color: var(--comic-white);
+  font-weight: 700;
+}
+
+/* Benefit band — full-bleed glass strip closing the hero */
+.comic-hero__benefits {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin: clamp(3.5rem, 6vw, 5rem) calc(var(--comic-gutter) * -1) -4rem;
+  padding: clamp(1.5rem, 3vw, 2.25rem) max(var(--comic-gutter), calc((100% - var(--comic-container)) / 2 + var(--comic-gutter)));
+  border-top: 1px solid rgb(255 255 255 / 0.3);
+  background: color-mix(in oklab, var(--comic-purple) 42%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(18px) saturate(1.2);
+  color: var(--comic-white);
+  text-shadow: 0 1px 12px rgb(26 0 26 / 0.18);
+}
+
+.comic-hero__benefit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  font-family: var(--font-card-display), system-ui, sans-serif;
+  font-size: clamp(1.125rem, 2vw, 1.75rem);
+  font-weight: var(--font-display-weight-light);
+  letter-spacing: calc(-0.02em * var(--font-display-track));
+  line-height: 1.2;
+}
+
+.comic-hero__benefit svg {
+  flex-shrink: 0;
+}
+
+@media (max-width: 760px) {
+  .comic-hero__benefits {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .comic-hero__benefit {
+    justify-content: flex-start;
+  }
+}
+
 .comic-logo-strip {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -404,8 +534,8 @@
   text-align: center;
   font-family: var(--font-card-display), system-ui, sans-serif;
   font-size: clamp(1.75rem, 3.4vw, 3rem);
-  font-weight: 600;
-  letter-spacing: -0.04em;
+  font-weight: var(--font-display-weight);
+  letter-spacing: calc(-0.04em * var(--font-display-track));
   line-height: 1.1;
   color: var(--comic-white);
   text-wrap: balance;
@@ -737,14 +867,6 @@
 }
 
 
-.comic-portfolio-tile {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--comic-radius);
-  background: var(--comic-ink);
-  cursor: pointer;
-}
-
 .comic-film-expand {
   border: 1px solid var(--comic-line);
   border-radius: var(--comic-radius);
@@ -768,8 +890,8 @@
 .comic-film-expand__title {
   font-family: var(--font-card-display), system-ui, sans-serif;
   font-size: clamp(1.75rem, 3vw, 2.5rem);
-  font-weight: 600;
-  letter-spacing: -0.04em;
+  font-weight: var(--font-display-weight);
+  letter-spacing: calc(-0.04em * var(--font-display-track));
   line-height: 1.05;
   text-wrap: balance;
 }
@@ -884,101 +1006,6 @@
 .comic-film-expand__cta:active {
   transform: translateY(1px) scale(0.98);
   box-shadow: 1px 1px 4px rgb(26 0 26 / 0.16);
-}
-
-.comic-portfolio-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-}
-
-/* Secondary to the yellow CTA — quiet text control, sentence case */
-.comic-portfolio-more {
-  margin: 0;
-  padding: 0.35rem 0.25rem;
-  border: 0;
-  background: transparent;
-  color: var(--comic-purple);
-  font-family: var(--font-card-sans), system-ui, sans-serif;
-  font-size: 1.05rem;
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  line-height: 1.3;
-  text-transform: none;
-  text-decoration: underline;
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 0.28em;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.comic-portfolio-more:hover {
-  color: var(--comic-ink);
-}
-
-.comic-portfolio-more:active {
-  opacity: 0.75;
-}
-
-.comic-chip {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 18px;
-  border: 1px solid var(--comic-line-strong);
-  border-radius: 999px;
-  background: var(--comic-white);
-  color: var(--comic-ink);
-  font-size: 1rem;
-  font-weight: 500;
-  transition: border-color 160ms var(--comic-ease);
-  letter-spacing: -0.02em;
-  line-height: 1.25;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.comic-chip:hover {
-  border-color: var(--comic-ink);
-}
-
-.comic-chip[data-active="true"] {
-  border-color: var(--comic-ink);
-  background: var(--comic-ink);
-  color: var(--comic-white);
-}
-
-.comic-chip__label {
-  opacity: 0.6;
-  font-weight: 600;
-}
-
-.comic-chip__value {
-  font-weight: 600;
-}
-
-.comic-chip__chevron {
-  display: inline-flex;
-  flex-shrink: 0;
-  margin-left: 2px;
-  opacity: 0.7;
-}
-
-.comic-chip__select {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  opacity: 0;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  font: inherit;
 }
 
 @media (max-width: 900px) {
@@ -1313,8 +1340,7 @@
 @media (prefers-reduced-motion: reduce) {
   .comic-cta,
   .comic-cta__face,
-  .comic-cta__face::after,
-  .comic-chip {
+  .comic-cta__face::after {
     transition: none;
   }
 
@@ -1328,5 +1354,85 @@
 
   .comic-refs-nav {
     transition: none;
+  }
+}
+
+/* Font pairing switcher — review tool, floats bottom-right */
+.font-switcher {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: calc(100vw - 2rem);
+  padding: 0.4rem 0.4rem 0.4rem 1rem;
+  border: 1px solid var(--comic-line);
+  border-radius: 999px;
+  background: rgb(255 250 255 / 0.92);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--comic-shadow);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+.font-switcher__label {
+  margin: 0;
+  overflow: hidden;
+  color: var(--comic-muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.font-switcher__options {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.25rem;
+}
+
+.font-switcher__option {
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--comic-ink);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms var(--comic-ease);
+}
+
+.font-switcher__option:hover {
+  background: var(--comic-line);
+}
+
+.font-switcher__option[aria-pressed="true"] {
+  background: var(--comic-ink);
+  color: var(--comic-white);
+}
+
+/* Film wall on the landing page — tiles use the headline face */
+.comic-portfolio-wall .portfolio-tile h3 {
+  font-family: var(--font-card-display), system-ui, sans-serif;
+  font-weight: var(--font-display-weight-light);
+  letter-spacing: calc(-0.02em * var(--font-display-track));
+}
+
+@media (max-width: 760px) {
+  /* Clear the portfolio filter dock: compact, top-right (nav links are hidden here) */
+  .font-switcher {
+    top: 0.5rem;
+    right: 0.5rem;
+    bottom: auto;
+    padding: 0.25rem;
+  }
+
+  .font-switcher__label {
+    display: none;
   }
 }

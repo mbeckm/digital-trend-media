@@ -19,6 +19,7 @@ import {
 } from "motion/react";
 
 import { CloudsVolumetric } from "@/components/clouds/CloudsVolumetric";
+import { ComicCta, ComicSectionIntro } from "@/components/comic/ComicUi";
 import { FilterDockPill } from "@/components/portfolio/FilterDropdowns";
 import { FilmExpand, WallPoster } from "@/components/portfolio/FilmExpand";
 import {
@@ -49,7 +50,17 @@ const hoverOut = {
 /** Higher = more wheel travel to scrub through the wall. */
 const SCROLL_SLOWDOWN = 2.4;
 
-export function Portfolio() {
+/**
+ * Full-bleed film wall: the shell grows from a card to the full page width,
+ * then pins while the wall scrubs past. `comic` restyles it for the main
+ * landing page (comic intro, dark wall, comic film sheet).
+ */
+export function Portfolio({
+  variant = "classic",
+}: {
+  variant?: "classic" | "comic";
+} = {}) {
+  const isComic = variant === "comic";
   const [active, setActive] = useState<FilterState>(emptyFilters);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [metrics, setMetrics] = useState({ overflow: 0, viewH: 0 });
@@ -219,34 +230,49 @@ export function Portfolio() {
       <section
         id="portfolio"
         ref={sectionRef}
-        className="relative isolate w-full text-black"
+        className={`relative isolate w-full ${isComic ? "comic-portfolio-wall" : "text-black"}`}
       >
         {/* Editorial intro — normal page flow, outside the wall experience. */}
-        <div className="mx-auto flex w-full max-w-[1280px] flex-col px-6 pb-10 pt-4 md:px-10 md:pb-12 lg:px-12 lg:pb-14">
-          <RevealGroup className="flex max-w-[44rem] flex-col gap-5 md:gap-6">
-            <RevealItem
-              as="h2"
-              className="font-[family-name:var(--font-inter-tight)] text-[clamp(3rem,6.5vw,4.75rem)] font-bold leading-[0.98] tracking-[-0.035em] text-black"
-            >
-              Von Hä? zu Aha!
-            </RevealItem>
-            <RevealItem soft>
-              <SectionDek
-                tone="light"
-                lead="Über 100 Filme. Für Unternehmen aus ganz unterschiedlichen Branchen."
-                rest="Von Fintech bis Industrie, von Onboarding bis Pitch. Jedes Projekt eine eigene Geschichte."
-              />
-            </RevealItem>
-          </RevealGroup>
-        </div>
+        {isComic ? (
+          <div className="comic-shell pb-12 pt-[clamp(4rem,8vw,7.5rem)] md:pb-16">
+            <ComicSectionIntro
+              title="Entdecke unsere Filme"
+              lead="Über 200 Unternehmen setzen unsere Filme ein. Von Finanzindustrie bis Solarwirtschaft."
+            />
+          </div>
+        ) : (
+          <div className="mx-auto flex w-full max-w-[1280px] flex-col px-6 pb-10 pt-4 md:px-10 md:pb-12 lg:px-12 lg:pb-14">
+            <RevealGroup className="flex max-w-[44rem] flex-col gap-5 md:gap-6">
+              <RevealItem
+                as="h2"
+                className="font-[family-name:var(--font-inter-tight)] text-[clamp(3rem,6.5vw,4.75rem)] font-bold leading-[0.98] tracking-[-0.035em] text-black"
+              >
+                Von Hä? zu Aha!
+              </RevealItem>
+              <RevealItem soft>
+                <SectionDek
+                  tone="light"
+                  lead="Über 100 Filme. Für Unternehmen aus ganz unterschiedlichen Branchen."
+                  rest="Von Fintech bis Industrie, von Onboarding bis Pitch. Jedes Projekt eine eigene Geschichte."
+                />
+              </RevealItem>
+            </RevealGroup>
+          </div>
+        )}
 
         {/* Immersive wall only: sky, expand shell, tiles, scrub. */}
         <div
           ref={shellRef}
           className="portfolio-shell relative"
-          style={{ backgroundImage: "var(--gradient-hero)" }}
+          style={
+            isComic
+              ? { background: "var(--comic-ink)" }
+              : { backgroundImage: "var(--gradient-hero)" }
+          }
         >
-          <CloudsVolumetric className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-[inherit]" />
+          {isComic ? null : (
+            <CloudsVolumetric className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-[inherit]" />
+          )}
 
           <div
             ref={trackRef}
@@ -303,7 +329,9 @@ export function Portfolio() {
 
           {results.length === 0 ? (
             <div className="relative z-10 flex flex-col items-center gap-3 px-6 py-24 text-center">
-              <p className="font-[family-name:var(--font-inter-tight)] text-xl font-semibold text-black">
+              <p
+                className={`font-[family-name:var(--font-inter-tight)] text-xl font-semibold ${isComic ? "text-white" : "text-black"}`}
+              >
                 Keine Filme für diesen Filter
               </p>
               <button
@@ -326,7 +354,17 @@ export function Portfolio() {
           visible={showFilterDock}
         />
 
-        <FilmExpand film={selected} onClose={onClose} />
+        {isComic ? (
+          <div className="comic-shell flex justify-center pb-[clamp(4rem,8vw,7.5rem)]">
+            <ComicCta />
+          </div>
+        ) : null}
+
+        <FilmExpand
+          film={selected}
+          onClose={onClose}
+          variant={isComic ? "comic" : "default"}
+        />
       </section>
     </LayoutGroup>
   );

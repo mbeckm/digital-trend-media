@@ -37,8 +37,8 @@
 
 .comic-process-n {
   font-family: var(--font-card-display), system-ui, sans-serif;
-  font-weight: 600;
-  letter-spacing: -0.03em;
+  font-weight: var(--font-display-weight);
+  letter-spacing: calc(-0.03em * var(--font-display-track));
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
@@ -579,8 +579,8 @@
   margin: 0;
   font-family: var(--font-card-display), system-ui, sans-serif;
   font-size: clamp(1.5rem, 2.6vw, 2.25rem);
-  font-weight: 600;
-  letter-spacing: -0.04em;
+  font-weight: var(--font-display-weight);
+  letter-spacing: calc(-0.04em * var(--font-display-track));
   line-height: 1.1;
 }
 
@@ -588,7 +588,7 @@
   margin: 0;
   max-width: 46ch;
   font-size: clamp(1rem, 1.3vw, 1.125rem);
-  font-weight: 400;
+  font-weight: var(--font-body-weight);
   letter-spacing: -0.01em;
   line-height: 1.55;
   text-wrap: pretty;
@@ -806,7 +806,7 @@
   font-family: var(--font-card-display), Impact, sans-serif;
   font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 400;
-  letter-spacing: -0.02em;
+  letter-spacing: calc(-0.02em * var(--font-display-track));
   line-height: 1.05;
 }
 

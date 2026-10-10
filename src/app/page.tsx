@@ -6,8 +6,9 @@ import { ComicFooter } from "@/components/comic/ComicFooter";
 import { ComicHero, ComicNav } from "@/components/comic/ComicHero";
 import { ComicHelp } from "@/components/comic/ComicHelp";
 import { ComicLogoStrip } from "@/components/comic/ComicLogoStrip";
-import { ComicPortfolio } from "@/components/comic/ComicPortfolio";
 import { ComicTestimonials } from "@/components/comic/ComicTestimonials";
+import { FontSwitcher } from "@/components/comic/FontSwitcher";
+import { Portfolio } from "@/components/Portfolio";
 import { FocusProcess } from "@/components/process/variants/Focus";
 
 export default function Home() {
@@ -20,13 +21,14 @@ export default function Home() {
         <ComicCaseStudies />
         <ComicCustomers />
         <ComicHelp />
-        <ComicPortfolio />
+        <Portfolio variant="comic" />
         <ComicTestimonials />
         <FocusProcess />
         <ComicCompare />
         <ComicFaq />
       </main>
       <ComicFooter />
+      <FontSwitcher />
     </div>
   );
 }

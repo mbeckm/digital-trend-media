@@ -9,6 +9,7 @@ import {
   type MotionValue,
 } from "motion/react";
 import { useRef } from "react";
+import { Lightbulb, Phone, Timer, type LucideIcon } from "lucide-react";
 
 import { ComicCta } from "@/components/comic/ComicUi";
 import { PRIMARY_VIDEO, VimeoFacade } from "@/components/VimeoEmbed";
@@ -26,7 +27,7 @@ export function ComicNav() {
       <div className="comic-shell flex items-center justify-between gap-4 py-3.5 md:py-4">
         <a
           href="#top"
-          className="shrink-0 text-[clamp(1rem,1.5vw,1.35rem)] comic-display tracking-[-0.03em] text-[var(--comic-ink)]"
+          className="shrink-0 text-[clamp(1rem,1.5vw,1.35rem)] comic-display text-[var(--comic-ink)]"
         >
           Digital Trend Media
         </a>
@@ -43,6 +44,57 @@ export function ComicNav() {
         </nav>
       </div>
     </header>
+  );
+}
+
+// Placeholder headshots — swap for real customer portraits.
+const proofAvatars = [
+  "/images/comic/avatar-2.png",
+  "/images/comic/avatar-1.png",
+  "/images/comic/avatar-4.png",
+  "/images/testimonials/portrait-2.jpg",
+  "/images/comic/avatar-3.png",
+] as const;
+
+const heroBenefits: { label: string; Icon: LucideIcon }[] = [
+  { label: "Mehr Anfragen", Icon: Phone },
+  { label: "Komplexes einfach erklärt", Icon: Lightbulb },
+  { label: "Kürzere Vertriebszyklen", Icon: Timer },
+];
+
+function ComicHeroProof() {
+  return (
+    <div className="comic-hero__proof">
+      <div className="comic-hero__avatars" aria-hidden>
+        {proofAvatars.map((src) => (
+          <Image
+            key={src}
+            src={src}
+            alt=""
+            width={112}
+            height={112}
+            className="comic-hero__avatar"
+          />
+        ))}
+      </div>
+      <p className="comic-hero__proof-text">
+        Über <strong>200 Unternehmen</strong> vertrauen bereits Digital Trend
+        Media
+      </p>
+    </div>
+  );
+}
+
+function ComicHeroBenefits() {
+  return (
+    <ul className="comic-hero__benefits">
+      {heroBenefits.map(({ label, Icon }) => (
+        <li key={label} className="comic-hero__benefit">
+          <Icon aria-hidden size={28} strokeWidth={1.75} />
+          <span>{label}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -140,8 +192,12 @@ export function ComicHero() {
           </div>
         </div>
 
-        <ComicCta />
+        <ComicHeroProof />
+
+        <ComicCta className="!mt-10" />
       </div>
+
+      <ComicHeroBenefits />
     </section>
   );
 }

@@ -132,9 +132,9 @@ html {
   margin: 0;
   font-family: var(--font-card-display), system-ui, sans-serif;
   font-size: clamp(1.15rem, 2.1vw, 1.85rem);
-  font-weight: 600;
+  font-weight: var(--font-display-weight);
   line-height: 1.1;
-  letter-spacing: -0.035em;
+  letter-spacing: calc(-0.035em * var(--font-display-track));
   text-wrap: balance;
 }
 
