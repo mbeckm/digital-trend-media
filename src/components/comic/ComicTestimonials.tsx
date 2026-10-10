@@ -1,21 +1,10 @@
-"use client";
-
 import Image from "next/image";
-import {
-  useEffect,
-  useRef,
-  useState,
-  type PointerEvent as ReactPointerEvent,
-} from "react";
-import { useReducedMotion } from "motion/react";
 
 import { ComicCta, ComicSectionIntro } from "@/components/comic/ComicUi";
 import { CaseStudyLink } from "@/components/stories/CaseStudyLink";
 import { CASE_STUDIES, type CaseStudy } from "@/components/stories/data";
 import { vimeoPosterSrc } from "@/components/VimeoEmbed";
 
-const accents = ["#604BB8", "#FF52E3", "#0099FF"] as const;
-const tilts = [2.39, -2.58, 2.39] as const;
 const portraits = [
   "/images/testimonials/office-1.jpg",
   "/images/testimonials/office-2.jpg",
@@ -34,21 +23,18 @@ export function ComicTestimonials() {
         />
       </div>
 
-      {/* Large screens: centered editorial 3-up outside the shell so it can span wider */}
-      <div className="mx-auto mt-12 hidden w-[min(calc(100vw-3rem),1800px)] grid-cols-3 gap-6 md:mt-16 lg:grid xl:gap-8 2xl:gap-9">
-        {studies.map((study, index) => (
-          <TestimonialCard
-            key={study.slug}
-            study={study}
-            index={index}
-            sizes="(min-width: 1024px) 38vw, 100vw"
-          />
-        ))}
-      </div>
-
+      {/* Three-up on desktop, stacked on phones — nothing to swipe */}
       <div className="comic-shell mt-12 flex flex-col items-center gap-12 md:mt-16 md:gap-16">
-        {/* Smaller screens: infinite horizontal marquee, still manually scrollable */}
-        <TestimonialMarquee className="lg:hidden" />
+        <div className="grid w-full max-w-[36rem] grid-cols-1 gap-6 lg:max-w-none lg:grid-cols-3 xl:gap-8">
+          {studies.map((study, index) => (
+            <TestimonialCard
+              key={study.slug}
+              study={study}
+              index={index}
+              sizes="(min-width: 1024px) 30vw, 100vw"
+            />
+          ))}
+        </div>
 
         <ComicCta className="!mt-0" />
       </div>
@@ -67,275 +53,54 @@ function TestimonialCard({
   sizes: string;
   className?: string;
 }) {
-  const accent = accents[index % accents.length]!;
   const poster =
     portraits[index % portraits.length] ?? vimeoPosterSrc(study.video);
 
   return (
     <article
       className={`comic-panel flex flex-col overflow-hidden pb-8 ${className}`.trim()}
-      style={{ borderWidth: "5px 12px 15px 5px" }}
     >
-      <div className="relative h-[220px] border-b-[5px] border-[var(--comic-ink)] md:h-[260px]">
+      <div className="relative h-[220px] md:h-[260px]">
         <Image
           src={poster}
           alt=""
           fill
-          className="object-cover contrast-[1.15]"
+          className="object-cover"
           sizes={sizes}
         />
       </div>
 
       <div className="flex flex-1 flex-col gap-6 px-6 pt-6 md:px-8 md:pt-8">
         <div
-          className="mb-2 inline-flex w-fit flex-col gap-2.5 rounded-lg bg-white px-6 py-4 md:px-7 md:py-5"
-          style={{
-            borderStyle: "solid",
-            borderColor: accent,
-            borderWidth: "2px 4px 8px 2px",
-            rotate: `${tilts[index % tilts.length]}deg`,
-          }}
+          className="flex items-baseline gap-3 border-b border-[var(--comic-line)] pb-5"
         >
           <p
-            className="comic-display text-[clamp(1.75rem,2.5vw,2.25rem)] leading-none"
-            style={{ color: accent }}
+            className="comic-display text-[clamp(2rem,3vw,2.75rem)] leading-none text-[var(--comic-purple)]"
           >
             {study.metric}
           </p>
-          <p className="text-lg font-bold leading-snug text-[var(--comic-ink)]">
+          <p className="text-base font-medium leading-snug text-[var(--comic-muted)]">
             {study.metricLabel}
           </p>
         </div>
 
-        <blockquote className="text-[clamp(1.15rem,1.8vw,1.75rem)] font-bold tracking-[-0.03em] leading-[1.25] text-[var(--comic-ink)] text-pretty">
+        <blockquote className="text-[clamp(1.125rem,1.5vw,1.375rem)] font-medium tracking-[-0.02em] leading-[1.4] text-[var(--comic-ink)] text-pretty">
           „{study.quote}“
         </blockquote>
 
         <div className="mt-auto flex items-end justify-between gap-4 pt-4">
           <div className="min-w-0">
-            <p className="text-lg font-medium leading-snug">{study.name}</p>
-            <p className="text-lg leading-snug">{study.company}</p>
+            <p className="text-base font-semibold leading-snug">{study.name}</p>
+            <p className="text-base leading-snug text-[var(--comic-muted)]">{study.company}</p>
           </div>
           <CaseStudyLink
             slug={study.slug}
-            className="shrink-0 !text-lg !font-bold !leading-snug !text-[var(--comic-purple)]"
+            className="shrink-0 !text-base !font-semibold !leading-snug !text-[var(--comic-purple)]"
           >
             Zur Case Study
           </CaseStudyLink>
         </div>
       </div>
     </article>
-  );
-}
-
-/**
- * Full-bleed horizontal track: auto-drifts infinitely, pauses on interaction,
- * and stays manually scrollable (touch / trackpad / drag).
- */
-function TestimonialMarquee({ className = "" }: { className?: string }) {
-  const reduceMotion = useReducedMotion();
-  const scrollerRef = useRef<HTMLDivElement>(null);
-  const pausedRef = useRef(false);
-  const resumeTimer = useRef(0);
-  const dragRef = useRef<{
-    pointerId: number;
-    startX: number;
-    startScroll: number;
-    moved: boolean;
-  } | null>(null);
-  const suppressClickRef = useRef(false);
-  const [dragging, setDragging] = useState(false);
-
-  const pause = (resumeMs?: number) => {
-    pausedRef.current = true;
-    if (resumeTimer.current) {
-      window.clearTimeout(resumeTimer.current);
-      resumeTimer.current = 0;
-    }
-    if (reduceMotion || resumeMs == null) return;
-    resumeTimer.current = window.setTimeout(() => {
-      pausedRef.current = false;
-      resumeTimer.current = 0;
-    }, resumeMs);
-  };
-
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-
-    let wrapping = false;
-
-    const wrap = () => {
-      const half = el.scrollWidth / 2;
-      if (half <= 0 || wrapping) return;
-      // Seed sits exactly on `half`; only wrap once we cross it.
-      if (el.scrollLeft > half) {
-        wrapping = true;
-        el.scrollLeft -= half;
-        wrapping = false;
-      } else if (el.scrollLeft <= 0) {
-        wrapping = true;
-        el.scrollLeft += half;
-        wrapping = false;
-      }
-    };
-
-    const seed = () => {
-      const half = el.scrollWidth / 2;
-      if (half > 0 && el.clientWidth > 0) {
-        wrapping = true;
-        el.scrollLeft = half;
-        wrapping = false;
-      }
-    };
-
-    el.addEventListener("scroll", wrap, { passive: true });
-
-    const ro = new ResizeObserver(() => {
-      // Becoming visible (display:none → block) or width change: re-seed.
-      if (el.clientWidth > 0 && el.scrollLeft === 0) seed();
-    });
-    ro.observe(el);
-    seed();
-
-    return () => {
-      el.removeEventListener("scroll", wrap);
-      ro.disconnect();
-    };
-  }, []);
-
-  // Gentle auto-drift; paused while interacting or when reduced motion is on.
-  useEffect(() => {
-    if (reduceMotion) return;
-    const el = scrollerRef.current;
-    if (!el) return;
-
-    let raf = 0;
-    let last = performance.now();
-    let carry = 0;
-    const speed = 32; // px / second
-
-    const tick = (now: number) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-
-      // Skip while the track is display:none (desktop breakpoint).
-      if (el.clientWidth > 0 && !pausedRef.current && !dragRef.current) {
-        carry += speed * dt;
-        if (carry >= 1) {
-          const step = Math.floor(carry);
-          carry -= step;
-          el.scrollLeft += step;
-        }
-      }
-
-      raf = requestAnimationFrame(tick);
-    };
-
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [reduceMotion]);
-
-  useEffect(() => {
-    return () => {
-      if (resumeTimer.current) window.clearTimeout(resumeTimer.current);
-    };
-  }, []);
-
-  const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    // Touch/pen: native scroll + pause auto-drift. Mouse: drag-to-scroll.
-    if (event.pointerType !== "mouse" || event.button !== 0) {
-      pause();
-      return;
-    }
-    const el = scrollerRef.current;
-    if (!el) return;
-    pause();
-    suppressClickRef.current = false;
-    dragRef.current = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startScroll: el.scrollLeft,
-      moved: false,
-    };
-    el.setPointerCapture(event.pointerId);
-  };
-
-  const onPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const drag = dragRef.current;
-    const el = scrollerRef.current;
-    if (!drag || !el || drag.pointerId !== event.pointerId) return;
-    const dx = event.clientX - drag.startX;
-    if (!drag.moved && Math.abs(dx) > 4) {
-      drag.moved = true;
-      suppressClickRef.current = true;
-      setDragging(true);
-    }
-    if (drag.moved) {
-      el.scrollLeft = drag.startScroll - dx;
-    }
-  };
-
-  const endDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const drag = dragRef.current;
-    if (!drag || drag.pointerId !== event.pointerId) return;
-    const moved = drag.moved;
-    dragRef.current = null;
-    setDragging(false);
-    try {
-      scrollerRef.current?.releasePointerCapture(event.pointerId);
-    } catch {
-      /* already released */
-    }
-    pause(moved ? 2400 : 1200);
-  };
-
-  const onClickCapture = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!suppressClickRef.current) return;
-    event.preventDefault();
-    event.stopPropagation();
-    suppressClickRef.current = false;
-  };
-
-  const slides = (prefix: string, hidden: boolean) =>
-    studies.map((study, index) => (
-      <div
-        key={`${prefix}-${study.slug}`}
-        className="comic-testimonial-slide shrink-0"
-        aria-hidden={hidden || undefined}
-        {...(hidden ? { inert: true } : {})}
-      >
-        <TestimonialCard
-          study={study}
-          index={index}
-          sizes="(max-width: 1023px) 84vw, 420px"
-        />
-      </div>
-    ));
-
-  return (
-    <div
-      className={`comic-testimonial-bleed relative left-1/2 w-[100vw] max-w-[100vw] -translate-x-1/2 ${className}`.trim()}
-    >
-      <div
-        ref={scrollerRef}
-        role="region"
-        aria-label="Kundenstimmen"
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={endDrag}
-        onPointerCancel={endDrag}
-        onClickCapture={onClickCapture}
-        onWheel={() => pause(1800)}
-        onTouchStart={() => pause()}
-        onTouchEnd={() => pause(2200)}
-        className={`comic-testimonial-track ${
-          dragging ? "is-dragging cursor-grabbing" : "cursor-grab"
-        }`}
-      >
-        {slides("a", false)}
-        {slides("b", true)}
-      </div>
-    </div>
   );
 }

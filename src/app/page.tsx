@@ -1,13 +1,18 @@
 import { ComicCaseStudies } from "@/components/comic/ComicCaseStudies";
+import { ComicClosing } from "@/components/comic/ComicClosing";
 import { ComicCompare } from "@/components/comic/ComicCompare";
 import { ComicCustomers } from "@/components/comic/ComicCustomers";
+import { ComicDiagnosis } from "@/components/comic/ComicDiagnosis";
 import { ComicFaq } from "@/components/comic/ComicFaq";
 import { ComicFooter } from "@/components/comic/ComicFooter";
-import { ComicHero, ComicNav } from "@/components/comic/ComicHero";
-import { ComicHelp } from "@/components/comic/ComicHelp";
-import { ComicLogoStrip } from "@/components/comic/ComicLogoStrip";
-import { ComicPortfolio } from "@/components/comic/ComicPortfolio";
+import {
+  ComicHero,
+  ComicNav,
+  ComicProofBar,
+} from "@/components/comic/ComicHero";
 import { ComicTestimonials } from "@/components/comic/ComicTestimonials";
+import { FontSwitcher } from "@/components/comic/FontSwitcher";
+import { Portfolio } from "@/components/Portfolio";
 import { FocusProcess } from "@/components/process/variants/Focus";
 
 export default function Home() {
@@ -16,17 +21,19 @@ export default function Home() {
       <ComicNav />
       <main>
         <ComicHero />
-        <ComicLogoStrip />
+        <ComicProofBar />
+        <ComicDiagnosis />
         <ComicCaseStudies />
         <ComicCustomers />
-        <ComicHelp />
-        <ComicPortfolio />
+        <Portfolio variant="comic" />
         <ComicTestimonials />
         <FocusProcess />
         <ComicCompare />
         <ComicFaq />
+        <ComicClosing />
       </main>
       <ComicFooter />
+      <FontSwitcher />
     </div>
   );
 }
