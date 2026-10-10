@@ -42,7 +42,7 @@ export function ComicHero() {
   return (
     <section id="top" className="comic-hero">
       <Image
-        src="/images/studio/studio-desk.webp"
+        src="/images/studio/studio-stage.webp"
         alt=""
         fill
         priority

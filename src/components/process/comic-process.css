@@ -2,10 +2,10 @@
 
 .comic-process {
   padding-block: clamp(4rem, 8vw, 7.5rem);
-  /* Storyboard desk under a paper wash — texture, not decoration */
+  /* Animation studio loft under a paper wash — texture, not decoration */
   background:
     linear-gradient(180deg, rgb(247 243 251 / 0.9), rgb(247 243 251 / 0.95)),
-    url("/images/studio/studio-storyboard.webp") center / cover;
+    url("/images/studio/studio-loft.webp") center / cover;
   color: var(--comic-ink);
 }
 

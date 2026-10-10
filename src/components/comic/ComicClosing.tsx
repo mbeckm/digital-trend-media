@@ -2,12 +2,12 @@ import Image from "next/image";
 
 import { ComicCta } from "@/components/comic/ComicUi";
 
-/** Last call to action before the footer, set in the voice-over booth. */
+/** Last call to action before the footer, set in the recording studio. */
 export function ComicClosing() {
   return (
     <section className="comic-closing">
       <Image
-        src="/images/studio/studio-voice.webp"
+        src="/images/studio/studio-recording.webp"
         alt=""
         fill
         sizes="100vw"

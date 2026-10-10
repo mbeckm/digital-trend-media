@@ -47,7 +47,7 @@ export function ComicDiagnosis() {
   return (
     <section id="diagnose" className="comic-diagnosis">
       <Image
-        src="/images/studio/studio-edit.webp"
+        src="/images/studio/studio-grading.webp"
         alt=""
         fill
         sizes="100vw"
