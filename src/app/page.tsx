@@ -1,4 +1,5 @@
 import { ComicCaseStudies } from "@/components/comic/ComicCaseStudies";
+import { ComicClosing } from "@/components/comic/ComicClosing";
 import { ComicCompare } from "@/components/comic/ComicCompare";
 import { ComicCustomers } from "@/components/comic/ComicCustomers";
 import { ComicDiagnosis } from "@/components/comic/ComicDiagnosis";
@@ -29,6 +30,7 @@ export default function Home() {
         <FocusProcess />
         <ComicCompare />
         <ComicFaq />
+        <ComicClosing />
       </main>
       <ComicFooter />
       <FontSwitcher />

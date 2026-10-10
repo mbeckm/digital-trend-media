@@ -41,6 +41,14 @@ export function ComicNav() {
 export function ComicHero() {
   return (
     <section id="top" className="comic-hero">
+      <Image
+        src="/images/studio/studio-desk.webp"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="comic-hero__bg"
+      />
       <div className="comic-hero__layout">
         <div className="comic-hero__copy">
           <h1 className="comic-hero__title">
